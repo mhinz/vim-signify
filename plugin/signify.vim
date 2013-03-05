@@ -59,9 +59,10 @@ endif
 "  Initial stuff  {{{1
 aug signify
     au!
-    au ColorScheme           * call s:set_colors()
-    au BufWritePost,BufEnter * call s:start()
-    au BufDelete             * call s:stop() | call remove(s:active_buffers, expand('%:p'))
+    au ColorScheme  * call s:set_colors()
+    au BufWritePost * call s:start()
+    au BufEnter     * let s:colors_set_b = 0 | call s:start()
+    au BufDelete    * call s:stop() | call remove(s:active_buffers, expand('%:p'))
 aug END
 
 com! -nargs=0 -bar SignifyToggle           call s:toggle_signify()
