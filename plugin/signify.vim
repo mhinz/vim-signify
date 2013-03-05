@@ -38,20 +38,20 @@ else
 endif
 
 "  Default signs  {{{1
-if exists('g:signify_option_sign_add')
-    exe 'sign define SignifyAdd text='. g:signify_option_sign_add .' texthl=SignifyAdd linehl=none'
+if exists('g:signify_sign_add')
+    exe 'sign define SignifyAdd text='. g:signify_sign_add .' texthl=SignifyAdd linehl=none'
 else
     sign define SignifyAdd text=>> texthl=SignifyAdd linehl=none
 endif
 
-if exists('g:signify_option_sign_delete')
-    exe 'sign define SignifyDelete text='. g:signify_option_sign_delete .' texthl=SignifyDelete linehl=none'
+if exists('g:signify_sign_delete')
+    exe 'sign define SignifyDelete text='. g:signify_sign_delete .' texthl=SignifyDelete linehl=none'
 else
     sign define SignifyDelete text=<< texthl=SignifyDelete linehl=none
 endif
 
-if exists('g:signify_option_sign_change')
-    exe 'sign define SignifyChange text='. g:signify_option_sign_change .' texthl=SignifyChange linehl=none'
+if exists('g:signify_sign_change')
+    exe 'sign define SignifyChange text='. g:signify_sign_change .' texthl=SignifyChange linehl=none'
 else
     sign define SignifyChange text=!! texthl=SignifyChange linehl=none
 endif
