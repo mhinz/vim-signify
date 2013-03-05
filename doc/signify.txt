@@ -1,0 +1,174 @@
+*signify.txt*                                      Seeing changes like a boss.
+*signify*
+
+                                              ___
+                    __                  __  /'___\
+               ____/\_\     __     ___ /\_\/\ \__/  __  __
+              /',__\/\ \  /'_ `\ /' _ `\/\ \ \ ,__\/\ \/\ \
+             /\__, `\ \ \/\ \L\ \/\ \/\ \ \ \ \ \_/\ \ \_\ \
+             \/\____/\ \_\ \____ \ \_\ \_\ \_\ \_\  \/`____ \
+              \/___/  \/_/\/___L\ \/_/\/_/\/_/\/_/   `/___/> \
+                            /\____/                     /\___/
+                            \_/__/                      \/__/
+
+
+
+                              Reference Manual
+
+
+==============================================================================
+CONTENTS                                                    *signify-contents*
+
+    1.Intro..........................................|signify-intro|
+    2.Usage..........................................|signify-usage|
+    3.Options........................................|signify-options|
+    4.Commandss......................................|signify-commands|
+    5.Author.........................................|signify-author|
+    6.Credits........................................|signify-credits|
+    7.License........................................|signify-license|
+
+
+==============================================================================
+1. Intro                                                       *signify-intro*
+
+Signify is quite unobtrusive. If there is information about changes since the
+last commit, they will be shown on the left side in Vim's sign column.
+
+Easy-peasy!
+
+
+==============================================================================
+2. Usage                                                       *signify-usage*
+
+The usage is pretty straight-forward. By default you should only notice a
+difference, if you're working in a directory that is managed by a supported
+version control system, e.g. git.
+
+The plugin defines 3 new kinds of signs and their corresponding highlighting
+classes. It tries to inherent existing colors from the LineNr class, if that
+fails, it sets its own colors. In case you don't like these colors, you can
+change them easily through variables.
+
+
+==============================================================================
+3. Options                                                   *signify-options*
+
+Just put these variables into your vimrc. The shown assignments are only
+examples.
+
+
+                                             *signify-var-mapping_next_change*
+
+    let g:signify_mapping_next_change = '<leader>gn'
+
+Mapping for jumping to the next change.
+
+
+                                             *signify-var-mapping_prev_change*
+
+    let g:signify_mapping_prev_change = '<leader>gp'
+
+mapping for jumping to the previous change.
+
+
+                                        *signify-var-mapping_toggle_highlight*
+
+    let g:signify_mapping_toggle_highlight = '<leader>gh'
+
+Mapping for toggling line highlighting for lines containing changes.
+
+
+                                                  *signify-var-mapping_toggle*
+
+    let g:signify_mapping_toggle = '<leader>gt'
+
+Mapping for toggling the plugin for the current buffer only.
+
+
+                                                        *signify-var-sign_add*
+
+    let g:signify_sign_add = '+'
+
+The sign to use if a line was added.
+
+
+                                                     *signify-var-sign_delete*
+
+    let g:signify_sign_delete = '-'
+
+The sign to use if a line was deleted.
+
+
+                                                     *signify-var-sign_change*
+
+    let g:signify_sign_change = '*'
+
+The sign to use if a line changed.
+
+
+==============================================================================
+4. Commands                                                 *signify-commands*
+
+                                                         *signify-func-toggle*
+
+    :SignifyToggle
+
+Toggle the plugin for the current buffer only.
+
+Default mapping:  <leader>gt
+
+
+                                               *signify-func-toggle-highlight*
+
+    :SignifyToggleHighlight
+
+Toggle line highlighting for lines containing changes.
+
+Default mapping:  <leader>gh
+
+
+                                            *signify-func-jump_to_next_change*
+
+    :SignifyJumpToNextChange
+
+Jump to the next change.
+
+Default mapping:  <leader>gn
+
+
+                                            *signify-func-jump_to_prev_change*
+
+    :SignifyJumpToPrevChange
+
+Jump to the previous change.
+
+Default mapping:  <leader>gp
+
+
+==============================================================================
+5. About the author                                           *signify-author*
+
+The author of signify is a lazy bum who somehow enjoys wasting time toying
+around with Vim and especially VimL.
+
+For latest developments:
+
+https://github.com/mhinz
+
+Thank you for flying mhi airlines. Get the Vim on!
+
+
+==============================================================================
+6. Credits                                                   *signify-credits*
+
+No one so far! Want to be the first? - You know where to find the repo.
+Do you accept the challenge? Fame and fortune to the glorious adventurers!
+
+
+==============================================================================
+7. Licence                                                   *signify-license*
+
+Distributed under the same terms as Vim itself (see |:help license|).
+
+
+vim: tw=78
