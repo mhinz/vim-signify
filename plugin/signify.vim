@@ -177,7 +177,7 @@ function! s:process_diff(diff) abort
             endwhile
         " An old line was removed.
         elseif (old_count >= 1) && (new_count == 0)
-            exe 'sign place '. s:id_top .' line='. old_line .' name=SignifyDelete file='. expand('%:p')
+            exe 'sign place '. s:id_top .' line='. new_line .' name=SignifyDelete file='. expand('%:p')
             let s:id_top += 1
         " A line was changed.
         else
