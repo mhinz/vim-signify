@@ -11,7 +11,7 @@ Features:
 - supports git (other DVCS will follow)
 - apart from signs there is also optional line highlighting
 - you can toggle the plugin per buffer
-- fully configurable through global variables in vimrc
+- fully configurable through global variables
 - good documentation
 
 - quick developer response! :-)
