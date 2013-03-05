@@ -74,6 +74,10 @@ com! -nargs=0 -bar SignifyJumpToPrevChange call s:jump_to_prev_change()
 function! s:start() abort
     let l:path = expand('%:p')
 
+    if empty(l:path) || &ft == 'help'
+        return
+    endif
+
     " New buffer.. add to list.
     if !has_key(s:active_buffers, l:path)
         let s:active_buffers[l:path] = 1
