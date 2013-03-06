@@ -14,16 +14,16 @@ let s:id_top   = s:id_start
 let s:id_jump  = s:id_start
 
 "  Default mappings  {{{1
-if exists('g:signify_mapping_next_change')
-    exe 'nnoremap '. g:signify_mapping_next_change .' :SignifyJumpToNextChange<cr>'
+if exists('g:signify_mapping_next_hunk')
+    exe 'nnoremap '. g:signify_mapping_next_hunk .' :SignifyJumpToNextHunk<cr>'
 else
-    nnoremap <leader>gn :SignifyJumpToNextChange<cr>
+    nnoremap <leader>gn :SignifyJumpToNextHunk<cr>
 endif
 
-if exists('g:signify_mapping_prev_change')
-    exe 'nnoremap '. g:signify_mapping_prev_change .' :SignifyJumpToPrevChange<cr>'
+if exists('g:signify_mapping_prev_hunk')
+    exe 'nnoremap '. g:signify_mapping_prev_hunk .' :SignifyJumpToPrevHunk<cr>'
 else
-    nnoremap <leader>gp :SignifyJumpToPrevChange<cr>
+    nnoremap <leader>gp :SignifyJumpToPrevHunk<cr>
 endif
 
 if exists('g:signify_mapping_toggle_highlight')
@@ -66,10 +66,10 @@ aug signify
     au BufDelete    * call s:stop() | call remove(s:active_buffers, expand('%:p'))
 aug END
 
-com! -nargs=0 -bar SignifyToggle           call s:toggle_signify()
-com! -nargs=0 -bar SignifyToggleHighlight  call s:toggle_line_highlighting()
-com! -nargs=0 -bar SignifyJumpToNextChange call s:jump_to_next_change()
-com! -nargs=0 -bar SignifyJumpToPrevChange call s:jump_to_prev_change()
+com! -nargs=0 -bar SignifyToggle          call s:toggle_signify()
+com! -nargs=0 -bar SignifyToggleHighlight call s:toggle_line_highlighting()
+com! -nargs=0 -bar SignifyJumpToNextHunk  call s:jump_to_next_hunk()
+com! -nargs=0 -bar SignifyJumpToPrevHunk  call s:jump_to_prev_hunk()
 
 "  Internal functions  {{{1
 "  Functions -> s:start()  {{{2
@@ -194,21 +194,21 @@ endfunction
 "  Functions -> s:toggle_line_highlighting()  {{{2
 function! s:toggle_line_highlighting() abort
     if s:line_highlight_b
-        sign define SignifyAdd    text=+ texthl=SignifyAdd    linehl=none
-        sign define SignifyChange text=* texthl=SignifyChange linehl=none
-        sign define SignifyDelete text=- texthl=SignifyDelete linehl=none
+        sign define SignifyAdd    text=>> texthl=SignifyAdd    linehl=none
+        sign define SignifyChange text=!! texthl=SignifyChange linehl=none
+        sign define SignifyDelete text=<< texthl=SignifyDelete linehl=none
         let s:line_highlight_b = 0
     else
-        sign define SignifyAdd    text=+ texthl=SignifyAdd    linehl=DiffAdd
-        sign define SignifyChange text=* texthl=SignifyChange linehl=DiffChange
-        sign define SignifyDelete text=- texthl=SignifyRemove linehl=DiffDelete
+        sign define SignifyAdd    text=>> texthl=SignifyAdd    linehl=DiffAdd
+        sign define SignifyDelete text=<< texthl=SignifyRemove linehl=DiffDelete
+        sign define SignifyChange text=!! texthl=SignifyChange linehl=DiffChange
         let s:line_highlight_b = 1
     endif
     call s:start()
 endfunction
 
-"  Functions -> s:jump_to_next_change()  {{{2
-function! s:jump_to_next_change()
+"  Functions -> s:jump_to_next_hunk()  {{{2
+function! s:jump_to_next_hunk()
     if s:last_jump_was_next == 0
         let s:id_jump += 2
     endif
@@ -217,8 +217,8 @@ function! s:jump_to_next_change()
     let s:last_jump_was_next = 1
 endfunction
 
-"  Functions -> s:jump_to_prev_change()  {{{2
-function! s:jump_to_prev_change()
+"  Functions -> s:jump_to_prev_hunk()  {{{2
+function! s:jump_to_prev_hunk()
     if s:last_jump_was_next == 1
         let s:id_jump -= 2
     endif

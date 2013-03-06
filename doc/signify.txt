@@ -31,8 +31,9 @@ CONTENTS                                                    *signify-contents*
 ==============================================================================
 1. Intro                                                       *signify-intro*
 
-Signify is quite unobtrusive. If there is information about changes since the
-last commit, they will be shown on the left side in Vim's sign column.
+Signify is quite unobtrusive. If there is information about changes (in form
+of patch hunks) since the last commit, they will be shown on the left side in
+Vim's sign column.
 
 Easy-peasy!
 
@@ -57,18 +58,18 @@ Just put these variables into your vimrc. The shown assignments are only
 examples.
 
 
-                                             *signify-var-mapping_next_change*
+                                               *signify-var-mapping_next_hunk*
 
-    let g:signify_mapping_next_change = '<leader>gn'
+    let g:signify_mapping_next_hunk = '<leader>gn'
 
-Mapping for jumping to the next change.
+Mapping for jumping to the next hunk.
 
 
-                                             *signify-var-mapping_prev_change*
+                                               *signify-var-mapping_prev_hunk*
 
-    let g:signify_mapping_prev_change = '<leader>gp'
+    let g:signify_mapping_prev_hunk = '<leader>gp'
 
-mapping for jumping to the previous change.
+mapping for jumping to the previous hunk.
 
 
                                         *signify-var-mapping_toggle_highlight*
@@ -127,20 +128,20 @@ Toggle line highlighting for lines containing changes.
 Default mapping:  <leader>gh
 
 
-                                            *signify-func-jump_to_next_change*
+                                              *signify-func-jump_to_next_hunk*
 
-    :SignifyJumpToNextChange
+    :SignifyJumpToNextHunk
 
-Jump to the next change.
+Jump to the next hunk.
 
 Default mapping:  <leader>gn
 
 
-                                            *signify-func-jump_to_prev_change*
+                                              *signify-func-jump_to_prev_hunk*
 
-    :SignifyJumpToPrevChange
+    :SignifyJumpToPrevHunk
 
-Jump to the previous change.
+Jump to the previous hunk.
 
 Default mapping:  <leader>gp
 
