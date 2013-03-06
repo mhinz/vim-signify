@@ -22,7 +22,11 @@ Limits exist only in your mind! Vim on!
 
 ## Installation
 
-Just clone it into ~/.vim/bundle/.
+I suggest using tpope's plain and awesome pathogen:
+
+- https://github.com/tpope/vim-pathogen
+
+Afterwards, just clone vim-signify into ~/.vim/bundle/.
 
 ## Usage
 
