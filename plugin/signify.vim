@@ -246,3 +246,15 @@ function! s:jump_to_prev_hunk()
     let s:id_jump = (s:id_jump == s:id_start) ? (s:id_top - 1) : (s:id_jump - 1)
     let s:last_jump_was_next = 0
 endfunction
+
+" Functions -> SignifyListActiveBuffers()  {{{2
+function! SignifyListActiveBuffers() abort
+    if len(s:active_buffers) == 0
+        echo 'No active buffers!'
+        return
+    endif
+
+    for i in items(s:active_buffers)
+        echo i
+    endfor
+endfunction
