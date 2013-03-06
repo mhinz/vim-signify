@@ -189,6 +189,7 @@ function! s:process_diff(diff) abort
         endif
     endfor
 endfunction
+
 "  Functions -> s:toggle_line_highlighting()  {{{2
 function! s:toggle_line_highlighting() abort
     if s:line_highlight_b
