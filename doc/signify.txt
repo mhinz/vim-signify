@@ -31,9 +31,9 @@ CONTENTS                                                    *signify-contents*
 ==============================================================================
 1. Intro                                                       *signify-intro*
 
-Signify is quite unobtrusive. If there is information about changes (in form
-of patch hunks) since the last commit, they will be shown on the left side in
-Vim's sign column.
+Signify, or just sy for short, is an quite unobtrusive plugin. If there is
+information about changes (in form of patch hunks) since the last commit, they
+will be shown on the left side in Vim's sign column.
 
 Easy-peasy!
 

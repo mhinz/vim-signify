@@ -1,5 +1,7 @@
 # vim-signify
 
+Or just: sy
+
 This plugin started as a port of GitGutter, a famous plugin for Sublime Text 2.
 It shows all added, deleted and changed lines since the last commit via Vim its
 sign column.
