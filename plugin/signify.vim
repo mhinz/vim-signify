@@ -63,7 +63,7 @@ aug signify
     au ColorScheme  * call s:set_colors()
     au BufWritePost * call s:start()
     au BufEnter     * let s:colors_set_b = 0 | call s:start()
-    au BufDelete    * call s:stop() | call remove(s:active_buffers, expand('%:p'))
+    au BufDelete    * call s:stop() | call s:remove_from_buffer_list(expand('%:p'))
 aug END
 
 com! -nargs=0 -bar SignifyToggle          call s:toggle_signify()
@@ -111,7 +111,6 @@ function! s:stop() abort
     aug signify
         au! * <buffer>
     aug END
-    let s:active_buffers[expand('%:p')] = 0
 endfunction
 
 "  Functions -> s:toggle_signify()  {{{2
@@ -247,7 +246,14 @@ function! s:jump_to_prev_hunk()
     let s:last_jump_was_next = 0
 endfunction
 
-" Functions -> SignifyListActiveBuffers()  {{{2
+"  Functions -> s:remove_from_buffer_list()  {{{2
+function! s:remove_from_buffer_list(path) abort
+    if has_key(s:active_buffers, a:path)
+        call remove(s:active_buffers, a:path)
+    endif
+endfunction
+
+"  Functions -> SignifyListActiveBuffers()  {{{2
 function! SignifyListActiveBuffers() abort
     if len(s:active_buffers) == 0
         echo 'No active buffers!'
