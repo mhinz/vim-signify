@@ -131,7 +131,7 @@ endfunction
 func! s:set_colors() abort
     if has('gui_running')
         let guibg = synIDattr(hlID('LineNr'), 'bg', 'gui')
-        if empty(guibg)
+        if empty(guibg) || guibg < 0
             hi SignifyAdd    gui=bold guifg=#11ee11
             hi SignifyDelete gui=bold guifg=#ee1111
             hi SignifyChange gui=bold guifg=#eeee11
@@ -142,7 +142,7 @@ func! s:set_colors() abort
         endif
     else
         let ctermbg = synIDattr(hlID('LineNr'), 'bg', 'cterm')
-        if empty(ctermbg)
+        if empty(ctermbg) || ctermbg < 0
             hi SignifyAdd    cterm=bold ctermfg=2
             hi SignifyDelete cterm=bold ctermfg=1
             hi SignifyChange cterm=bold ctermfg=3
