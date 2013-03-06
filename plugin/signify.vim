@@ -4,9 +4,10 @@ endif
 let g:loaded_signify = 1
 
 "  Default values  {{{1
-let s:line_highlight_b = 0
-let s:colors_set_b     = 0
-let s:active_buffers   = {}
+let s:line_highlight_b   = 0
+let s:colors_set_b       = 0
+let s:last_jump_was_next = -1
+let s:active_buffers     = {}
 
 let s:id_start = 0x100
 let s:id_top   = s:id_start
@@ -208,12 +209,20 @@ endfunction
 
 "  Functions -> s:jump_to_next_change()  {{{2
 function! s:jump_to_next_change()
+    if s:last_jump_was_next == 0
+        let s:id_jump += 2
+    endif
     exe 'sign jump '. s:id_jump .' file='. expand('%:p')
-    let s:id_jump = ((s:id_jump + 1) == s:id_top) ? (s:id_start) : (s:id_jump + 1)
+    let s:id_jump = (s:id_jump == (s:id_top - 1)) ? (s:id_start) : (s:id_jump + 1)
+    let s:last_jump_was_next = 1
 endfunction
 
 "  Functions -> s:jump_to_prev_change()  {{{2
 function! s:jump_to_prev_change()
+    if s:last_jump_was_next == 1
+        let s:id_jump -= 2
+    endif
     exe 'sign jump '. s:id_jump .' file='. expand('%:p')
     let s:id_jump = (s:id_jump == s:id_start) ? (s:id_top - 1) : (s:id_jump - 1)
+    let s:last_jump_was_next = 0
 endfunction
