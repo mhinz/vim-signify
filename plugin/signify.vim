@@ -120,11 +120,9 @@ function! s:toggle_signify() abort
     if has_key(s:active_buffers, l:path) && get(s:active_buffers, l:path) == 1
         call s:stop()
         let s:active_buffers[l:path] = 0
-        echom 'signify: stopped!'
     else
         let s:active_buffers[l:path] = 1
         call s:start()
-        echom 'signify: started!'
     endif
 endfunction
 
