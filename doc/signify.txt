@@ -55,94 +55,69 @@ change them easily through variables.
 3. Options                                                   *signify-options*
 
 Just put these variables into your vimrc. The shown assignments are only
-examples.
+examples, not default 
 
-
-                                               *signify-var-mapping_next_hunk*
 
     let g:signify_mapping_next_hunk = '<leader>gn'
-
-Mapping for jumping to the next hunk.
-
-
-                                               *signify-var-mapping_prev_hunk*
-
     let g:signify_mapping_prev_hunk = '<leader>gp'
 
-mapping for jumping to the previous hunk.
+Mapping for jumping to the next or previous hunk.
 
-
-                                        *signify-var-mapping_toggle_highlight*
 
     let g:signify_mapping_toggle_highlight = '<leader>gh'
 
 Mapping for toggling line highlighting for lines containing changes.
 
 
-                                                  *signify-var-mapping_toggle*
-
     let g:signify_mapping_toggle = '<leader>gt'
 
 Mapping for toggling the plugin for the current buffer only.
 
 
-                                                        *signify-var-sign_add*
-
-    let g:signify_sign_add = '+'
-
-The sign to use if a line was added.
-
-
-                                                     *signify-var-sign_delete*
-
+    let g:signify_sign_add    = '+'
     let g:signify_sign_delete = '-'
-
-The sign to use if a line was deleted.
-
-
-                                                     *signify-var-sign_change*
-
     let g:signify_sign_change = '*'
 
-The sign to use if a line changed.
+The sign to use if a line was added, deleted or changed.
+
+
+    let g:signify_color_sign_guifg_add      = '#00ff00'
+    let g:signify_color_sign_guifg_delete   = '#ff0000'
+    let g:signify_color_sign_guifg_change   = '#ffff00'
+    let g:signify_color_guibg               = '#111111'
+
+    let g:signify_color_sign_ctermfg_add')  = 2
+    let g:signify_color_sign_ctermfg_delete = 1
+    let g:signify_color_sign_ctermfg_change = 3
+    let g:signify_color_sign_ctermbg        = 0
+
+The colors of your sign column.
 
 
 ==============================================================================
 4. Commands                                                 *signify-commands*
 
-                                                         *signify-func-toggle*
-
     :SignifyToggle
 
 Toggle the plugin for the current buffer only.
-
 Default mapping:  <leader>gt
 
-
-                                               *signify-func-toggle-highlight*
 
     :SignifyToggleHighlight
 
 Toggle line highlighting for lines containing changes.
-
 Default mapping:  <leader>gh
 
-
-                                              *signify-func-jump_to_next_hunk*
 
     :SignifyJumpToNextHunk
 
 Jump to the next hunk.
-
 Default mapping:  <leader>gn
 
 
-                                              *signify-func-jump_to_prev_hunk*
-
     :SignifyJumpToPrevHunk
 
-Jump to the previous hunk.
-
+Jump to the previous hunk.  
 Default mapping:  <leader>gp
 
 
