@@ -2,11 +2,8 @@
 
 Or just: sy
 
-This plugin started as a port of GitGutter, a famous plugin for Sublime Text 2.
-It shows all added, deleted and changed lines since the last commit via Vim its
-sign column.
-
-![Example:signify in action](https://github.com/mhinz/vim-signify/raw/master/signify.png)
+Sy shows all added, deleted and changed lines since the last commit via Vim its
+sign column (and much more!)
 
 It's fast, highly configurable and well documented.
 
@@ -20,6 +17,8 @@ Features:
 - good documentation
 
 - quick developer response! :-)
+
+![Example:signify in action](https://github.com/mhinz/vim-signify/raw/master/signify.png)
 
 Limits exist only in your mind! Vim on!
 
