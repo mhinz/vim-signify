@@ -12,7 +12,7 @@ It's fast, highly configurable and well documented.
 
 Features:
 
-- supports git (other DVCS will follow)
+- supports git, mercurial
 - apart from signs there is also optional line highlighting
 - you can toggle the plugin per buffer
 - fully configurable through global variables

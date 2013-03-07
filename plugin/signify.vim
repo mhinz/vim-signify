@@ -1,4 +1,4 @@
-if exists('g:loaded_signify') || !executable('git') || &cp
+if exists('g:loaded_signify') || &cp
   finish
 endif
 let g:loaded_signify = 1
@@ -89,8 +89,8 @@ function! s:start() abort
     endif
 
     " Is a diff available?
-    let s:diff = system('git diff --no-ext-diff -U0 '. fnameescape(l:path) .'| grep "^@@ "')
-    if v:shell_error
+    let diff = s:get_diff(l:path)
+    if empty(diff)
         sign unplace *
         return
     endif
@@ -102,7 +102,7 @@ function! s:start() abort
     endif
 
     " Use git's diff cmd to set our signs.
-    call s:process_diff(s:diff)
+    call s:process_diff(diff)
 endfunction
 
 "  Functions -> s:stop()  {{{2
@@ -111,6 +111,25 @@ function! s:stop() abort
     aug signify
         au! * <buffer>
     aug END
+endfunction
+
+"  Functions -> s:get_diff()  {{{2
+function! s:get_diff(path) abort
+    if executable('git')
+        let diff = system('git diff --no-ext-diff -U0 '. fnameescape(a:path) .'| grep "^@@ "')
+        if !v:shell_error
+            return diff
+        endif
+    endif
+
+    if executable('hg')
+        let diff = system('hg diff --nodates -U0 '. fnameescape(a:path) .'| grep "^@@ "')
+        if !v:shell_error
+            return diff
+        endif
+    endif
+
+    return []
 endfunction
 
 "  Functions -> s:toggle_signify()  {{{2

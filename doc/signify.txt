@@ -43,7 +43,10 @@ Easy-peasy!
 
 The usage is pretty straight-forward. By default you should only notice a
 difference, if you're working in a directory that is managed by a supported
-version control system, e.g. git.
+version control system:
+
+    - git
+    - mercurial
 
 The plugin defines 3 new kinds of signs and their corresponding highlighting
 classes. It tries to inherent existing colors from the LineNr class, if that
