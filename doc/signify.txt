@@ -162,8 +162,10 @@ Thank you for flying mhi airlines. Get the Vim on!
 ==============================================================================
 6. Credits                                                   *signify-credits*
 
-No one so far! Want to be the first? - You know where to find the repo.
-Do you accept the challenge? Fame and fortune to the glorious adventurers!
+People who contributed to sy. Format: Person (Github account)
+
+
+Jeremy Mack (muterwinter)
 
 
 ==============================================================================
