@@ -27,11 +27,14 @@ Limits exist only in your mind! Vim on!
 
 Because people keep asking for it: Yes, I knew about vim-gitgutter before, I
 even contributed to it. But in the end I just didn't like the codebase and
-started my one own. And because I like programming VimL.
+started my own plugin. And because I like programming VimL.
 
-As to the difference.. all of Sy's features are stated above. The main
-difference is probably the support for other DVCS. Moreover, execution speed is
-one of the design goals.
+Yes, I knew about vim-gitgutter before, I even contributed to it. But in the end
+I just didn't like the codebase and started my own plugin. And because I like
+programming VimL.
+
+The main difference is probably the support for other DVCS. Moreover, execution
+speed and high configurability are two of the design goals.
 
 ## Installation
 
