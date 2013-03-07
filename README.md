@@ -14,8 +14,9 @@ Features:
 
 - supports git, mercurial, bzr, subversion, cvs
 - apart from signs there is also optional line highlighting
-- you can toggle the plugin per buffer
 - fully configurable through global variables
+- optional preserving of signs from other plugins
+- you can toggle the plugin per buffer
 - good documentation
 
 - quick developer response! :-)

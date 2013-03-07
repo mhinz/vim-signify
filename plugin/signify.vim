@@ -4,10 +4,14 @@ endif
 let g:loaded_signify = 1
 
 "  Default values  {{{1
-let s:line_highlight     = 0
-let s:colors_set         = 0
-let s:last_jump_was_next = -1
-let s:active_buffers     = {}
+" Overwrite non-signify signs by default
+let s:line_highlight           = 0
+let s:colors_set               = 0
+let s:last_jump_was_next       = -1
+let s:active_buffers           = {}
+let s:other_signs_line_numbers = {}
+
+let s:sign_overwrite = exists('g:signify_sign_overwrite') ? g:signify_sign_overwrite : 1
 
 let s:id_start = 0x100
 let s:id_top   = s:id_start
@@ -107,7 +111,7 @@ function! s:start() abort
     " Is a diff available?
     let diff = s:get_diff(l:path)
     if empty(diff)
-        sign unplace *
+        call s:remove_signs()
         return
     endif
 
@@ -117,13 +121,20 @@ function! s:start() abort
         let s:colors_set = 1
     endif
 
+    call s:remove_signs()
+    let s:id_top = s:id_start
+
+    if s:sign_overwrite == 0
+        call s:get_other_signs(l:path)
+    endif
+
     " Use git's diff cmd to set our signs.
     call s:process_diff(diff)
 endfunction
 
 "  Functions -> s:stop()  {{{2
 function! s:stop() abort
-    sign unplace *
+    call s:remove_signs()
     aug signify
         au! * <buffer>
     aug END
@@ -139,6 +150,144 @@ function! s:toggle_signify() abort
         let s:active_buffers[l:path] = 1
         call s:start()
     endif
+endfunction
+
+"  Functions -> s:get_other_signs()  {{{2
+function! s:get_other_signs(path) abort
+    redir => signlist
+        sil! exe ":sign place file=" . a:path
+    redir END
+
+    for line in split(signlist, '\n')
+        if line =~ '^\s\+line'
+            let s:other_signs_line_numbers[matchlist(line, '\v(\d+)')[1]] = 1
+        endif
+    endfor
+endfunction
+
+"  Functions -> s:set_sign()  {{{2
+function! s:set_sign(lnum, type, path)
+    " Preserve non-signify signs
+    if get(s:other_signs_line_numbers, a:lnum) == 1
+        return
+    endif
+
+    exe 'sign place '. s:id_top .' line='. a:lnum .' name='. a:type .' file='. a:path
+
+    let s:id_top += 1
+endfunction
+
+"  Functions -> s:remove_signs()  {{{2
+function! s:remove_signs() abort
+    if s:sign_overwrite == 1
+        sign unplace *
+    else
+        for id in range(s:id_start, s:id_top - 1)
+            exe 'sign unplace '. id
+        endfor
+    endif
+endfunction
+"  Functions -> s:get_diff()  {{{2
+function! s:get_diff(path) abort
+    if !executable('grep')
+        echoerr "signify: I cannot work without grep!"
+        return
+    endif
+
+    if executable('git')
+        let diff = system('git diff --no-ext-diff -U0 '. fnameescape(a:path) .'| grep "^@@ "')
+        if !v:shell_error
+            return diff
+        endif
+    endif
+
+    if executable('hg')
+        let diff = system('hg diff --nodates -U0 '. fnameescape(a:path) .'| grep "^@@ "')
+        if !v:shell_error
+            return diff
+        endif
+    endif
+
+    if executable('diff')
+        if executable('svn')
+            let diff = system('svn diff --diff-cmd diff -x -U0 '. fnameescape(a:path) .'| grep "^@@ "')
+            if !v:shell_error
+                return diff
+            endif
+        endif
+
+        if executable('bzr')
+            let diff = system('bzr diff --using diff --diff-options=-U0 '. fnameescape(a:path) .'| grep "^@@ "')
+            if !v:shell_error
+                return diff
+            endif
+        endif
+    endif
+
+    if executable('cvs')
+        let diff = system('cvs diff -U0 '. fnameescape(expand('%')) .' 2>&1 | grep "^@@ "')
+        if !empty(diff)
+            return diff
+        endif
+    endif
+
+    return []
+endfunction
+
+"  Functions -> s:process_diff()  {{{2
+function! s:process_diff(diff) abort
+    let l:path = expand('%:p')
+
+    " Determine where we have to put our signs.
+    for line in split(a:diff, '\n')
+        " Parse diff output.
+        let tokens = matchlist(line, '\v^\@\@ -(\d+),?(\d*) \+(\d+),?(\d*)')
+        if empty(tokens)
+            echoerr 'signify: I cannot parse this line "'. line .'"'
+        endif
+
+        let [ old_line, old_count, new_line, new_count ] = [ str2nr(tokens[1]), (tokens[2] == '') ? 1 : str2nr(tokens[2]), str2nr(tokens[3]), (tokens[4] == '') ? 1 : str2nr(tokens[4]) ]
+
+        " A new line was added.
+        if (old_count == 0) && (new_count >= 1)
+            let offset = 0
+            while offset < new_count
+                call s:set_sign(new_line + offset, 'SignifyAdd', l:path)
+                let offset += 1
+            endwhile
+        " An old line was removed.
+        elseif (old_count >= 1) && (new_count == 0)
+            call s:set_sign(new_line, 'SignifyDelete', l:path)
+        " A line was changed.
+        elseif (old_count == new_count)
+            let offset = 0
+            while offset < new_count
+                call s:set_sign(new_line + offset, 'SignifyChange', l:path)
+                let offset += 1
+            endwhile
+        else
+            " Lines were changed && deleted.
+            if (old_count > new_count)
+                let offset = 0
+                while offset < new_count
+                    call s:set_sign(new_line + offset, 'SignifyChange', l:path)
+                    let offset += 1
+                endwhile
+                call s:set_sign(new_line + offset - 1, 'SignifyDelete', l:path)
+            " (old_count < new_count): Lines were added && changed.
+            else
+                let offset = 0
+                while offset < old_count
+                    call s:set_sign(new_line + offset, 'SignifyChange', l:path)
+                    let offset += 1
+                endwhile
+                while offset < new_count
+                    call s:set_sign(new_line + offset, 'SignifyAdd', l:path)
+                    let offset += 1
+                endwhile
+            endif
+        endif
+    endfor
 endfunction
 
 "  Functions -> s:set_colors()  {{{2
@@ -190,113 +339,6 @@ func! s:set_colors() abort
     endif
 endfunc
 
-"  Functions -> s:get_diff()  {{{2
-function! s:get_diff(path) abort
-    if !executable('grep')
-        echoerr "signify: I cannot work without grep!"
-        finish
-    endif
-
-    if executable('git')
-        let diff = system('git diff --no-ext-diff -U0 '. fnameescape(a:path) .'| grep "^@@ "')
-        if !v:shell_error
-            return diff
-        endif
-    endif
-
-    if executable('hg')
-        let diff = system('hg diff --nodates -U0 '. fnameescape(a:path) .'| grep "^@@ "')
-        if !v:shell_error
-            return diff
-        endif
-    endif
-
-    if executable('diff')
-        if executable('svn')
-            let diff = system('svn diff --diff-cmd diff -x -U0 '. fnameescape(a:path) .'| grep "^@@ "')
-            if !v:shell_error
-                return diff
-            endif
-        endif
-
-        if executable('bzr')
-            let diff = system('bzr diff --using diff --diff-options=-U0 '. fnameescape(a:path) .'| grep "^@@ "')
-            if !v:shell_error
-                return diff
-            endif
-        endif
-    endif
-
-    if executable('cvs')
-        let diff = system('cvs diff -U0 '. fnameescape(expand('%')) .' 2>&1 | grep "^@@ "')
-        if !empty(diff)
-            return diff
-        endif
-    endif
-
-    return []
-endfunction
-
-"  Functions -> s:process_diff()  {{{2
-function! s:process_diff(diff) abort
-    let s:id_top = s:id_start
-    let l:path = expand('%:p')
-
-    sign unplace *
-
-    " Determine where we have to put our signs.
-    for line in split(a:diff, '\n')
-        " Parse diff output.
-        let tokens = matchlist(line, '\v^\@\@ -(\d+),?(\d*) \+(\d+),?(\d*)')
-        if empty(tokens)
-            echoerr 'signify: I cannot parse this line "'. line .'"'
-        endif
-
-        let [ old_line, old_count, new_line, new_count ] = [ str2nr(tokens[1]), (tokens[2] == '') ? 1 : str2nr(tokens[2]), str2nr(tokens[3]), (tokens[4] == '') ? 1 : str2nr(tokens[4]) ]
-
-        " A new line was added.
-        if (old_count == 0) && (new_count >= 1)
-            let offset = 0
-            while offset < new_count
-                exe 'sign place '. s:id_top .' line='. (new_line + offset) .' name=SignifyAdd file='. l:path
-                let [ offset, s:id_top ] += [ 1, 1 ]
-            endwhile
-        " An old line was removed.
-        elseif (old_count >= 1) && (new_count == 0)
-            exe 'sign place '. s:id_top .' line='. new_line .' name=SignifyDelete file='. l:path
-            let s:id_top += 1
-        " A line was changed.
-        elseif (old_count == new_count)
-            let offset = 0
-            while offset < new_count
-                exe 'sign place '. s:id_top .' line='. (new_line + offset) .' name=SignifyChange file='. l:path
-                let [ offset, s:id_top ] += [ 1, 1 ]
-            endwhile
-        else
-            " Lines were changed && deleted.
-            if (old_count > new_count)
-                let offset = 0
-                while offset < new_count
-                    exe 'sign place '. s:id_top .' line='. (new_line + offset) .' name=SignifyChange file='. l:path
-                    let [ offset, s:id_top ] += [ 1, 1 ]
-                endwhile
-                exe 'sign place '. s:id_top .' line='. (new_line + offset - 1) .' name=SignifyDelete file='. l:path
-            " (old_count < new_count): Lines were added && changed.
-            else
-                let offset = 0
-                while offset < old_count
-                    exe 'sign place '. s:id_top .' line='. (new_line + offset) .' name=SignifyAdd file='. l:path
-                    let offset += 1
-                endwhile
-                while offset < new_count
-                    exe 'sign place '. s:id_top .' line='. (new_line + offset) .' name=SignifyChange file='. l:path
-                    let offset += 1
-                endwhile
-            endif
-        endif
-    endfor
-endfunction
-
 "  Functions -> s:toggle_line_highlighting()  {{{2
 function! s:toggle_line_highlighting() abort
     if s:line_highlight
@@ -344,8 +386,8 @@ function! s:remove_from_buffer_list(path) abort
     endif
 endfunction
 
-"  Functions -> SignifyListActiveBuffers()  {{{2
-function! SignifyListActiveBuffers() abort
+"  Functions -> SignifyDebugListActiveBuffers()  {{{2
+function! SignifyDebugListActiveBuffers() abort
     if len(s:active_buffers) == 0
         echo 'No active buffers!'
         return
@@ -354,4 +396,9 @@ function! SignifyListActiveBuffers() abort
     for i in items(s:active_buffers)
         echo i
     endfor
+endfunction
+
+"  Functions -> SignifyDebugID()  {{{2
+function! SignifyDebugID() abort
+    echo [ s:id_start, s:id_top ]
 endfunction

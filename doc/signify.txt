@@ -64,6 +64,11 @@ Just put these variables into your vimrc. The shown assignments are only
 examples, not default 
 
 
+    let g:signify_sign_overwrite = 1
+
+Overwrite signs set by other plugins by default.
+
+
     let g:signify_mapping_next_hunk = '<leader>gn'
     let g:signify_mapping_prev_hunk = '<leader>gp'
 
