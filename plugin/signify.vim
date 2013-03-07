@@ -273,7 +273,7 @@ function! s:process_diff(diff) abort
                 let [ offset, s:id_top ] += [ 1, 1 ]
             endwhile
         else
-            " Lines were changed and deleted.
+            " Lines were changed && deleted.
             if (old_count > new_count)
                 let offset = 0
                 while offset < new_count
@@ -281,6 +281,17 @@ function! s:process_diff(diff) abort
                     let [ offset, s:id_top ] += [ 1, 1 ]
                 endwhile
                 exe 'sign place '. s:id_top .' line='. (new_line + offset - 1) .' name=SignifyDelete file='. l:path
+            " (old_count < new_count): Lines were added && changed.
+            else
+                let offset = 0
+                while offset < old_count
+                    exe 'sign place '. s:id_top .' line='. (new_line + offset) .' name=SignifyAdd file='. l:path
+                    let offset += 1
+                endwhile
+                while offset < new_count
+                    exe 'sign place '. s:id_top .' line='. (new_line + offset) .' name=SignifyChange file='. l:path
+                    let offset += 1
+                endwhile
             endif
         endif
     endfor
