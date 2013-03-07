@@ -150,10 +150,19 @@ function! s:get_diff(path) abort
         endif
     endif
 
-    if executable('bzr') && executable('diff')
-        let diff = system('bzr diff --using diff --diff-options=-U0 '. fnameescape(a:path) .'| grep "^@@ "')
-        if !v:shell_error
-            return diff
+    if executable('diff')
+        if executable('svn')
+            let diff = system('svn diff --diff-cmd diff -x -U0 '. fnameescape(a:path) .'| grep "^@@ "')
+            if !v:shell_error
+                return diff
+            endif
+        endif
+
+        if executable('bzr')
+            let diff = system('bzr diff --using diff --diff-options=-U0 '. fnameescape(a:path) .'| grep "^@@ "')
+            if !v:shell_error
+                return diff
+            endif
         endif
     endif
 

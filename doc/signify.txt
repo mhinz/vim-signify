@@ -46,6 +46,7 @@ difference, if you're working in a directory that is managed by a supported
 version control system:
 
     - git
+    - subversion
     - mercurial
     - bzr
 

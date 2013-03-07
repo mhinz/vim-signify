@@ -12,7 +12,7 @@ It's fast, highly configurable and well documented.
 
 Features:
 
-- supports git, mercurial, bzr
+- supports subversion, git, mercurial, bzr
 - apart from signs there is also optional line highlighting
 - you can toggle the plugin per buffer
 - fully configurable through global variables
