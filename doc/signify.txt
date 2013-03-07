@@ -105,6 +105,12 @@ Don't active the plugin for these filetypes and/or filenames.
 
 The colors of your sign column.
 
+    let g:signify_color_line_highlight_add    = 'DiffAdd'
+    let g:signify_color_line_highlight_delete = 'DiffDelete'
+    let g:signify_color_line_highlight_change = 'DiffChange'
+
+The highlight classes to use with line highlighting.
+
 
 ==============================================================================
 4. Commands                                                 *signify-commands*

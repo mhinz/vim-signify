@@ -4,8 +4,8 @@ endif
 let g:loaded_signify = 1
 
 "  Default values  {{{1
-let s:line_highlight_b   = 0
-let s:colors_set_b       = 0
+let s:line_highlight     = 0
+let s:colors_set         = 0
 let s:last_jump_was_next = -1
 let s:active_buffers     = {}
 
@@ -62,7 +62,7 @@ aug signify
     au!
     au ColorScheme  * call s:set_colors()
     au BufWritePost * call s:start()
-    au BufEnter     * let s:colors_set_b = 0 | call s:start()
+    au BufEnter     * let s:colors_set = 0 | call s:start()
     au BufDelete    * call s:stop() | call s:remove_from_buffer_list(expand('%:p'))
 aug END
 
@@ -112,9 +112,9 @@ function! s:start() abort
     endif
 
     " Set colors only for the first time or when a new colorscheme is set.
-    if !s:colors_set_b
+    if !s:colors_set
         call s:set_colors()
-        let s:colors_set_b = 1
+        let s:colors_set = 1
     endif
 
     " Use git's diff cmd to set our signs.
@@ -278,16 +278,20 @@ endfunction
 
 "  Functions -> s:toggle_line_highlighting()  {{{2
 function! s:toggle_line_highlighting() abort
-    if s:line_highlight_b
+    if s:line_highlight
         sign define SignifyAdd    text=>> texthl=SignifyAdd    linehl=none
-        sign define SignifyChange text=!! texthl=SignifyChange linehl=none
         sign define SignifyDelete text=<< texthl=SignifyDelete linehl=none
-        let s:line_highlight_b = 0
+        sign define SignifyChange text=!! texthl=SignifyChange linehl=none
+        let s:line_highlight = 0
     else
-        sign define SignifyAdd    text=>> texthl=SignifyAdd    linehl=DiffAdd
-        sign define SignifyDelete text=<< texthl=SignifyRemove linehl=DiffDelete
-        sign define SignifyChange text=!! texthl=SignifyChange linehl=DiffChange
-        let s:line_highlight_b = 1
+        let add    = exists('g:signify_color_line_highlight_add')    ? g:signify_color_line_highlight_add    : 'DiffAdd'
+        let delete = exists('g:signify_color_line_highlight_delete') ? g:signify_color_line_highlight_delete : 'DiffDelete'
+        let change = exists('g:signify_color_line_highlight_change') ? g:signify_color_line_highlight_change : 'DiffChange'
+
+        exe 'sign define SignifyAdd    text=>> texthl=SignifyAdd    linehl='. add
+        exe 'sign define SignifyDelete text=<< texthl=SignifyDelete linehl='. delete
+        exe 'sign define SignifyChange text=!! texthl=SignifyChange linehl='. change
+        let s:line_highlight = 1
     endif
     call s:start()
 endfunction
