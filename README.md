@@ -29,10 +29,6 @@ Because people keep asking for it: Yes, I knew about vim-gitgutter before, I
 even contributed to it. But in the end I just didn't like the codebase and
 started my own plugin. And because I like programming VimL.
 
-Yes, I knew about vim-gitgutter before, I even contributed to it. But in the end
-I just didn't like the codebase and started my own plugin. And because I like
-programming VimL.
-
 The main difference is probably the support for other DVCS. Moreover, execution
 speed and high configurability are two of the design goals.
 
