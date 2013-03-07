@@ -46,9 +46,10 @@ difference, if you're working in a directory that is managed by a supported
 version control system:
 
     - git
-    - subversion
     - mercurial
     - bzr
+    - subversion
+    - cvs
 
 The plugin defines 3 new kinds of signs and their corresponding highlighting
 classes. It tries to inherent existing colors from the LineNr class, if that

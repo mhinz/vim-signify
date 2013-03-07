@@ -129,46 +129,6 @@ function! s:stop() abort
     aug END
 endfunction
 
-"  Functions -> s:get_diff()  {{{2
-function! s:get_diff(path) abort
-    if !executable('grep')
-        echoerr "signify: I cannot work without grep!"
-        finish
-    endif
-
-    if executable('git')
-        let diff = system('git diff --no-ext-diff -U0 '. fnameescape(a:path) .'| grep "^@@ "')
-        if !v:shell_error
-            return diff
-        endif
-    endif
-
-    if executable('hg')
-        let diff = system('hg diff --nodates -U0 '. fnameescape(a:path) .'| grep "^@@ "')
-        if !v:shell_error
-            return diff
-        endif
-    endif
-
-    if executable('diff')
-        if executable('svn')
-            let diff = system('svn diff --diff-cmd diff -x -U0 '. fnameescape(a:path) .'| grep "^@@ "')
-            if !v:shell_error
-                return diff
-            endif
-        endif
-
-        if executable('bzr')
-            let diff = system('bzr diff --using diff --diff-options=-U0 '. fnameescape(a:path) .'| grep "^@@ "')
-            if !v:shell_error
-                return diff
-            endif
-        endif
-    endif
-
-    return []
-endfunction
-
 "  Functions -> s:toggle_signify()  {{{2
 function! s:toggle_signify() abort
     let l:path = expand('%:p')
@@ -229,6 +189,53 @@ func! s:set_colors() abort
         endif
     endif
 endfunc
+
+"  Functions -> s:get_diff()  {{{2
+function! s:get_diff(path) abort
+    if !executable('grep')
+        echoerr "signify: I cannot work without grep!"
+        finish
+    endif
+
+    if executable('git')
+        let diff = system('git diff --no-ext-diff -U0 '. fnameescape(a:path) .'| grep "^@@ "')
+        if !v:shell_error
+            return diff
+        endif
+    endif
+
+    if executable('hg')
+        let diff = system('hg diff --nodates -U0 '. fnameescape(a:path) .'| grep "^@@ "')
+        if !v:shell_error
+            return diff
+        endif
+    endif
+
+    if executable('diff')
+        if executable('svn')
+            let diff = system('svn diff --diff-cmd diff -x -U0 '. fnameescape(a:path) .'| grep "^@@ "')
+            if !v:shell_error
+                return diff
+            endif
+        endif
+
+        if executable('bzr')
+            let diff = system('bzr diff --using diff --diff-options=-U0 '. fnameescape(a:path) .'| grep "^@@ "')
+            if !v:shell_error
+                return diff
+            endif
+        endif
+    endif
+
+    if executable('cvs')
+        let diff = system('cvs diff -U0 '. fnameescape(expand('%')) .' 2>&1 | grep "^@@ "')
+        if !empty(diff)
+            return diff
+        endif
+    endif
+
+    return []
+endfunction
 
 "  Functions -> s:process_diff()  {{{2
 function! s:process_diff(diff) abort
