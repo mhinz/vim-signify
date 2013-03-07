@@ -14,6 +14,7 @@ Features:
 - fully configurable through global variables
 - optional preserving of signs from other plugins
 - you can toggle the plugin per buffer
+- exception lists for filetypes and filenames
 - good documentation
 
 - quick developer response! :-)
