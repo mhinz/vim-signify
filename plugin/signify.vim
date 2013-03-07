@@ -129,9 +129,9 @@ function! s:start() abort
 
     " New buffer.. add to list.
     if !has_key(s:active_buffers, l:path)
-        let s:active_buffers[l:path] = 1
+        let s:active_buffers[l:path] = { 'active': 1 }
     " Inactive buffer.. bail out.
-    elseif get(s:active_buffers, l:path) == 0
+    elseif s:active_buffers[l:path].active == 0
         return
     endif
 
@@ -159,6 +159,7 @@ function! s:start() abort
     call s:process_diff(diff)
 endfunction
 
+
 "  Functions -> s:stop()  {{{2
 function! s:stop() abort
     call s:remove_signs()
@@ -170,11 +171,11 @@ endfunction
 "  Functions -> s:toggle_signify()  {{{2
 function! s:toggle_signify() abort
     let l:path = expand('%:p')
-    if has_key(s:active_buffers, l:path) && get(s:active_buffers, l:path) == 1
+    if has_key(s:active_buffers, l:path) && (s:active_buffers[l:path].active == 1)
         call s:stop()
-        let s:active_buffers[l:path] = 0
+        let s:active_buffers[l:path].active = 0
     else
-        let s:active_buffers[l:path] = 1
+        let s:active_buffers[l:path].active = 1
         call s:start()
     endif
 endfunction
