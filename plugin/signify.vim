@@ -115,6 +115,11 @@ endfunction
 
 "  Functions -> s:get_diff()  {{{2
 function! s:get_diff(path) abort
+    if !executable('grep')
+        echoerr "signify: I cannot work without grep!"
+        finish
+    endif
+
     if executable('git')
         let diff = system('git diff --no-ext-diff -U0 '. fnameescape(a:path) .'| grep "^@@ "')
         if !v:shell_error
@@ -124,6 +129,13 @@ function! s:get_diff(path) abort
 
     if executable('hg')
         let diff = system('hg diff --nodates -U0 '. fnameescape(a:path) .'| grep "^@@ "')
+        if !v:shell_error
+            return diff
+        endif
+    endif
+
+    if executable('bzr') && executable('diff')
+        let diff = system('bzr diff --using diff --diff-options=-U0 '. fnameescape(a:path) .'| grep "^@@ "')
         if !v:shell_error
             return diff
         endif
@@ -205,7 +217,7 @@ function! s:process_diff(diff) abort
         " Parse diff output.
         let tokens = matchlist(line, '\v^\@\@ -(\d+),?(\d*) \+(\d+),?(\d*)')
         if empty(tokens)
-            echoerr 'signify: Could not parse this line "'. line .'"'
+            echoerr 'signify: I cannot parse this line "'. line .'"'
         endif
 
         let [ old_line, old_count, new_line, new_count ] = [ str2nr(tokens[1]), (tokens[2] == '') ? 1 : str2nr(tokens[2]), str2nr(tokens[3]), (tokens[4] == '') ? 1 : str2nr(tokens[4]) ]

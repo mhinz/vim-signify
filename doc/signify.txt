@@ -47,6 +47,7 @@ version control system:
 
     - git
     - mercurial
+    - bzr
 
 The plugin defines 3 new kinds of signs and their corresponding highlighting
 classes. It tries to inherent existing colors from the LineNr class, if that
