@@ -176,8 +176,11 @@ endfunc
 
 "  Functions -> s:process_diff()  {{{2
 function! s:process_diff(diff) abort
-    sign unplace *
     let s:id_top = s:id_start
+    let l:path = expand('%:p')
+
+    sign unplace *
+
     " Determine where we have to put our signs.
     for line in split(a:diff, '\n')
         " Parse diff output.
@@ -192,18 +195,18 @@ function! s:process_diff(diff) abort
         if (old_count == 0) && (new_count >= 1)
             let offset = 0
             while offset < new_count
-                exe 'sign place '. s:id_top .' line='. (new_line + offset) .' name=SignifyAdd file='. expand('%:p')
+                exe 'sign place '. s:id_top .' line='. (new_line + offset) .' name=SignifyAdd file='. l:path
                 let [ offset, s:id_top ] += [ 1, 1 ]
             endwhile
         " An old line was removed.
         elseif (old_count >= 1) && (new_count == 0)
-            exe 'sign place '. s:id_top .' line='. new_line .' name=SignifyDelete file='. expand('%:p')
+            exe 'sign place '. s:id_top .' line='. new_line .' name=SignifyDelete file='. l:path
             let s:id_top += 1
         " A line was changed.
         else
             let offset = 0
             while offset < new_count
-                exe 'sign place '. s:id_top .' line='. (new_line + offset) .' name=SignifyChange file='. expand('%:p')
+                exe 'sign place '. s:id_top .' line='. (new_line + offset) .' name=SignifyChange file='. l:path
                 let [ offset, s:id_top ] += [ 1, 1 ]
             endwhile
         endif
