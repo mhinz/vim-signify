@@ -59,7 +59,7 @@ For more info: `:h signify-options`
     let g:signify_color_sign_guifg_change   = '#ffff00'
     let g:signify_color_guibg               = '#111111'
 
-    let g:signify_color_sign_ctermfg_add')  = 2
+    let g:signify_color_sign_ctermfg_add    = 2
     let g:signify_color_sign_ctermfg_delete = 1
     let g:signify_color_sign_ctermfg_change = 3
     let g:signify_color_sign_ctermbg        = 0
