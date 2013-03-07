@@ -169,7 +169,7 @@ Do you accept the challenge? Fame and fortune to the glorious adventurers!
 ==============================================================================
 7. Licence                                                   *signify-license*
 
-Distributed under the same terms as Vim itself (see |:help license|).
+Distributed under a 3-clause BSD license.
 
 
 vim: tw=78

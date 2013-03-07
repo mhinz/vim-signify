@@ -41,5 +41,4 @@ Marco Hinz `<mh.codebro@gmail.com>`
 
 ## License
 
-Copyright © 2013 Marco Hinz. Distributed under the same terms as Vim itself (see
-`:help license`).
+Copyright © 2013 Marco Hinz. Revised BSD license.
