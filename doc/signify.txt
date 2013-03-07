@@ -22,7 +22,7 @@ CONTENTS                                                    *signify-contents*
     1.Intro..........................................|signify-intro|
     2.Usage..........................................|signify-usage|
     3.Options........................................|signify-options|
-    4.Commandss......................................|signify-commands|
+    4.Commands.. ....................................|signify-commands|
     5.Author.........................................|signify-author|
     6.Credits........................................|signify-credits|
     7.License........................................|signify-license|
@@ -83,6 +83,12 @@ Mapping for toggling the plugin for the current buffer only.
     let g:signify_sign_change = '*'
 
 The sign to use if a line was added, deleted or changed.
+
+
+    let g:signify_exceptions_filetype = [ 'vim', 'c' ]
+    let g:signify_exceptions_filename = [ '.vimrc' ]
+
+Don't active the plugin for these filetypes and/or filenames.
 
 
     let g:signify_color_sign_guifg_add      = '#00ff00'

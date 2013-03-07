@@ -80,6 +80,22 @@ function! s:start() abort
         return
     endif
 
+    " Check for exceptions.
+    if exists('g:signify_exceptions_filetype')
+        for i in g:signify_exceptions_filetype
+            if i == &ft
+                return
+            endif
+        endfor
+    endif
+    if exists('g:signify_exceptions_filename')
+        for i in g:signify_exceptions_filename
+            if i == expand('%')
+                return
+            endif
+        endfor
+    endif
+
     " New buffer.. add to list.
     if !has_key(s:active_buffers, l:path)
         let s:active_buffers[l:path] = 1
