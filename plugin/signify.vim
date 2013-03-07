@@ -266,12 +266,22 @@ function! s:process_diff(diff) abort
             exe 'sign place '. s:id_top .' line='. new_line .' name=SignifyDelete file='. l:path
             let s:id_top += 1
         " A line was changed.
-        else
+        elseif (old_count == new_count)
             let offset = 0
             while offset < new_count
                 exe 'sign place '. s:id_top .' line='. (new_line + offset) .' name=SignifyChange file='. l:path
                 let [ offset, s:id_top ] += [ 1, 1 ]
             endwhile
+        else
+            " Lines were changed and deleted.
+            if (old_count > new_count)
+                let offset = 0
+                while offset < new_count
+                    exe 'sign place '. s:id_top .' line='. (new_line + offset) .' name=SignifyChange file='. l:path
+                    let [ offset, s:id_top ] += [ 1, 1 ]
+                endwhile
+                exe 'sign place '. s:id_top .' line='. (new_line + offset - 1) .' name=SignifyDelete file='. l:path
+            endif
         endif
     endfor
 endfunction
