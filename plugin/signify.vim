@@ -91,7 +91,7 @@ endif
 "  Initial stuff  {{{1
 aug signify
     au!
-    au ColorScheme              * call s:set_colors()
+    au ColorScheme              * call s:colors_set()
     au BufWritePost,FocusGained * call s:start(expand('<afile>:p'))
     au BufEnter                 * let s:colors_set = 0 | call s:start(expand('<afile>:p'))
 aug END
@@ -125,10 +125,10 @@ function! s:start(path) abort
     endif
 
     " Is a diff available?
-    let diff = s:get_diff(a:path)
+    let diff = s:diff_get(a:path)
     if empty(diff)
         if has_key(s:sy, a:path)
-            call s:remove_signs(a:path)
+            call s:sign_remove_all(a:path)
         endif
         return
     endif
@@ -141,19 +141,19 @@ function! s:start(path) abort
         return
     " Update active buffer.. reset default values
     else
-        call s:remove_signs(a:path)
+        call s:sign_remove_all(a:path)
         let s:sy[a:path].id_top  = s:id_top
         let s:sy[a:path].id_jump = s:id_top
         let s:sy[a:path].last_jump_was_next = -1
     endif
 
     if s:sign_overwrite == 0
-        call s:get_other_signs(a:path)
+        call s:sign_get_others(a:path)
     endif
 
     " Set colors only for the first time or when a new colorscheme is set.
     if !s:colors_set
-        call s:set_colors()
+        call s:colors_set()
         let s:colors_set = 1
     endif
 
@@ -169,7 +169,7 @@ function! s:stop(path) abort
         return
     endif
 
-    call s:remove_signs(a:path)
+    call s:sign_remove_all(a:path)
 
     if (s:sy[a:path].active == 0)
         return
@@ -182,28 +182,8 @@ function! s:stop(path) abort
     aug END
 endfunction
 
-"  Functions -> s:toggle_signify()  {{{2
-function! s:toggle_signify() abort
-    let path = expand('%:p')
-
-    if empty(path)
-        echoerr "signify: I don't sy empty buffers!"
-        return
-    endif
-
-    if has_key(s:sy, path)
-        if (s:sy[path].active == 1)
-            let s:sy[path].active = 0
-            call s:stop(path)
-        else
-            let s:sy[path].active = 1
-            call s:start(path)
-        endif
-    endif
-endfunction
-
-"  Functions -> s:get_other_signs()  {{{2
-function! s:get_other_signs(path) abort
+"  Functions -> s:sign_get_others()  {{{2
+function! s:sign_get_others(path) abort
     redir => signlist
         sil! exe 'sign place file='. a:path
     redir END
@@ -216,8 +196,8 @@ function! s:get_other_signs(path) abort
     endfor
 endfunction
 
-"  Functions -> s:set_sign()  {{{2
-function! s:set_sign(lnum, type, path)
+"  Functions -> s:sign_set()  {{{2
+function! s:sign_set(lnum, type, path)
     " Preserve non-signify signs
     if get(s:other_signs_line_numbers, a:lnum) == 1
         return
@@ -229,8 +209,8 @@ function! s:set_sign(lnum, type, path)
     let s:id_top += 1
 endfunction
 
-"  Functions -> s:remove_signs()  {{{2
-function! s:remove_signs(path) abort
+"  Functions -> s:sign_remove_all()  {{{2
+function! s:sign_remove_all(path) abort
     for id in s:sy[a:path].ids
         exe 'sign unplace '. id
     endfor
@@ -239,8 +219,8 @@ function! s:remove_signs(path) abort
     let s:sy[a:path].ids = []
 endfunction
 
-"  Functions -> s:get_diff()  {{{2
-function! s:get_diff(path) abort
+"  Functions -> s:diff_get()  {{{2
+function! s:diff_get(path) abort
     if !executable('grep')
         echoerr 'signify: I cannot work without grep!'
         return
@@ -304,17 +284,17 @@ function! s:process_diff(diff) abort
         if (old_count == 0) && (new_count >= 1)
             let offset = 0
             while offset < new_count
-                call s:set_sign(new_line + offset, 'SignifyAdd', l:path)
+                call s:sign_set(new_line + offset, 'SignifyAdd', l:path)
                 let offset += 1
             endwhile
         " An old line was removed.
         elseif (old_count >= 1) && (new_count == 0)
-            call s:set_sign(new_line, 'SignifyDelete', l:path)
+            call s:sign_set(new_line, 'SignifyDelete', l:path)
         " A line was changed.
         elseif (old_count == new_count)
             let offset = 0
             while offset < new_count
-                call s:set_sign(new_line + offset, 'SignifyChange', l:path)
+                call s:sign_set(new_line + offset, 'SignifyChange', l:path)
                 let offset += 1
             endwhile
         else
@@ -322,19 +302,19 @@ function! s:process_diff(diff) abort
             if (old_count > new_count)
                 let offset = 0
                 while offset < new_count
-                    call s:set_sign(new_line + offset, 'SignifyChange', l:path)
+                    call s:sign_set(new_line + offset, 'SignifyChange', l:path)
                     let offset += 1
                 endwhile
-                call s:set_sign(new_line + offset - 1, 'SignifyDelete', l:path)
+                call s:sign_set(new_line + offset - 1, 'SignifyDelete', l:path)
             " (old_count < new_count): Lines were added && changed.
             else
                 let offset = 0
                 while offset < old_count
-                    call s:set_sign(new_line + offset, 'SignifyChange', l:path)
+                    call s:sign_set(new_line + offset, 'SignifyChange', l:path)
                     let offset += 1
                 endwhile
                 while offset < new_count
-                    call s:set_sign(new_line + offset, 'SignifyAdd', l:path)
+                    call s:sign_set(new_line + offset, 'SignifyAdd', l:path)
                     let offset += 1
                 endwhile
             endif
@@ -342,8 +322,8 @@ function! s:process_diff(diff) abort
     endfor
 endfunction
 
-"  Functions -> s:set_colors()  {{{2
-func! s:set_colors() abort
+"  Functions -> s:colors_set()  {{{2
+func! s:colors_set() abort
     if has('gui_running')
         let guifg_add    = exists('g:signify_color_sign_guifg_add')    ? g:signify_color_sign_guifg_add    : '#11ee11'
         let guifg_delete = exists('g:signify_color_sign_guifg_delete') ? g:signify_color_sign_guifg_delete : '#ee1111'
@@ -390,6 +370,26 @@ func! s:set_colors() abort
         endif
     endif
 endfunc
+
+"  Functions -> s:toggle_signify()  {{{2
+function! s:toggle_signify() abort
+    let path = expand('%:p')
+
+    if empty(path)
+        echoerr "signify: I don't sy empty buffers!"
+        return
+    endif
+
+    if has_key(s:sy, path)
+        if (s:sy[path].active == 1)
+            let s:sy[path].active = 0
+            call s:stop(path)
+        else
+            let s:sy[path].active = 1
+            call s:start(path)
+        endif
+    endif
+endfunction
 
 "  Functions -> s:toggle_line_highlighting()  {{{2
 function! s:toggle_line_highlighting() abort
