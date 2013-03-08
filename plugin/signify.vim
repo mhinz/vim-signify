@@ -127,7 +127,7 @@ function! s:start(path) abort
 
     " New buffer.. add to list.
     if !has_key(s:sy, a:path)
-        let s:sy[a:path] = { 'active': 1, 'ids': [], 'id_jump': -1, 'id_top': s:id_top, 'last_jump_was_next': -1 }
+        let s:sy[a:path] = { 'active': 1, 'ids': [], 'id_jump': s:id_top, 'id_top': s:id_top, 'last_jump_was_next': -1 }
     " Inactive buffer.. bail out.
     elseif s:sy[a:path].active == 0
         return
