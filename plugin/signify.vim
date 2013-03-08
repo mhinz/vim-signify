@@ -179,13 +179,23 @@ endfunction
 
 "  Functions -> s:toggle_signify()  {{{2
 function! s:toggle_signify() abort
-    let l:path = expand('%:p')
-    if has_key(s:sy, l:path) && (s:sy[l:path].active == 1)
-        call s:stop(l:path)
-        let s:sy[l:path].active = 0
+    let path = expand('%:p')
+
+    if empty(path)
+        echoerr "signify: I don't sy empty buffers!"
+        return
+    endif
+
+    if has_key(s:sy, path)
+        if (s:sy[path].active == 1)
+            call s:stop(path)
+            let s:sy[path].active = 0
+        else
+            let s:sy[path].active = 1
+            call s:start(path)
+        endif
     else
-        let s:sy[l:path].active = 1
-        call s:start(l:path)
+        echoerr 'signify: not handled by a supported VCS: '. path
     endif
 endfunction
 
