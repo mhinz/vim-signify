@@ -170,7 +170,12 @@ function! s:stop(path) abort
     endif
 
     call s:remove_signs(a:path)
-    call remove(s:sy, a:path)
+
+    if (s:sy[a:path].active == 0)
+        return
+    else
+        call remove(s:sy, a:path)
+    endif
 
     aug signify
         au! * <buffer>
@@ -188,26 +193,25 @@ function! s:toggle_signify() abort
 
     if has_key(s:sy, path)
         if (s:sy[path].active == 1)
-            call s:stop(path)
             let s:sy[path].active = 0
+            call s:stop(path)
         else
             let s:sy[path].active = 1
             call s:start(path)
         endif
-    else
-        echoerr 'signify: not handled by a supported VCS: '. path
     endif
 endfunction
 
 "  Functions -> s:get_other_signs()  {{{2
 function! s:get_other_signs(path) abort
     redir => signlist
-        sil! exe ":sign place file=" . a:path
+        sil! exe 'sign place file='. a:path
     redir END
 
     for line in split(signlist, '\n')
         if line =~ '^\s\+line'
-            let s:other_signs_line_numbers[matchlist(line, '\v(\d+)')[1]] = 1
+            let [ lnum, id ] = matchlist(line, '\vline\=(\d+)\s+id\=(\d+)')[1:2]
+            let s:other_signs_line_numbers[lnum] = id
         endif
     endfor
 endfunction
@@ -238,7 +242,7 @@ endfunction
 "  Functions -> s:get_diff()  {{{2
 function! s:get_diff(path) abort
     if !executable('grep')
-        echoerr "signify: I cannot work without grep!"
+        echoerr 'signify: I cannot work without grep!'
         return
     endif
 
