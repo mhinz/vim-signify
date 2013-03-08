@@ -94,7 +94,6 @@ aug signify
     au ColorScheme              * call s:set_colors()
     au BufWritePost,FocusGained * call s:start(expand('<afile>:p'))
     au BufEnter                 * let s:colors_set = 0 | call s:start(expand('<afile>:p'))
-    au BufDelete                * call s:stop(expand('<afile>:p')) | call s:remove_from_buffer_list(expand('<afile>:p'))
 aug END
 
 com! -nargs=0 -bar SignifyToggle          call s:toggle_signify()
@@ -125,35 +124,34 @@ function! s:start(path) abort
         endfor
     endif
 
+    " Is a diff available?
+    let diff = s:get_diff(a:path)
+    if empty(diff)
+        return
+    endif
+
     " New buffer.. add to list.
     if !has_key(s:sy, a:path)
         let s:sy[a:path] = { 'active': 1, 'ids': [], 'id_jump': s:id_top, 'id_top': s:id_top, 'last_jump_was_next': -1 }
     " Inactive buffer.. bail out.
     elseif s:sy[a:path].active == 0
         return
+    " Update active buffer.. reset default values
     else
+        call s:remove_signs(a:path)
         let s:sy[a:path].id_top  = s:id_top
         let s:sy[a:path].id_jump = s:id_top
         let s:sy[a:path].last_jump_was_next = -1
     endif
 
-    " Is a diff available?
-    let diff = s:get_diff(a:path)
-    if empty(diff)
-        call s:remove_signs(a:path)
-        return
+    if s:sign_overwrite == 0
+        call s:get_other_signs(a:path)
     endif
 
     " Set colors only for the first time or when a new colorscheme is set.
     if !s:colors_set
         call s:set_colors()
         let s:colors_set = 1
-    endif
-
-    call s:remove_signs(a:path)
-
-    if s:sign_overwrite == 0
-        call s:get_other_signs(a:path)
     endif
 
     " Use git's diff cmd to set our signs.
@@ -164,8 +162,13 @@ endfunction
 
 "  Functions -> s:stop()  {{{2
 function! s:stop(path) abort
-    echom expand('%:p')
+    if !has_key(s:sy, a:path)
+        return
+    endif
+
     call s:remove_signs(a:path)
+    call remove(s:sy, a:path)
+
     aug signify
         au! * <buffer>
     aug END
@@ -426,13 +429,6 @@ function! s:jump_to_prev_hunk()
 
     let s:sy[path].id_jump -= 1
     let s:sy[path].last_jump_was_next = 0
-endfunction
-
-"  Functions -> s:remove_from_buffer_list()  {{{2
-function! s:remove_from_buffer_list(path) abort
-    if has_key(s:sy, a:path)
-        call remove(s:sy, a:path)
-    endif
 endfunction
 
 "  Functions -> SignifyDebugListActiveBuffers()  {{{2
