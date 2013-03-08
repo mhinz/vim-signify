@@ -165,7 +165,8 @@ Thank you for flying mhi airlines. Get the Vim on!
 People who contributed to sy. Format: Person (Github account)
 
 
-Jeremy Mack (muterwinter)
+Jeremy Mack     (muterwinter)
+Chong Li        (chongli)
 
 
 ==============================================================================
