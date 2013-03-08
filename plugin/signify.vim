@@ -127,6 +127,9 @@ function! s:start(path) abort
     " Is a diff available?
     let diff = s:get_diff(a:path)
     if empty(diff)
+        if has_key(s:sy, a:path)
+            call s:remove_signs(a:path)
+        endif
         return
     endif
 
@@ -214,12 +217,11 @@ endfunction
 
 "  Functions -> s:remove_signs()  {{{2
 function! s:remove_signs(path) abort
-    if s:sign_overwrite == 1
-        for id in s:sy[a:path].ids
-            exe 'sign unplace '. id
-        endfor
-    endif
+    for id in s:sy[a:path].ids
+        exe 'sign unplace '. id
+    endfor
 
+    let s:other_signs_line_numbers = {}
     let s:sy[a:path].ids = []
 endfunction
 
