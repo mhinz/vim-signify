@@ -31,18 +31,18 @@ endif
 let g:loaded_signify = 1
 
 "  Default values  {{{1
-" Overwrite non-signify signs by default
-let s:line_highlight           = 0
-let s:colors_set               = 0
-let s:last_jump_was_next       = -1
-let s:active_buffers           = {}
-let s:other_signs_line_numbers = {}
+let s:line_highlight           = 0   " disable line highlighting
+let s:colors_set               = 0   " do colors have to be reset?
+let s:last_jump_was_next       = -1  " last movement was next or prev?
 
+let s:other_signs_line_numbers = {}  " holds IDs of other signs
+let s:sy                       = {}  " the main data structure
+
+" overwrite non-signify signs by default
 let s:sign_overwrite = exists('g:signify_sign_overwrite') ? g:signify_sign_overwrite : 1
 
 let s:id_start = 0x100
 let s:id_top   = s:id_start
-let s:id_jump  = s:id_start
 
 "  Default mappings  {{{1
 if exists('g:signify_mapping_next_hunk')
@@ -92,9 +92,9 @@ endif
 aug signify
     au!
     au ColorScheme              * call s:set_colors()
-    au BufWritePost,FocusGained * call s:start()
-    au BufEnter                 * let s:colors_set = 0 | call s:start()
-    au BufDelete                * call s:stop() | call s:remove_from_buffer_list(expand('%:p'))
+    au BufWritePost,FocusGained * call s:start(expand('<afile>:p'))
+    au BufEnter                 * let s:colors_set = 0 | call s:start(expand('<afile>:p'))
+    au BufDelete                * call s:stop(expand('<afile>:p')) | call s:remove_from_buffer_list(expand('<afile>:p'))
 aug END
 
 com! -nargs=0 -bar SignifyToggle          call s:toggle_signify()
@@ -104,10 +104,8 @@ com! -nargs=0 -bar SignifyJumpToPrevHunk  call s:jump_to_prev_hunk()
 
 "  Internal functions  {{{1
 "  Functions -> s:start()  {{{2
-function! s:start() abort
-    let l:path = expand('%:p')
-
-    if empty(l:path) || &ft == 'help'
+function! s:start(path) abort
+    if empty(a:path) || &ft == 'help'
         return
     endif
 
@@ -128,17 +126,21 @@ function! s:start() abort
     endif
 
     " New buffer.. add to list.
-    if !has_key(s:active_buffers, l:path)
-        let s:active_buffers[l:path] = { 'active': 1 }
+    if !has_key(s:sy, a:path)
+        let s:sy[a:path] = { 'active': 1, 'ids': [], 'id_jump': -1, 'id_top': s:id_top, 'last_jump_was_next': -1 }
     " Inactive buffer.. bail out.
-    elseif s:active_buffers[l:path].active == 0
+    elseif s:sy[a:path].active == 0
         return
+    else
+        let s:sy[a:path].id_top  = s:id_top
+        let s:sy[a:path].id_jump = s:id_top
+        let s:sy[a:path].last_jump_was_next = -1
     endif
 
     " Is a diff available?
-    let diff = s:get_diff(l:path)
+    let diff = s:get_diff(a:path)
     if empty(diff)
-        call s:remove_signs()
+        call s:remove_signs(a:path)
         return
     endif
 
@@ -148,21 +150,22 @@ function! s:start() abort
         let s:colors_set = 1
     endif
 
-    call s:remove_signs()
-    let s:id_top = s:id_start
+    call s:remove_signs(a:path)
 
     if s:sign_overwrite == 0
-        call s:get_other_signs(l:path)
+        call s:get_other_signs(a:path)
     endif
 
     " Use git's diff cmd to set our signs.
     call s:process_diff(diff)
+
+    let s:sy[a:path].id_top = (s:id_top - 1)
 endfunction
 
-
 "  Functions -> s:stop()  {{{2
-function! s:stop() abort
-    call s:remove_signs()
+function! s:stop(path) abort
+    echom expand('%:p')
+    call s:remove_signs(a:path)
     aug signify
         au! * <buffer>
     aug END
@@ -171,12 +174,12 @@ endfunction
 "  Functions -> s:toggle_signify()  {{{2
 function! s:toggle_signify() abort
     let l:path = expand('%:p')
-    if has_key(s:active_buffers, l:path) && (s:active_buffers[l:path].active == 1)
-        call s:stop()
-        let s:active_buffers[l:path].active = 0
+    if has_key(s:sy, l:path) && (s:sy[l:path].active == 1)
+        call s:stop(l:path)
+        let s:sy[l:path].active = 0
     else
-        let s:active_buffers[l:path].active = 1
-        call s:start()
+        let s:sy[l:path].active = 1
+        call s:start(l:path)
     endif
 endfunction
 
@@ -200,21 +203,23 @@ function! s:set_sign(lnum, type, path)
         return
     endif
 
+    call add(s:sy[a:path].ids, s:id_top)
     exe 'sign place '. s:id_top .' line='. a:lnum .' name='. a:type .' file='. a:path
 
     let s:id_top += 1
 endfunction
 
 "  Functions -> s:remove_signs()  {{{2
-function! s:remove_signs() abort
+function! s:remove_signs(path) abort
     if s:sign_overwrite == 1
-        sign unplace *
-    else
-        for id in range(s:id_start, s:id_top - 1)
+        for id in s:sy[a:path].ids
             exe 'sign unplace '. id
         endfor
     endif
+
+    let s:sy[a:path].ids = []
 endfunction
+
 "  Functions -> s:get_diff()  {{{2
 function! s:get_diff(path) abort
     if !executable('grep')
@@ -384,44 +389,60 @@ function! s:toggle_line_highlighting() abort
         exe 'sign define SignifyChange text=! texthl=SignifyChange linehl='. change
         let s:line_highlight = 1
     endif
-    call s:start()
+    call s:start(expand('%'))
 endfunction
 
 "  Functions -> s:jump_to_next_hunk()  {{{2
 function! s:jump_to_next_hunk()
-    if s:last_jump_was_next == 0
-        let s:id_jump += 2
+    let path = expand('%:p')
+
+    if s:sy[path].last_jump_was_next == 0
+        let s:sy[path].id_jump += 2
     endif
-    exe 'sign jump '. s:id_jump .' file='. expand('%:p')
-    let s:id_jump = (s:id_jump == (s:id_top - 1)) ? (s:id_start) : (s:id_jump + 1)
-    let s:last_jump_was_next = 1
+
+    if s:sy[path].id_jump > s:sy[path].id_top
+        let s:sy[path].id_jump = s:sy[path].ids[0]
+    endif
+
+    exe 'sign jump '. s:sy[path].id_jump .' file='. path
+
+    let s:sy[path].id_jump += 1
+    let s:sy[path].last_jump_was_next = 1
 endfunction
 
 "  Functions -> s:jump_to_prev_hunk()  {{{2
 function! s:jump_to_prev_hunk()
-    if s:last_jump_was_next == 1
-        let s:id_jump -= 2
+    let path = expand('%:p')
+
+    if s:sy[path].last_jump_was_next == 1
+        let s:sy[path].id_jump -= 2
     endif
-    exe 'sign jump '. s:id_jump .' file='. expand('%:p')
-    let s:id_jump = (s:id_jump == s:id_start) ? (s:id_top - 1) : (s:id_jump - 1)
-    let s:last_jump_was_next = 0
+
+    if s:sy[path].id_jump < s:sy[path].ids[0]
+        let s:sy[path].id_jump = s:sy[path].id_top
+    endif
+
+    exe 'sign jump '. s:sy[path].id_jump .' file='. path
+
+    let s:sy[path].id_jump -= 1
+    let s:sy[path].last_jump_was_next = 0
 endfunction
 
 "  Functions -> s:remove_from_buffer_list()  {{{2
 function! s:remove_from_buffer_list(path) abort
-    if has_key(s:active_buffers, a:path)
-        call remove(s:active_buffers, a:path)
+    if has_key(s:sy, a:path)
+        call remove(s:sy, a:path)
     endif
 endfunction
 
 "  Functions -> SignifyDebugListActiveBuffers()  {{{2
 function! SignifyDebugListActiveBuffers() abort
-    if len(s:active_buffers) == 0
+    if len(s:sy) == 0
         echo 'No active buffers!'
         return
     endif
 
-    for i in items(s:active_buffers)
+    for i in items(s:sy)
         echo i
     endfor
 endfunction
