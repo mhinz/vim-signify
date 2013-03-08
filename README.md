@@ -29,6 +29,8 @@ Because people keep asking for it: Yes, I knew about vim-gitgutter before, I
 even contributed to it. But in the end I just didn't like the codebase and
 started my own plugin. And because I like programming VimL.
 
+vim-signify has all the features of gitgutter and more!
+
 The main difference is probably the support for other DVCS. Moreover, execution
 speed and high configurability are two of the design goals.
 
