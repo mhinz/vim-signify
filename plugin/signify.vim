@@ -92,8 +92,8 @@ endif
 aug signify
     au!
     au ColorScheme              * call s:colors_set()
-    au BufWritePost,FocusGained * call s:start(expand('<afile>:p'))
-    au BufEnter                 * let s:colors_set = 0 | call s:start(expand('<afile>:p'))
+    au BufWritePost,FocusGained * call s:start(resolve(expand('<afile>:p')))
+    au BufEnter                 * let s:colors_set = 0 | call s:start(resolve(expand('<afile>:p')))
 aug END
 
 com! -nargs=0 -bar SignifyToggle          call s:toggle_signify()
@@ -118,7 +118,7 @@ function! s:start(path) abort
     endif
     if exists('g:signify_exceptions_filename')
         for i in g:signify_exceptions_filename
-            if i == expand('%')
+            if i == a:path
                 return
             endif
         endfor
@@ -158,7 +158,7 @@ function! s:start(path) abort
     endif
 
     " Use git's diff cmd to set our signs.
-    call s:process_diff(diff)
+    call s:process_diff(a:path, diff)
 
     let s:sy[a:path].id_top = (s:id_top - 1)
 endfunction
@@ -227,14 +227,24 @@ function! s:diff_get(path) abort
     endif
 
     if executable('git')
-        let diff = system('git diff --no-ext-diff -U0 '. fnameescape(a:path) .'| grep "^@@ "')
+        let orig_dir = getcwd()
+        let wt = fnamemodify(a:path, ':h')
+        exe 'cd '. wt
+        let gd = system('git rev-parse --git-dir')[:-2]  " remove newline
+        if v:shell_error
+            echom 'signify: I cannot find the .git dir!'
+            return []
+        endif
+        let diff = system('git --work-tree '. wt .' --git-dir '. gd .' diff --no-ext-diff -U0 -- '. a:path .' | grep "^@@ "')
         if !v:shell_error
+            exe 'cd '. orig_dir
             return diff
         endif
+        exe 'cd '. orig_dir
     endif
 
     if executable('hg')
-        let diff = system('hg diff --nodates -U0 '. fnameescape(a:path) .'| grep "^@@ "')
+        let diff = system('hg diff --nodates -U0 '. a:path .' | grep "^@@ "')
         if !v:shell_error
             return diff
         endif
@@ -242,14 +252,14 @@ function! s:diff_get(path) abort
 
     if executable('diff')
         if executable('svn')
-            let diff = system('svn diff --diff-cmd diff -x -U0 '. fnameescape(a:path) .'| grep "^@@ "')
+            let diff = system('svn diff --diff-cmd diff -x -U0 '. a:path .' | grep "^@@ "')
             if !v:shell_error
                 return diff
             endif
         endif
 
         if executable('bzr')
-            let diff = system('bzr diff --using diff --diff-options=-U0 '. fnameescape(a:path) .'| grep "^@@ "')
+            let diff = system('bzr diff --using diff --diff-options=-U0 '. a:path .' | grep "^@@ "')
             if !v:shell_error
                 return diff
             endif
@@ -257,7 +267,7 @@ function! s:diff_get(path) abort
     endif
 
     if executable('cvs')
-        let diff = system('cvs diff -U0 '. fnameescape(expand('%')) .' 2>&1 | grep "^@@ "')
+        let diff = system('cvs diff -U0 '. a:path .' 2>&1 | grep "^@@ "')
         if !empty(diff)
             return diff
         endif
@@ -267,9 +277,7 @@ function! s:diff_get(path) abort
 endfunction
 
 "  Functions -> s:process_diff()  {{{2
-function! s:process_diff(diff) abort
-    let l:path = expand('%:p')
-
+function! s:process_diff(path, diff) abort
     " Determine where we have to put our signs.
     for line in split(a:diff, '\n')
         " Parse diff output.
@@ -284,17 +292,17 @@ function! s:process_diff(diff) abort
         if (old_count == 0) && (new_count >= 1)
             let offset = 0
             while offset < new_count
-                call s:sign_set(new_line + offset, 'SignifyAdd', l:path)
+                call s:sign_set(new_line + offset, 'SignifyAdd', a:path)
                 let offset += 1
             endwhile
         " An old line was removed.
         elseif (old_count >= 1) && (new_count == 0)
-            call s:sign_set(new_line, 'SignifyDelete', l:path)
+            call s:sign_set(new_line, 'SignifyDelete', a:path)
         " A line was changed.
         elseif (old_count == new_count)
             let offset = 0
             while offset < new_count
-                call s:sign_set(new_line + offset, 'SignifyChange', l:path)
+                call s:sign_set(new_line + offset, 'SignifyChange', a:path)
                 let offset += 1
             endwhile
         else
@@ -302,19 +310,19 @@ function! s:process_diff(diff) abort
             if (old_count > new_count)
                 let offset = 0
                 while offset < new_count
-                    call s:sign_set(new_line + offset, 'SignifyChange', l:path)
+                    call s:sign_set(new_line + offset, 'SignifyChange', a:path)
                     let offset += 1
                 endwhile
-                call s:sign_set(new_line + offset - 1, 'SignifyDelete', l:path)
+                call s:sign_set(new_line + offset - 1, 'SignifyDelete', a:path)
             " (old_count < new_count): Lines were added && changed.
             else
                 let offset = 0
                 while offset < old_count
-                    call s:sign_set(new_line + offset, 'SignifyChange', l:path)
+                    call s:sign_set(new_line + offset, 'SignifyChange', a:path)
                     let offset += 1
                 endwhile
                 while offset < new_count
-                    call s:sign_set(new_line + offset, 'SignifyAdd', l:path)
+                    call s:sign_set(new_line + offset, 'SignifyAdd', a:path)
                     let offset += 1
                 endwhile
             endif
@@ -373,7 +381,7 @@ endfunc
 
 "  Functions -> s:toggle_signify()  {{{2
 function! s:toggle_signify() abort
-    let path = expand('%:p')
+    let path = resolve(expand('%:p'))
 
     if empty(path)
         echoerr "signify: I don't sy empty buffers!"
@@ -408,12 +416,12 @@ function! s:toggle_line_highlighting() abort
         exe 'sign define SignifyChange text=! texthl=SignifyChange linehl='. change
         let s:line_highlight = 1
     endif
-    call s:start(expand('%'))
+    call s:start(resolve(expand('%:p')))
 endfunction
 
 "  Functions -> s:jump_to_next_hunk()  {{{2
 function! s:jump_to_next_hunk()
-    let path = expand('%:p')
+    let path = resolve(expand('%:p'))
 
     if s:sy[path].last_jump_was_next == 0
         let s:sy[path].id_jump += 2
@@ -431,7 +439,7 @@ endfunction
 
 "  Functions -> s:jump_to_prev_hunk()  {{{2
 function! s:jump_to_prev_hunk()
-    let path = expand('%:p')
+    let path = resolve(expand('%:p'))
 
     if s:sy[path].last_jump_was_next == 1
         let s:sy[path].id_jump -= 2
