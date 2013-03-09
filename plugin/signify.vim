@@ -235,6 +235,7 @@ function! s:diff_get(path) abort
             echom 'signify: I cannot find the .git dir!'
             return []
         endif
+        let wt = fnamemodify(gd, ':h')
         let diff = system('git --work-tree '. wt .' --git-dir '. gd .' diff --no-ext-diff -U0 -- '. a:path .' | grep "^@@ "')
         if !v:shell_error
             exe 'cd '. orig_dir
