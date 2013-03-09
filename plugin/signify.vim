@@ -231,15 +231,13 @@ function! s:diff_get(path) abort
         let wt = fnamemodify(a:path, ':h')
         exe 'cd '. wt
         let gd = system('git rev-parse --git-dir')[:-2]  " remove newline
-        if v:shell_error
-            echom 'signify: I cannot find the .git dir!'
-            return []
-        endif
-        let wt = fnamemodify(gd, ':h')
-        let diff = system('git --work-tree '. wt .' --git-dir '. gd .' diff --no-ext-diff -U0 -- '. a:path .' | grep "^@@ "')
         if !v:shell_error
-            exe 'cd '. orig_dir
-            return diff
+            let wt = fnamemodify(gd, ':h')
+            let diff = system('git --work-tree '. wt .' --git-dir '. gd .' diff --no-ext-diff -U0 -- '. a:path .' | grep "^@@ "')
+            if !v:shell_error
+                exe 'cd '. orig_dir
+                return diff
+            endif
         endif
         exe 'cd '. orig_dir
     endif
