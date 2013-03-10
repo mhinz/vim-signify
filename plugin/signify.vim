@@ -266,7 +266,7 @@ function! s:diff_get(path) abort
 
     if executable('cvs')
         let diff = system('cvs diff -U0 '. a:path .' 2>&1 | grep "^@@ "')
-        if !empty(diff)
+        if !v:shell_error
             return diff
         endif
     endif
