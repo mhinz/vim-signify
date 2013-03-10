@@ -458,6 +458,12 @@ endfunction
 function! s:jump_to_next_hunk()
     let path = resolve(expand('%:p'))
 
+    if !has_key(s:sy, path)
+        echoerr "signify: I haven't detected any changes!"
+        return
+    endif
+
+    endif
     if s:sy[path].last_jump_was_next == 0
         let s:sy[path].id_jump += 2
     endif
@@ -475,6 +481,11 @@ endfunction
 "  Functions -> s:jump_to_prev_hunk()  {{{2
 function! s:jump_to_prev_hunk()
     let path = resolve(expand('%:p'))
+
+    if !has_key(s:sy, path)
+        echoerr "signify: I haven't detected any changes!"
+        return
+    endif
 
     if s:sy[path].last_jump_was_next == 1
         let s:sy[path].id_jump -= 2
