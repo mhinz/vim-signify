@@ -329,53 +329,91 @@ function! s:process_diff(path, diff) abort
 endfunction
 
 "  Functions -> s:colors_set()  {{{2
-func! s:colors_set() abort
+function! s:colors_set() abort
     if has('gui_running')
-        let guifg_add    = exists('g:signify_color_sign_guifg_add')    ? g:signify_color_sign_guifg_add    : '#11ee11'
-        let guifg_delete = exists('g:signify_color_sign_guifg_delete') ? g:signify_color_sign_guifg_delete : '#ee1111'
-        let guifg_change = exists('g:signify_color_sign_guifg_change') ? g:signify_color_sign_guifg_change : '#eeee11'
-
-        if exists('g:signify_color_sign_guibg')
-            let guibg = g:signify_color_sign_guibg
+        if exists('g:signify_sign_color_guibg')
+            let guibg = g:signify_sign_color_guibg
         endif
 
         if !exists('guibg')
             let guibg = synIDattr(hlID('LineNr'), 'bg', 'gui')
         endif
 
-        if empty(guibg) || guibg < 0
-            exe 'hi SignifyAdd    gui=bold guifg='. guifg_add
-            exe 'hi SignifyDelete gui=bold guifg='. guifg_delete
-            exe 'hi SignifyChange gui=bold guifg='. guifg_change
+        if exists('g:signify_sign_color_group_add')
+            exe 'hi! link SignifyAdd '. g:signify_sign_color_group_add
         else
-            exe 'hi SignifyAdd    gui=bold guifg='. guifg_add    .' guibg='. guibg
-            exe 'hi SignifyDelete gui=bold guifg='. guifg_delete .' guibg='. guibg
-            exe 'hi SignifyChange gui=bold guifg='. guifg_change .' guibg='. guibg
+            let guifg_add = exists('g:signify_sign_color_guifg_add') ? g:signify_sign_color_guifg_add : '#11ee11'
+            if empty(guibg) || guibg < 0
+                exe 'hi SignifyAdd gui=bold guifg='. guifg_add
+            else
+                exe 'hi SignifyAdd gui=bold guifg='. guifg_add    .' guibg='. guibg
+            endif
+        endif
+
+        if exists('g:signify_sign_color_group_delete')
+            exe 'hi! link SignifyDelete '. g:signify_sign_color_group_delete
+        else
+            let guifg_delete = exists('g:signify_sign_color_guifg_delete') ? g:signify_sign_color_guifg_delete : '#ee1111'
+            if empty(guibg) || guibg < 0
+                exe 'hi SignifyDelete gui=bold guifg='. guifg_delete
+            else
+                exe 'hi SignifyDelete gui=bold guifg='. guifg_delete .' guibg='. guibg
+            endif
+        endif
+
+        if exists('g:signify_sign_color_group_change')
+            exe 'hi! link SignifyChange '. g:signify_sign_color_group_change
+        else
+            let guifg_change = exists('g:signify_sign_color_guifg_change') ? g:signify_sign_color_guifg_change : '#eeee11'
+            if empty(guibg) || guibg < 0
+                exe 'hi SignifyChange gui=bold guifg='. guifg_change
+            else
+                exe 'hi SignifyChange gui=bold guifg='. guifg_change .' guibg='. guibg
+            endif
         endif
     else
-        let ctermfg_add    = exists('g:signify_color_sign_ctermfg_add')    ? g:signify_color_sign_ctermfg_add    : 2
-        let ctermfg_delete = exists('g:signify_color_sign_ctermfg_delete') ? g:signify_color_sign_ctermfg_delete : 1
-        let ctermfg_change = exists('g:signify_color_sign_ctermfg_change') ? g:signify_color_sign_ctermfg_change : 3
-
-        if exists('g:signify_color_sign_ctermbg')
-            let ctermbg = g:signify_color_sign_ctermbg
+        if exists('g:signify_sign_color_ctermbg')
+            let ctermbg = g:signify_sign_color_ctermbg
         endif
 
         if !exists('ctermbg')
             let ctermbg = synIDattr(hlID('LineNr'), 'bg', 'cterm')
         endif
 
-        if empty(ctermbg) || ctermbg < 0
-            exe 'hi SignifyAdd    cterm=bold ctermfg='. ctermfg_add
-            exe 'hi SignifyDelete cterm=bold ctermfg='. ctermfg_delete
-            exe 'hi SignifyChange cterm=bold ctermfg='. ctermfg_change
+        if exists('g:signify_sign_color_group_add')
+            exe 'hi! link SignifyAdd '. g:signify_sign_color_group_add
         else
-            exe 'hi SignifyAdd    cterm=bold ctermfg='. ctermfg_add    .' ctermbg='. ctermbg
-            exe 'hi SignifyDelete cterm=bold ctermfg='. ctermfg_delete .' ctermbg='. ctermbg
-            exe 'hi SignifyChange cterm=bold ctermfg='. ctermfg_change .' ctermbg='. ctermbg
+            let ctermfg_add = exists('g:signify_sign_color_ctermfg_add') ? g:signify_sign_color_ctermfg_add : 2
+            if empty(ctermbg) || ctermbg < 0
+                exe 'hi SignifyAdd cterm=bold ctermfg='. ctermfg_add
+            else
+                exe 'hi SignifyAdd cterm=bold ctermfg='. ctermfg_add    .' ctermbg='. ctermbg
+            endif
+        endif
+
+        if exists('g:signify_sign_color_group_delete')
+            exe 'hi! link SignifyDelete '. g:signify_sign_color_group_delete
+        else
+            let ctermfg_delete = exists('g:signify_sign_color_ctermfg_delete') ? g:signify_sign_color_ctermfg_delete : 1
+            if empty(ctermbg) || ctermbg < 0
+                exe 'hi SignifyDelete cterm=bold ctermfg='. ctermfg_delete
+            else
+                exe 'hi SignifyDelete cterm=bold ctermfg='. ctermfg_delete .' ctermbg='. ctermbg
+            endif
+        endif
+
+        if exists('g:signify_sign_color_group_change')
+            exe 'hi! link SignifyChange '. g:signify_sign_color_group_change
+        else
+            let ctermfg_change = exists('g:signify_sign_color_ctermfg_change') ? g:signify_sign_color_ctermfg_change : 3
+            if empty(ctermbg) || ctermbg < 0
+                exe 'hi SignifyChange cterm=bold ctermfg='. ctermfg_change
+            else
+                exe 'hi SignifyChange cterm=bold ctermfg='. ctermfg_change .' ctermbg='. ctermbg
+            endif
         endif
     endif
-endfunc
+endfunction
 
 "  Functions -> s:toggle_signify()  {{{2
 function! s:toggle_signify() abort
@@ -405,10 +443,9 @@ function! s:toggle_line_highlighting() abort
         sign define SignifyChange text=! texthl=SignifyChange linehl=none
         let s:line_highlight = 0
     else
-        let add    = exists('g:signify_color_line_highlight_add')    ? g:signify_color_line_highlight_add    : 'DiffAdd'
-        let delete = exists('g:signify_color_line_highlight_delete') ? g:signify_color_line_highlight_delete : 'DiffDelete'
-        let change = exists('g:signify_color_line_highlight_change') ? g:signify_color_line_highlight_change : 'DiffChange'
-
+        let add    = exists('g:signify_line_color_add')    ? g:signify_line_color_add    : 'DiffAdd'
+        let delete = exists('g:signify_line_color_delete') ? g:signify_line_color_delete : 'DiffDelete'
+        let change = exists('g:signify_line_color_change') ? g:signify_line_color_change : 'DiffChange'
         exe 'sign define SignifyAdd    text=+ texthl=SignifyAdd    linehl='. add
         exe 'sign define SignifyDelete text=_ texthl=SignifyDelete linehl='. delete
         exe 'sign define SignifyChange text=! texthl=SignifyChange linehl='. change

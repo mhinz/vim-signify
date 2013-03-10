@@ -22,7 +22,8 @@ CONTENTS                                                    *signify-contents*
     1.Intro..........................................|signify-intro|
     2.Usage..........................................|signify-usage|
     3.Options........................................|signify-options|
-    4.Commands.. ....................................|signify-commands|
+    4.Commands.......................................|signify-commands|
+    4.Mappings.......................................|signify-mappings|
     5.Author.........................................|signify-author|
     6.Credits........................................|signify-credits|
     7.License........................................|signify-license|
@@ -60,13 +61,8 @@ change them easily through variables.
 ==============================================================================
 3. Options                                                   *signify-options*
 
-Just put these variables into your vimrc. The shown assignments are only
-examples, not default 
-
-
-    let g:signify_sign_overwrite = 1
-
-Overwrite signs set by other plugins by default.
+Put these variables into your vimrc. The shown assignments are only examples,
+not defaults.
 
 
     let g:signify_mapping_next_hunk = '<leader>gn'
@@ -85,6 +81,17 @@ Mapping for toggling line highlighting for lines containing changes.
 Mapping for toggling the plugin for the current buffer only.
 
 
+    let g:signify_exceptions_filetype = [ 'vim', 'c' ]
+    let g:signify_exceptions_filename = [ '.vimrc' ]
+
+Don't activate the plugin for these filetypes and/or filenames.
+
+
+    let g:signify_sign_overwrite = 1
+
+Overwrite signs set by other plugins by default.
+
+
     let g:signify_sign_add    = '+'
     let g:signify_sign_delete = '-'
     let g:signify_sign_change = '*'
@@ -92,33 +99,43 @@ Mapping for toggling the plugin for the current buffer only.
 The sign to use if a line was added, deleted or changed.
 
 
-    let g:signify_exceptions_filetype = [ 'vim', 'c' ]
-    let g:signify_exceptions_filename = [ '.vimrc' ]
+    let g:signify_sign_color_guifg_add      = '#00ff00'
+    let g:signify_sign_color_guifg_delete   = '#ff0000'
+    let g:signify_sign_color_guifg_change   = '#ffff00'
+    let g:signify_sign_color_guibg          = '#111111'
 
-Don't active the plugin for these filetypes and/or filenames.
+    let g:signify_sign_color_ctermfg_add    = 2
+    let g:signify_sign_color_ctermfg_delete = 1
+    let g:signify_sign_color_ctermfg_change = 3
+    let g:signify_sign_color_ctermbg        = 0
+
+The colors of your signs.
 
 
-    let g:signify_color_sign_guifg_add      = '#00ff00'
-    let g:signify_color_sign_guifg_delete   = '#ff0000'
-    let g:signify_color_sign_guifg_change   = '#ffff00'
-    let g:signify_color_guibg               = '#111111'
+    let g:signify_sign_color_group_add    = 'MyAdd'
+    let g:signify_sign_color_group_delete = 'MyDelete'
+    let g:signify_sign_color_group_change = 'MyChange'
 
-    let g:signify_color_sign_ctermfg_add    = 2
-    let g:signify_color_sign_ctermfg_delete = 1
-    let g:signify_color_sign_ctermfg_change = 3
-    let g:signify_color_sign_ctermbg        = 0
+Link to another highlight group for setting sign colors. If this option is
+set, any other sign color option for that change class will be ignored.
 
-The colors of your sign column.
+Example:
+    is set:   g:signify_sign_color_group_delete
+    ignored:  g:signify_sign_color_ctermfg_delete
+    ignored:  g:signify_sign_color_guifg_delete
 
-    let g:signify_color_line_highlight_add    = 'DiffAdd'
-    let g:signify_color_line_highlight_delete = 'DiffDelete'
-    let g:signify_color_line_highlight_change = 'DiffChange'
 
-The highlight classes to use with line highlighting.
+    let g:signify_line_color_add    = 'DiffAdd'
+    let g:signify_line_color_delete = 'DiffDelete'
+    let g:signify_line_color_change = 'DiffChange'
+
+The highlight groups to use with line highlighting.
 
 
 ==============================================================================
 4. Commands                                                 *signify-commands*
+4. Mappings                                                 *signify-mappings*
+
 
     :SignifyToggle
 
