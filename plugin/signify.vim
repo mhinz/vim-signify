@@ -464,7 +464,6 @@ function! s:jump_to_next_hunk()
         return
     endif
 
-    endif
     if s:sy[path].last_jump_was_next == 0
         let s:sy[path].id_jump += 2
     endif
