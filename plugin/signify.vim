@@ -336,7 +336,7 @@ function! s:colors_set() abort
         endif
 
         if !exists('guibg')
-            let guibg = synIDattr(hlID('LineNr'), 'bg', 'gui')
+            let guibg = synIDattr(hlID('SignColumn'), 'bg', 'gui')
         endif
 
         if exists('g:signify_sign_color_group_add')
@@ -377,7 +377,7 @@ function! s:colors_set() abort
         endif
 
         if !exists('ctermbg')
-            let ctermbg = synIDattr(hlID('LineNr'), 'bg', 'cterm')
+            let ctermbg = synIDattr(hlID('SignColumn'), 'bg', 'cterm')
         endif
 
         if exists('g:signify_sign_color_group_add')
