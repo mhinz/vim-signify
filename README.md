@@ -2,8 +2,8 @@
 
 Or just: sy
 
-Sy shows all added, deleted and changed lines since the last commit via Vim its
-sign column (and much more!)
+Sy shows all added, deleted and modified lines since the last commit via Vim its
+sign column. It supports several version control systems.
 
 It's fast, highly configurable and well documented.
 
@@ -22,17 +22,6 @@ Features:
 ![Example:signify in action](https://github.com/mhinz/vim-signify/raw/master/signify.png)
 
 Limits exist only in your mind! Vim on!
-
-## What about vim-gitgutter?
-
-Because people keep asking for it: Yes, I knew about vim-gitgutter before, I
-even contributed to it. But in the end I just didn't like the codebase and
-started my own plugin. And because I like programming VimL.
-
-vim-signify has all the features of gitgutter and more!
-
-The main difference is probably the support for other DVCS. Moreover, execution
-speed and high configurability are two of the design goals.
 
 ## Installation
 
@@ -54,7 +43,7 @@ For more info: `:h signify-options`
     let g:signify_mapping_prev_hunk = '<leader>gp'
 
     let g:signify_mapping_toggle_highlight = '<leader>gh'
-    let g:signify_mapping_toggle = '<leader>gt'
+    let g:signify_mapping_toggle           = '<leader>gt'
 
     let g:signify_exceptions_filetype = [ 'vim', 'c' ]
     let g:signify_exceptions_filename = [ '.vimrc' ]
