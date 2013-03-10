@@ -33,7 +33,6 @@ let g:loaded_signify = 1
 "  Default values  {{{1
 let s:line_highlight           = 0   " disable line highlighting
 let s:colors_set               = 0   " do colors have to be reset?
-let s:last_jump_was_next       = -1  " last movement was next or prev?
 
 let s:other_signs_line_numbers = {}  " holds IDs of other signs
 let s:sy                       = {}  " the main data structure
