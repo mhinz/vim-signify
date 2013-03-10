@@ -221,7 +221,7 @@ endfunction
 "  Functions -> s:diff_get()  {{{2
 function! s:diff_get(path) abort
     if !executable('grep')
-        echoerr 'signify: I cannot work without grep!'
+        echo 'signify: I cannot work without grep!'
         return
     endif
 
@@ -281,7 +281,8 @@ function! s:process_diff(path, diff) abort
         " Parse diff output.
         let tokens = matchlist(line, '\v^\@\@ -(\d+),?(\d*) \+(\d+),?(\d*)')
         if empty(tokens)
-            echoerr 'signify: I cannot parse this line "'. line .'"'
+            echo 'signify: I cannot parse this line "'. line .'"'
+            return
         endif
 
         let [ old_line, old_count, new_line, new_count ] = [ str2nr(tokens[1]), (tokens[2] == '') ? 1 : str2nr(tokens[2]), str2nr(tokens[3]), (tokens[4] == '') ? 1 : str2nr(tokens[4]) ]
@@ -420,7 +421,7 @@ function! s:toggle_signify() abort
     let path = resolve(expand('%:p'))
 
     if empty(path)
-        echoerr "signify: I don't sy empty buffers!"
+        echo "signify: I don't sy empty buffers!"
         return
     endif
 
@@ -459,7 +460,7 @@ function! s:jump_to_next_hunk()
     let path = resolve(expand('%:p'))
 
     if !has_key(s:sy, path)
-        echoerr "signify: I haven't detected any changes!"
+        echo "signify: I haven't detected any changes!"
         return
     endif
 
@@ -483,7 +484,7 @@ function! s:jump_to_prev_hunk()
     let path = resolve(expand('%:p'))
 
     if !has_key(s:sy, path)
-        echoerr "signify: I haven't detected any changes!"
+        echo "signify: I haven't detected any changes!"
         return
     endif
 
