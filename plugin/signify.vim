@@ -264,10 +264,12 @@ function! s:diff_get(path) abort
         endif
     endif
 
-    if executable('cvs')
-        let diff = system('cvs diff -U0 '. a:path .' 2>&1 | grep "^@@ "')
-        if !v:shell_error
-            return diff
+    if exists('g:signify_enable_cvs') && (g:signify_enable_cvs == 1)
+        if executable('cvs')
+            let diff = system('cvs diff -U0 '. a:path .' 2>&1 | grep "^@@ "')
+            if !v:shell_error
+                return diff
+            endif
         endif
     endif
 

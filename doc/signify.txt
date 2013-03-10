@@ -132,6 +132,11 @@ Example:
 The highlight groups to use with line highlighting.
 
 
+    let g:signify_enable_cvs = 1
+
+Enable CVS repo detection.
+
+
 ==============================================================================
 4. Commands                                                 *signify-commands*
 4. Mappings                                                 *signify-mappings*
