@@ -90,9 +90,8 @@ endif
 "  Initial stuff  {{{1
 aug signify
     au!
-    au ColorScheme              * call s:colors_set()
-    au BufWritePost,FocusGained * call s:start(resolve(expand('<afile>:p')))
-    au BufEnter                 * let s:colors_set = 0 | call s:start(resolve(expand('<afile>:p')))
+    au ColorScheme * call s:colors_set()
+    au BufWritePost,BufEnter,FocusGained * call s:start(resolve(expand('<afile>:p')))
 aug END
 
 com! -nargs=0 -bar SignifyToggle          call s:toggle_signify()
@@ -146,7 +145,7 @@ function! s:start(path) abort
         let s:sy[a:path].last_jump_was_next = -1
     endif
 
-    if s:sign_overwrite == 0
+    if !s:sign_overwrite
         call s:sign_get_others(a:path)
     endif
 
