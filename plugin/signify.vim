@@ -236,7 +236,7 @@ function! s:diff_get(path) abort
     endif
 
     if executable('hg')
-        let diff = system('hg diff --nodates -U0 '. a:path .' | grep "^@@ "')
+        let diff = system('hg diff --nodates -U0 -- '. a:path .' | grep "^@@ "')
         if !v:shell_error
             return diff
         endif
@@ -244,14 +244,14 @@ function! s:diff_get(path) abort
 
     if executable('diff')
         if executable('svn')
-            let diff = system('svn diff --diff-cmd diff -x -U0 '. a:path .' | grep "^@@ "')
+            let diff = system('svn diff --diff-cmd diff -x -U0 -- '. a:path .' | grep "^@@ "')
             if !v:shell_error
                 return diff
             endif
         endif
 
         if executable('bzr')
-            let diff = system('bzr diff --using diff --diff-options=-U0 '. a:path .' | grep "^@@ "')
+            let diff = system('bzr diff --using diff --diff-options=-U0 -- '. a:path .' | grep "^@@ "')
             if !v:shell_error
                 return diff
             endif
@@ -260,7 +260,7 @@ function! s:diff_get(path) abort
         if executable('darcs')
             let orig_dir = getcwd()
             exe 'cd '. fnamemodify(a:path, ':h')
-            let diff = system('darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" '. a:path .' | grep "^@@ "')
+            let diff = system('darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. a:path .' | grep "^@@ "')
             if !v:shell_error
                 exe 'cd '. orig_dir
                 return diff
@@ -271,7 +271,7 @@ function! s:diff_get(path) abort
 
     if exists('g:signify_enable_cvs') && (g:signify_enable_cvs == 1)
         if executable('cvs')
-            let diff = system('cvs diff -U0 '. a:path .' 2>&1 | grep "^@@ "')
+            let diff = system('cvs diff -U0 -- '. a:path .' 2>&1 | grep "^@@ "')
             if !v:shell_error
                 return diff
             endif
