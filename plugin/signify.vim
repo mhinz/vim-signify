@@ -81,6 +81,12 @@ else
   sign define SignifyDelete text=_ texthl=SignifyDelete linehl=none
 endif
 
+if exists('g:signify_sign_delete_first_line')
+  exe 'sign define SignifyDeleteFirstLine text='. g:signify_sign_delete_first_line .' texthl=SignifyDeleteFirstLine linehl=none'
+else
+  sign define SignifyDeleteFirstLine text=‾ texthl=SignifyDelete linehl=none
+endif
+
 if exists('g:signify_sign_change')
   exe 'sign define SignifyChange text='. g:signify_sign_change .' texthl=SignifyChange linehl=none'
 else
@@ -304,7 +310,11 @@ function! s:diff_process(path, diff) abort
       endwhile
       " An old line was removed.
     elseif (old_count >= 1) && (new_count == 0)
-      call s:sign_set(new_line, 'SignifyDelete', a:path)
+      if new_line == 0
+        call s:sign_set(1, 'SignifyDeleteFirstLine', a:path)
+      else
+        call s:sign_set(new_line, 'SignifyDelete', a:path)
+      endif
       " A line was changed.
     elseif (old_count == new_count)
       let offset = 0
@@ -447,17 +457,22 @@ endfunction
 "  Functions -> s:toggle_line_highlighting()  {{{2
 function! s:toggle_line_highlighting() abort
   if s:line_highlight
-    sign define SignifyAdd    text=+ texthl=SignifyAdd    linehl=none
-    sign define SignifyDelete text=_ texthl=SignifyDelete linehl=none
-    sign define SignifyChange text=! texthl=SignifyChange linehl=none
+    sign define SignifyAdd             text=+ texthl=SignifyAdd    linehl=none
+    sign define SignifyChange          text=! texthl=SignifyChange linehl=none
+    sign define SignifyDelete          text=_ texthl=SignifyDelete linehl=none
+    sign define SignifyDeleteFirstLine text=‾ texthl=SignifyDelete linehl=none
+
     let s:line_highlight = 0
   else
     let add    = exists('g:signify_line_color_add')    ? g:signify_line_color_add    : 'DiffAdd'
     let delete = exists('g:signify_line_color_delete') ? g:signify_line_color_delete : 'DiffDelete'
     let change = exists('g:signify_line_color_change') ? g:signify_line_color_change : 'DiffChange'
-    exe 'sign define SignifyAdd    text=+ texthl=SignifyAdd    linehl='. add
-    exe 'sign define SignifyDelete text=_ texthl=SignifyDelete linehl='. delete
-    exe 'sign define SignifyChange text=! texthl=SignifyChange linehl='. change
+
+    exe 'sign define SignifyAdd             text=+ texthl=SignifyAdd    linehl='. add
+    exe 'sign define SignifyChange          text=! texthl=SignifyChange linehl='. change
+    exe 'sign define SignifyDelete          text=_ texthl=SignifyDelete linehl='. delete
+    exe 'sign define SignifyDeleteFirstLine text=‾ texthl=SignifyDelete linehl='. delete
+
     let s:line_highlight = 1
   endif
   call s:start(resolve(expand('%:p')))
