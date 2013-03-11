@@ -215,6 +215,7 @@ function! s:sign_remove_all(path) abort
 
   let s:other_signs_line_numbers = {}
   let s:sy[a:path].ids = []
+  let s:sy[a:path].id_jump = -1
 endfunction
 
 "  Functions -> s:diff_get()  {{{2
@@ -466,8 +467,8 @@ endfunction
 function! s:jump_to_next_hunk()
   let path = resolve(expand('%:p'))
 
-  if !has_key(s:sy, path)
-    echo "signify: I haven't detected any changes!"
+  if !has_key(s:sy, path) || s:sy[path].id_jump == -1
+    echo "signify: I cannot detect any changes!"
     return
   endif
 
@@ -489,8 +490,8 @@ endfunction
 function! s:jump_to_prev_hunk()
   let path = resolve(expand('%:p'))
 
-  if !has_key(s:sy, path)
-    echo "signify: I haven't detected any changes!"
+  if !has_key(s:sy, path) || s:sy[path].id_jump == -1
+    echo "signify: I cannot detect any changes!"
     return
   endif
 
