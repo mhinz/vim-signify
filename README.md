@@ -72,6 +72,8 @@ For more info: `:h signify-options`
     let g:signify_line_color_delete = 'DiffDelete'
     let g:signify_line_color_change = 'DiffChange'
 
+    let g:signify_enable_cvs = 1
+
 ## Author
 
 Marco Hinz `<mh.codebro@gmail.com>`
