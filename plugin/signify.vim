@@ -513,8 +513,3 @@ function! SignifyDebugListActiveBuffers() abort
         echo i
     endfor
 endfunction
-
-"  Functions -> SignifyDebugID()  {{{2
-function! SignifyDebugID() abort
-    echo [ s:id_start, s:id_top ]
-endfunction
