@@ -48,6 +48,7 @@ version control system:
 
     - git
     - mercurial
+    - darcs
     - bzr
     - subversion
     - cvs

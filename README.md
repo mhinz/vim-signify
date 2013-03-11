@@ -9,7 +9,7 @@ It's fast, highly configurable and well documented.
 
 Features:
 
-- supports git, mercurial, bazaar, subversion, cvs
+- supports git, mercurial, darcs, bazaar, subversion, cvs
 - apart from signs there is also optional line highlighting
 - fully configurable through global variables
 - optional preserving of signs from other plugins

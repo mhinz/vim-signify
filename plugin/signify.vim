@@ -156,7 +156,7 @@ function! s:start(path) abort
     endif
 
     " Use git's diff cmd to set our signs.
-    call s:process_diff(a:path, diff)
+    call s:diff_process(a:path, diff)
 
     let s:sy[a:path].id_top = (s:id_top - 1)
 endfunction
@@ -261,6 +261,17 @@ function! s:diff_get(path) abort
                 return diff
             endif
         endif
+
+        if executable('darcs')
+            let orig_dir = getcwd()
+            exe 'cd '. fnamemodify(a:path, ':h')
+            let diff = system('darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" '. a:path .' | grep "^@@ "')
+            if !v:shell_error
+                exe 'cd '. orig_dir
+                return diff
+            endif
+            exe 'cd '. orig_dir
+        endif
     endif
 
     if exists('g:signify_enable_cvs') && (g:signify_enable_cvs == 1)
@@ -275,8 +286,8 @@ function! s:diff_get(path) abort
     return []
 endfunction
 
-"  Functions -> s:process_diff()  {{{2
-function! s:process_diff(path, diff) abort
+"  Functions -> s:diff_process()  {{{2
+function! s:diff_process(path, diff) abort
     " Determine where we have to put our signs.
     for line in split(a:diff, '\n')
         " Parse diff output.
