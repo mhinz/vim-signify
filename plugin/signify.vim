@@ -100,11 +100,17 @@ else
 endif
 
 "  Initial stuff  {{{1
-aug signify
-  au!
-  au ColorScheme * call s:colors_set()
-  au BufWritePost,BufEnter,FocusGained * call s:start(resolve(expand('<afile>:p')))
-aug END
+augroup signify
+  autocmd!
+  if exists('g:signify_cursorhold_normal') && (g:signify_cursorhold_normal == 1)
+    autocmd CursorHold * write | call s:start(resolve(expand('<afile>:p')))
+  endif
+  if exists('g:signify_cursorhold_insert') && (g:signify_cursorhold_insert == 1)
+    autocmd CursorHoldI * write | call s:start(resolve(expand('<afile>:p')))
+  endif
+  autocmd ColorScheme * call s:colors_set()
+  autocmd BufWritePost,BufEnter,FocusGained * call s:start(resolve(expand('<afile>:p')))
+augroup END
 
 com! -nargs=0 -bar SignifyToggle          call s:toggle_signify()
 com! -nargs=0 -bar SignifyToggleHighlight call s:toggle_line_highlighting()

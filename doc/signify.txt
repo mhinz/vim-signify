@@ -141,6 +141,14 @@ The highlight groups to use with line highlighting.
 Enable CVS repo detection.
 
 
+    let g:signify_cursorhold_normal = 1
+    let g:signify_cursorhold_insert = 1
+
+Additionally trigger sign updates in normal or insert mode after 'updatetime'
+miliseconds without any keypresses. This fires only once between keypresses,
+thus not every 'updatetime' miliseconds.
+
+
 ==============================================================================
 4. Commands                                                 *signify-commands*
 4. Mappings                                                 *signify-mappings*

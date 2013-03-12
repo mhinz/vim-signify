@@ -76,6 +76,9 @@ For more info: `:h signify-options`
 
     let g:signify_enable_cvs = 1
 
+    let g:signify_cursorhold_normal = 1
+    let g:signify_cursorhold_insert = 1
+
 ## Author
 
 Marco Hinz `<mh.codebro@gmail.com>`
