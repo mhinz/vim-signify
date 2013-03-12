@@ -26,7 +26,7 @@ Limits exist only in your mind! Vim on!
 
 ## Longer introduction
 
-`supports git, mercurial, darcs, bazaar, subversion, cvs`
+#### supports git, mercurial, darcs, bazaar, subversion, cvs
 
 This plugin is based on the diffing features of the supported version control
 systems. Since not all VCS support the same options, sometimes we have to fall
@@ -45,7 +45,7 @@ Note: CVS detection is disabled by default, because it can lead to considerable
 delay if the current repo is not a CVS one and the environment variable $CVSROOT
 is set nevertheless because a remote connection could be made.
 
-`quick jumping between changed lines`
+#### quick jumping between changed lines
 
 There are mappings for jumping forth and back between changed lines (so-called
 hunks). The following example shows the default mappings and how to change them:
@@ -56,7 +56,7 @@ hunks). The following example shows the default mappings and how to change them:
 Note: In case you don't know about the mapleader, have a look at `:h mapleader`.
 The default is the '\' button.
 
-`apart from signs there is also optional line highlighting`
+#### apart from signs there is also optional line highlighting
 
 Sy shows you signs for changed lines. Moveover, you can enable highlighting of
 the concerned lines:
@@ -69,14 +69,14 @@ You can also change the highlighting classes for these lines. The defaults are:
     let g:signify_line_color_delete = 'DiffDelete'
     let g:signify_line_color_change = 'DiffChange'
 
-`you can toggle the plugin per buffer`
+#### you can toggle the plugin per buffer
 
 In case you want to disable the plugin for the current buffer, you can toggle
 it:
 
     let g:signify_mapping_toggle = '<leader>gt'
 
-`exception lists for filetypes and filenames`
+#### exception lists for filetypes and filenames
 
 If you want to disable Sy for certain kinds of filename or file types,
 you explicitely have to create exception lists:
@@ -86,7 +86,7 @@ Example:
     let g:signify_exceptions_filetype = [ 'vim', 'c' ]
     let g:signify_exceptions_filename = [ '.vimrc' ]
 
-`good documentation`
+#### good documentation
 
 You should know by now!
 
