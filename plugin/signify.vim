@@ -120,7 +120,7 @@ com! -nargs=0 -bar SignifyJumpToPrevHunk  call s:jump_to_prev_hunk()
 "  Internal functions  {{{1
 "  Functions -> s:start()  {{{2
 function! s:start(path) abort
-  if empty(a:path) || &ft == 'help'
+  if empty(a:path) || !filereadable(a:path) || &ft == 'help'
     return
   endif
 
@@ -297,7 +297,7 @@ function! s:diff_get(path) abort
     endif
   endif
 
-  return []
+  return ''
 endfunction
 
 "  Functions -> s:diff_process()  {{{2
