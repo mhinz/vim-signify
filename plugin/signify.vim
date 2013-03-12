@@ -245,9 +245,6 @@ function! s:diff_get(path) abort
 
   if executable('git')
     let orig_dir = getcwd()
-    if a:path =~ '^fugitive'
-      return ''
-    endif
     exe 'cd '. fnamemodify(a:path, ':h')
     let diff = system('git diff --no-ext-diff -U0 -- '. a:path .' | grep "^@@ "')
     if !v:shell_error
@@ -300,7 +297,7 @@ function! s:diff_get(path) abort
     endif
   endif
 
-  return ''
+  return []
 endfunction
 
 "  Functions -> s:diff_process()  {{{2
