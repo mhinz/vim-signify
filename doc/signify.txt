@@ -148,6 +148,8 @@ Additionally trigger sign updates in normal or insert mode after 'updatetime'
 miliseconds without any keypresses. This fires only once between keypresses,
 thus not every 'updatetime' miliseconds.
 
+Important: This also saves the buffer to disk!
+
 
 ==============================================================================
 4. Commands                                                 *signify-commands*
