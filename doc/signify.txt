@@ -93,11 +93,14 @@ Don't activate the plugin for these filetypes and/or filenames.
 Overwrite signs set by other plugins by default.
 
 
-    let g:signify_sign_add    = '+'
-    let g:signify_sign_delete = '-'
-    let g:signify_sign_change = '*'
+    let g:signify_sign_add               = '+'
+    let g:signify_sign_change            = '*'
+    let g:signify_sign_change_delete     = '!_'
+    let g:signify_sign_delete            = '-'
+    let g:signify_sign_delete_first_line = '‾'
 
-The sign to use if a line was added, deleted or changed.
+The sign to use if a line was added, deleted or changed or a combination of
+these.
 
 
     let g:signify_sign_color_guifg_add      = '#00ff00'

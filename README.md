@@ -50,9 +50,11 @@ For more info: `:h signify-options`
 
     let g:signify_sign_overwrite = 1
 
-    let g:signify_sign_add    = '+'
-    let g:signify_sign_delete = '-'
-    let g:signify_sign_change = '*'
+    let g:signify_sign_add               = '+'
+    let g:signify_sign_delete            = '-'
+    let g:signify_sign_change            = '*'
+    let g:signify_sign_delete            = '-'
+    let g:signify_sign_delete_first_line = '‾'
 
     let g:signify_sign_color_guifg_add      = '#00ff00'
     let g:signify_sign_color_guifg_delete   = '#ff0000'
