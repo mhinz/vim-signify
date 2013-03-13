@@ -140,24 +140,22 @@ function! s:start(path) abort
     endfor
   endif
 
-  " Is a diff available?
-  let diff = s:diff_get(a:path)
-  if empty(diff)
-    if has_key(s:sy, a:path)
-      call s:sign_remove_all(a:path)
-    endif
-    return
-  endif
-
   " New buffer.. add to list.
   if !has_key(s:sy, a:path)
-    let s:sy[a:path] = { 'active': 1, 'ids': [], 'id_jump': s:id_top, 'id_top': s:id_top, 'last_jump_was_next': -1 }
-    " Inactive buffer.. bail out.
+    let [ diff, type ] = s:repo_detect(a:path)
+    if empty(diff)
+      return
+    endif
+    let s:sy[a:path] = { 'active': 1, 'type': type, 'ids': [], 'id_jump': s:id_top, 'id_top': s:id_top, 'last_jump_was_next': -1 }
+  " Inactive buffer.. bail out.
   elseif s:sy[a:path].active == 0
     return
-    " Update active buffer.. reset default values
   else
     call s:sign_remove_all(a:path)
+    let diff = s:repo_get_diff_{s:sy[a:path].type}(a:path)
+    if empty(diff)
+      return
+    endif
     let s:sy[a:path].id_top  = s:id_top
     let s:sy[a:path].id_jump = s:id_top
     let s:sy[a:path].last_jump_was_next = -1
@@ -173,8 +171,7 @@ function! s:start(path) abort
     let s:colors_set = 1
   endif
 
-  " Use git's diff cmd to set our signs.
-  call s:diff_process(a:path, diff)
+  call s:repo_process_diff(a:path, diff)
 
   let s:sy[a:path].id_top = (s:id_top - 1)
 endfunction
@@ -236,13 +233,24 @@ function! s:sign_remove_all(path) abort
   let s:sy[a:path].id_jump = -1
 endfunction
 
-"  Functions -> s:diff_get()  {{{2
-function! s:diff_get(path) abort
-  if !executable('grep')
-    echo 'signify: I cannot work without grep!'
-    return
+"  Functions -> s:repo_detect()  {{{2
+function! s:repo_detect(path) abort
+  if !executable('grep') || !executable('diff')
+    echo 'signify: I cannot work without grep and diff!'
   endif
 
+  for type in [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'cvs' ]
+    let diff = s:repo_get_diff_{type}(a:path)
+    if !empty(diff)
+      return [ diff, type ]
+    endif
+  endfor
+
+  return [ '', '' ]
+endfunction
+
+"  Functions -> s:repo_get_diff_git  {{{2
+function! s:repo_get_diff_git(path) abort
   if executable('git')
     let orig_dir = getcwd()
     exe 'cd '. fnamemodify(a:path, ':h')
@@ -253,55 +261,58 @@ function! s:diff_get(path) abort
     endif
     exe 'cd '. orig_dir
   endif
-
-  if executable('hg')
-    let diff = system('hg diff --nodates -U0 -- '. a:path .' | grep "^@@ "')
-    if !v:shell_error
-      return diff
-    endif
-  endif
-
-  if executable('diff')
-    if executable('svn')
-      let diff = system('svn diff --diff-cmd diff -x -U0 -- '. a:path .' | grep "^@@ "')
-      if !v:shell_error
-        return diff
-      endif
-    endif
-
-    if executable('bzr')
-      let diff = system('bzr diff --using diff --diff-options=-U0 -- '. a:path .' | grep "^@@ "')
-      if !v:shell_error
-        return diff
-      endif
-    endif
-
-    if executable('darcs')
-      let orig_dir = getcwd()
-      exe 'cd '. fnamemodify(a:path, ':h')
-      let diff = system('darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. a:path .' | grep "^@@ "')
-      if !v:shell_error
-        exe 'cd '. orig_dir
-        return diff
-      endif
-      exe 'cd '. orig_dir
-    endif
-  endif
-
-  if exists('g:signify_enable_cvs') && (g:signify_enable_cvs == 1)
-    if executable('cvs')
-      let diff = system('cvs diff -U0 -- '. a:path .' 2>&1 | grep "^@@ "')
-      if !v:shell_error
-        return diff
-      endif
-    endif
-  endif
-
   return ''
 endfunction
 
-"  Functions -> s:diff_process()  {{{2
-function! s:diff_process(path, diff) abort
+"  Functions -> s:repo_get_diff_hg  {{{2
+function! s:repo_get_diff_hg(path) abort
+  if executable('hg')
+    let diff = system('hg diff --nodates -U0 -- '. a:path .' | grep "^@@ "')
+    return v:shell_error ? '' : diff
+  endif
+endfunction
+
+"  Functions -> s:repo_get_diff_svn  {{{2
+function! s:repo_get_diff_svn(path) abort
+  if executable('svn')
+    let diff = system('svn diff --diff-cmd diff -x -U0 -- '. a:path .' | grep "^@@ "')
+    return v:shell_error ? '' : diff
+  endif
+endfunction
+
+"  Functions -> s:repo_get_diff_bzr  {{{2
+function! s:repo_get_diff_bzr(path) abort
+  if executable('bzr')
+    let diff = system('bzr diff --using diff --diff-options=-U0 -- '. a:path .' | grep "^@@ "')
+    return v:shell_error ? '' : diff
+  endif
+endfunction
+
+"  Functions -> s:repo_get_diff_darcs  {{{2
+function! s:repo_get_diff_darcs(path) abort
+  if executable('darcs')
+    let orig_dir = getcwd()
+    exe 'cd '. fnamemodify(a:path, ':h')
+    let diff = system('darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. a:path .' | grep "^@@ "')
+    if !v:shell_error
+      exe 'cd '. orig_dir
+      return diff
+    endif
+    exe 'cd '. orig_dir
+  endif
+  return ''
+endfunction
+
+"  Functions -> s:repo_get_diff_cvs  {{{2
+function! s:repo_get_diff_cvs(path) abort
+  if executable('cvs') && exists('g:signify_enable_cvs') && (g:signify_enable_cvs == 1)
+    let diff = system('cvs diff -U0 -- '. a:path .' 2>&1 | grep "^@@ "')
+    return v:shell_error ? '' : diff
+  endif
+endfunction
+
+"  Functions -> s:repo_process_diff()  {{{2
+function! s:repo_process_diff(path, diff) abort
   " Determine where we have to put our signs.
   for line in split(a:diff, '\n')
     " Parse diff output.
