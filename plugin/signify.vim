@@ -45,15 +45,15 @@ let s:id_top   = s:id_start
 
 "  Default mappings  {{{1
 if exists('g:signify_mapping_next_hunk')
-  exe 'nnoremap '. g:signify_mapping_next_hunk .' :SignifyJumpToNextHunk<cr>'
+  exe 'nnoremap '. g:signify_mapping_next_hunk .' :<c-u>exe v:count ."SignifyJumpToNextHunk"<cr>'
 else
-  nnoremap <leader>gn :SignifyJumpToNextHunk<cr>
+  nnoremap <leader>gj :<c-u>exe v:count .'SignifyJumpToNextHunk'<cr>
 endif
 
 if exists('g:signify_mapping_prev_hunk')
-  exe 'nnoremap '. g:signify_mapping_prev_hunk .' :SignifyJumpToPrevHunk<cr>'
+  exe 'nnoremap '. g:signify_mapping_prev_hunk .' :<c-u>exe v:count ."SignifyJumpToPrevHunk"<cr>'
 else
-  nnoremap <leader>gp :SignifyJumpToPrevHunk<cr>
+  nnoremap <leader>gk :<c-u>exe v:count .'SignifyJumpToPrevHunk'<cr>
 endif
 
 if exists('g:signify_mapping_toggle_highlight')
@@ -116,8 +116,8 @@ augroup END
 
 com! -nargs=0 -bar SignifyToggle          call s:toggle_signify()
 com! -nargs=0 -bar SignifyToggleHighlight call s:toggle_line_highlighting()
-com! -nargs=0 -bar SignifyJumpToNextHunk  call s:jump_to_next_hunk()
-com! -nargs=0 -bar SignifyJumpToPrevHunk  call s:jump_to_prev_hunk()
+com! -nargs=0 -bar -count SignifyJumpToNextHunk call s:jump_to_next_hunk(<count>)
+com! -nargs=0 -bar -count SignifyJumpToPrevHunk call s:jump_to_prev_hunk(<count>)
 
 "  Internal functions  {{{1
 "  Functions -> s:start()  {{{2
@@ -511,7 +511,7 @@ function! s:toggle_line_highlighting() abort
 endfunction
 
 "  Functions -> s:jump_to_next_hunk()  {{{2
-function! s:jump_to_next_hunk()
+function! s:jump_to_next_hunk(count)
   let path = resolve(expand('%:p'))
 
   if !has_key(s:sy, path) || s:sy[path].id_jump == -1
@@ -522,6 +522,8 @@ function! s:jump_to_next_hunk()
   if s:sy[path].last_jump_was_next == 0
     let s:sy[path].id_jump += 2
   endif
+
+  let s:sy[path].id_jump += a:count ? (a:count - 1) : 0
 
   if s:sy[path].id_jump > s:sy[path].id_top
     let s:sy[path].id_jump = s:sy[path].ids[0]
@@ -534,7 +536,7 @@ function! s:jump_to_next_hunk()
 endfunction
 
 "  Functions -> s:jump_to_prev_hunk()  {{{2
-function! s:jump_to_prev_hunk()
+function! s:jump_to_prev_hunk(count)
   let path = resolve(expand('%:p'))
 
   if !has_key(s:sy, path) || s:sy[path].id_jump == -1
@@ -545,6 +547,8 @@ function! s:jump_to_prev_hunk()
   if s:sy[path].last_jump_was_next == 1
     let s:sy[path].id_jump -= 2
   endif
+
+  let s:sy[path].id_jump -= a:count ? (a:count - 1) : 0
 
   if s:sy[path].id_jump < s:sy[path].ids[0]
     let s:sy[path].id_jump = s:sy[path].id_top
