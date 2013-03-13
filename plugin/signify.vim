@@ -104,17 +104,21 @@ sign define SignifyPlaceholder text=~ texthl=SignifyChange linehl=none
 "  Initial stuff  {{{1
 augroup signify
   autocmd!
+
   if exists('g:signify_cursorhold_normal') && (g:signify_cursorhold_normal == 1)
     autocmd CursorHold * write | call s:start(resolve(expand('<afile>:p')))
   endif
+
   if exists('g:signify_cursorhold_insert') && (g:signify_cursorhold_insert == 1)
     autocmd CursorHoldI * write | call s:start(resolve(expand('<afile>:p')))
   endif
-  autocmd ColorScheme * call s:colors_set()
-  autocmd BufWritePost,BufEnter * call s:start(resolve(expand('<afile>:p')))
-  if !(has("gui_win32"))
+
+  if !has('gui_win32')
     autocmd FocusGained * call s:start(resolve(expand('<afile>:p')))
   endif
+
+  autocmd ColorScheme * call s:colors_set()
+  autocmd BufWritePost,BufEnter * call s:start(resolve(expand('<afile>:p')))
 augroup END
 
 com! -nargs=0 -bar SignifyToggle          call s:toggle_signify()
