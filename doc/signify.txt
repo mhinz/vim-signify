@@ -66,8 +66,8 @@ Put these variables into your vimrc. The shown assignments are only examples,
 not defaults.
 
 
-    let g:signify_mapping_next_hunk = '<leader>gn'
-    let g:signify_mapping_prev_hunk = '<leader>gp'
+    let g:signify_mapping_next_hunk = '<leader>gj'
+    let g:signify_mapping_prev_hunk = '<leader>gk'
 
 Mapping for jumping to the next or previous hunk.
 

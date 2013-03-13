@@ -50,8 +50,8 @@ is set nevertheless because a remote connection could be made.
 There are mappings for jumping forth and back between changed lines (so-called
 hunks). The following example shows the default mappings and how to change them:
 
-    let g:signify_mapping_next_hunk = '<leader>gn'
-    let g:signify_mapping_prev_hunk = '<leader>gp'
+    let g:signify_mapping_next_hunk = '<leader>gj'
+    let g:signify_mapping_prev_hunk = '<leader>gk'
 
 Note: In case you don't know about the mapleader, have a look at `:h mapleader`.
 The default is the '\' button.
