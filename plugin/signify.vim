@@ -198,13 +198,13 @@ endfunction
 "  Functions -> s:sign_get_others()  {{{2
 function! s:sign_get_others(path) abort
   redir => signlist
-  sil! exe 'sign place file='. a:path
+    sil! exe 'sign place file='. a:path
   redir END
 
   for line in split(signlist, '\n')
     if line =~ '^\s\+line'
-      let [ lnum, id ] = matchlist(line, '\vline\=(\d+)\s+id\=(\d+)')[1:2]
-      let s:other_signs_line_numbers[lnum] = id
+      let lnum = matchlist(line, '\vline\=(\d+)')[1]
+      let s:other_signs_line_numbers[lnum] = 1
     endif
   endfor
 endfunction
@@ -212,7 +212,7 @@ endfunction
 "  Functions -> s:sign_set()  {{{2
 function! s:sign_set(lnum, type, path)
   " Preserve non-signify signs
-  if get(s:other_signs_line_numbers, a:lnum) == 1
+  if !s:sign_overwrite && has_key(s:other_signs_line_numbers, a:lnum)
     return
   endif
 
