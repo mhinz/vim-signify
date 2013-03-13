@@ -111,7 +111,10 @@ augroup signify
     autocmd CursorHoldI * write | call s:start(resolve(expand('<afile>:p')))
   endif
   autocmd ColorScheme * call s:colors_set()
-  autocmd BufWritePost,BufEnter,FocusGained * call s:start(resolve(expand('<afile>:p')))
+  autocmd BufWritePost,BufEnter * call s:start(resolve(expand('<afile>:p')))
+  if !(has("gui_win32 ))
+    autocmd FocusGained * call s:start(resolve(expand('<afile>:p')))
+  endif
 augroup END
 
 com! -nargs=0 -bar SignifyToggle          call s:toggle_signify()
