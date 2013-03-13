@@ -99,6 +99,8 @@ else
   sign define SignifyChangeDelete text=!_ texthl=SignifyChange linehl=none
 endif
 
+sign define SignifyPlaceholder text=~ texthl=SignifyChange linehl=none
+
 "  Initial stuff  {{{1
 augroup signify
   autocmd!
@@ -154,6 +156,7 @@ function! s:start(path) abort
     call s:sign_remove_all(a:path)
     let diff = s:repo_get_diff_{s:sy[a:path].type}(a:path)
     if empty(diff)
+      sign unplace 99999
       return
     endif
     let s:sy[a:path].id_top  = s:id_top
@@ -174,6 +177,7 @@ function! s:start(path) abort
   call s:repo_process_diff(a:path, diff)
 
   let s:sy[a:path].id_top = (s:id_top - 1)
+  sign unplace 99999
 endfunction
 
 "  Functions -> s:stop()  {{{2
@@ -183,6 +187,7 @@ function! s:stop(path) abort
   endif
 
   call s:sign_remove_all(a:path)
+  sign unplace 99999
 
   if (s:sy[a:path].active == 0)
     return
@@ -224,6 +229,8 @@ endfunction
 
 "  Functions -> s:sign_remove_all()  {{{2
 function! s:sign_remove_all(path) abort
+  exe 'sign place 99999 line=1 name=SignifyPlaceholder  file='. a:path
+
   for id in s:sy[a:path].ids
     exe 'sign unplace '. id
   endfor
