@@ -207,8 +207,8 @@ function! s:sign_get_others(path) abort
   redir END
 
   for line in split(signlist, '\n')
-    if line =~ '^\s\+line'
-      let lnum = matchlist(line, '\vline\=(\d+)')[1]
+    if line =~ '\v^\s+\w+'
+      let lnum = matchlist(line, '\v^\w+\=(\d+)')[1]
       let s:other_signs_line_numbers[lnum] = 1
     endif
   endfor
