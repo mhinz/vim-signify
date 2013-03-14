@@ -24,6 +24,26 @@ Features:
 
 Limits exist only in your mind! Vim on!
 
+## What about vim-gitgutter?
+
+To be honest, I don't understand why people always compare plugins like Sy to
+vim-gitgutter. I understand that it is by far the most known one, but primarily
+because it was featured on the Hacker News frontpage.
+
+Don't get me wrong, I don't intend to badmouth gitgutter, I even contributed to
+it once. (Granted, it was only a small fix.) And I'm glad about everyone
+contributing to the Vim community, but there are two important facts one should
+consider:
+
+1. There were other plugins providing the same functionality as gitgutter years
+   before its creation.
+
+1. Sy provides a superset of gitgutter.
+
+So here is the short answer: The main difference is Sy its support for version
+control systems other than git. Moreover, two of its design goals are speed and
+high configurability.
+
 ## Sign explanation
 
 **+**
