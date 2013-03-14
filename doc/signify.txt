@@ -53,10 +53,32 @@ version control system:
     - subversion
     - cvs
 
-The plugin defines 3 new kinds of signs and their corresponding highlighting
-classes. It tries to inherent existing colors from the LineNr class, if that
-fails, it sets its own colors. In case you don't like these colors, you can
-change them easily through variables.
+The plugin defines 4 new kinds of signs and their corresponding highlighting
+groups. It tries to inherent existing colors from the SignColumn group, if
+that fails, it sets its own colors. In case you don't like these colors, you
+can change them easily through variables.
+
+Sign explanation:
+
+    +
+
+A new line was added. The sign is shown on the same line as the new line.
+
+    _
+
+A line was deleted. The sign is shown on the line above the deleted line.
+Special case: The first line was deleted. In this case the sign is shown on
+the same line.
+
+    !
+
+A line was changed. Something was changed, but the amount of lines stayed the
+same. The sign is shown on the same line.
+
+    !_
+
+A line was changed and one or more of the lines below were deleted. A
+combination of ! and _. The sign is shown on the same line.
 
 
 ==============================================================================
