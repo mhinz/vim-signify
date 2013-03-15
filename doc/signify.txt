@@ -52,6 +52,7 @@ version control system:
     - bzr
     - subversion
     - cvs
+    - rcs
 
 The plugin defines 4 new kinds of signs and their corresponding highlighting
 groups. It tries to inherent existing colors from the SignColumn group, if

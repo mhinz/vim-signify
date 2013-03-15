@@ -251,7 +251,7 @@ function! s:repo_detect(path) abort
     echo 'signify: I cannot work without grep and diff!'
   endif
 
-  for type in [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'cvs' ]
+  for type in [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'cvs', 'rcs' ]
     let diff = s:repo_get_diff_{type}(a:path)
     if !empty(diff)
       return [ diff, type ]
@@ -319,6 +319,14 @@ endfunction
 function! s:repo_get_diff_cvs(path) abort
   if executable('cvs') && exists('g:signify_enable_cvs') && (g:signify_enable_cvs == 1)
     let diff = system('cvs diff -U0 -- '. a:path .' 2>&1 | grep "^@@ "')
+    return v:shell_error ? '' : diff
+  endif
+endfunction
+
+"  Functions -> s:repo_get_diff_rcs  {{{2
+function! s:repo_get_diff_rcs(path) abort
+  if executable('rcs')
+    let diff = system('rcsdiff -U0 '. a:path .' 2>/dev/null | grep "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction

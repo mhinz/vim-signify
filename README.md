@@ -9,7 +9,7 @@ It's fast, highly configurable and well documented.
 
 Features:
 
-- supports git, mercurial, darcs, bazaar, subversion, cvs
+- supports git, mercurial, darcs, bazaar, subversion, cvs, rcs
 - quick jumping between changed lines
 - apart from signs there is also optional line highlighting
 - fully configurable through global variables (options and mappings)
@@ -64,7 +64,7 @@ A line was changed and one or more of the lines below were deleted. A combinatio
 
 ## Longer introduction
 
-#### supports git, mercurial, darcs, bazaar, subversion, cvs
+#### supports several version control systems
 
 This plugin is based on the diffing features of the supported version control
 systems. Since not all VCS support the same options, sometimes we have to fall
@@ -78,6 +78,7 @@ Current the following VCS are supported:
 - darcs
 - subversion (svn)
 - cvs
+- rcs
 
 Note: CVS detection is disabled by default, because it can lead to considerable
 delay if the current repo is not a CVS one and the environment variable $CVSROOT
