@@ -31,11 +31,9 @@ endif
 let g:loaded_signify = 1
 
 "  Default values  {{{1
-let s:line_highlight           = 0   " disable line highlighting
-let s:colors_set               = 0   " do colors have to be reset?
-
-let s:other_signs_line_numbers = {}  " holds IDs of other signs
-let s:sy                       = {}  " the main data structure
+let s:line_highlight = 0   " disable line highlighting
+let b:colors_set     = 0   " do colors have to be reset?
+let s:sy             = {}  " the main data structure
 
 " overwrite non-signify signs by default
 let s:sign_overwrite = exists('g:signify_sign_overwrite') ? g:signify_sign_overwrite : 1
@@ -117,14 +115,15 @@ augroup signify
     autocmd FocusGained * call s:start(resolve(expand('<afile>:p')))
   endif
 
-  autocmd ColorScheme * call s:colors_set()
-  autocmd BufWritePost,BufEnter * call s:start(resolve(expand('<afile>:p')))
+  autocmd ColorScheme  * call s:colors_set()
+  autocmd BufWritePost * call s:start(resolve(expand('<afile>:p')))
+  autocmd BufEnter     * call s:colors_set() | call s:start(resolve(expand('<afile>:p')))
 augroup END
 
-com! -nargs=0 -bar SignifyToggle          call s:toggle_signify()
-com! -nargs=0 -bar SignifyToggleHighlight call s:toggle_line_highlighting()
-com! -nargs=0 -bar -count SignifyJumpToNextHunk call s:jump_to_next_hunk(<count>)
-com! -nargs=0 -bar -count SignifyJumpToPrevHunk call s:jump_to_prev_hunk(<count>)
+com! -nargs=0 -bar        SignifyToggle          call s:toggle_signify()
+com! -nargs=0 -bar        SignifyToggleHighlight call s:toggle_line_highlighting()
+com! -nargs=0 -bar -count SignifyJumpToNextHunk  call s:jump_to_next_hunk(<count>)
+com! -nargs=0 -bar -count SignifyJumpToPrevHunk  call s:jump_to_prev_hunk(<count>)
 
 "  Internal functions  {{{1
 "  Functions -> s:start()  {{{2
@@ -148,6 +147,7 @@ function! s:start(path) abort
       endif
     endfor
   endif
+
 
   " New buffer.. add to list.
   if !has_key(s:sy, a:path)
@@ -173,12 +173,6 @@ function! s:start(path) abort
 
   if !s:sign_overwrite
     call s:sign_get_others(a:path)
-  endif
-
-  " Set colors only for the first time or when a new colorscheme is set.
-  if !s:colors_set
-    call s:colors_set()
-    let s:colors_set = 1
   endif
 
   call s:repo_process_diff(a:path, diff)
