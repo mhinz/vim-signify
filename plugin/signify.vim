@@ -32,7 +32,7 @@ let g:loaded_signify = 1
 
 "  Default values  {{{1
 let s:line_highlight = 0   " disable line highlighting
-let b:colors_set     = 0   " do colors have to be reset?
+let s:signmode       = 0
 let s:sy             = {}  " the main data structure
 
 " overwrite non-signify signs by default
@@ -116,8 +116,8 @@ augroup signify
   endif
 
   autocmd ColorScheme  * call s:colors_set()
-  autocmd BufWritePost * call s:start(resolve(expand('<afile>:p')))
   autocmd BufEnter     * call s:colors_set() | call s:start(resolve(expand('<afile>:p')))
+  autocmd BufWritePost * call s:start(resolve(expand('<afile>:p')))
 augroup END
 
 com! -nargs=0 -bar        SignifyToggle          call s:toggle_signify()
@@ -130,6 +130,10 @@ com! -nargs=0 -bar -count SignifyJumpToPrevHunk  call s:jump_to_prev_hunk(<count
 function! s:start(path) abort
   if empty(a:path) || !filereadable(a:path) || &ft == 'help'
     return
+  endif
+
+  if s:signmode
+    exe 'sign place 99999 line=1 name=SignifyPlaceholder  file='. a:path
   endif
 
   " Check for exceptions.
@@ -148,7 +152,6 @@ function! s:start(path) abort
     endfor
   endif
 
-
   " New buffer.. add to list.
   if !has_key(s:sy, a:path)
     let [ diff, type ] = s:repo_detect(a:path)
@@ -157,13 +160,16 @@ function! s:start(path) abort
     endif
     let s:sy[a:path] = { 'active': 1, 'type': type, 'ids': [], 'id_jump': s:id_top, 'id_top': s:id_top, 'last_jump_was_next': -1 }
   " Inactive buffer.. bail out.
-  elseif s:sy[a:path].active == 0
+  elseif !s:sy[a:path].active
+    sign unplace 99999
+    let s:signmode = 0
     return
   else
     call s:sign_remove_all(a:path)
     let diff = s:repo_get_diff_{s:sy[a:path].type}(a:path)
     if empty(diff)
       sign unplace 99999
+      let s:signmode = 0
       return
     endif
     let s:sy[a:path].id_top  = s:id_top
@@ -177,8 +183,9 @@ function! s:start(path) abort
 
   call s:repo_process_diff(a:path, diff)
 
-  let s:sy[a:path].id_top = (s:id_top - 1)
   sign unplace 99999
+  let s:signmode = 1
+  let s:sy[a:path].id_top = (s:id_top - 1)
 endfunction
 
 "  Functions -> s:stop()  {{{2
@@ -188,9 +195,8 @@ function! s:stop(path) abort
   endif
 
   call s:sign_remove_all(a:path)
-  sign unplace 99999
 
-  if (s:sy[a:path].active == 0)
+  if !s:sy[a:path].active
     return
   else
     call remove(s:sy, a:path)
@@ -230,15 +236,13 @@ endfunction
 
 "  Functions -> s:sign_remove_all()  {{{2
 function! s:sign_remove_all(path) abort
-  exe 'sign place 99999 line=1 name=SignifyPlaceholder  file='. a:path
-
   for id in s:sy[a:path].ids
     exe 'sign unplace '. id
   endfor
 
   let s:other_signs_line_numbers = {}
-  let s:sy[a:path].ids = []
   let s:sy[a:path].id_jump = -1
+  let s:sy[a:path].ids = []
 endfunction
 
 "  Functions -> s:repo_detect()  {{{2
