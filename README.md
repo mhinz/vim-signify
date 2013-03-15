@@ -1,11 +1,11 @@
 # vim-signify
 
-Or just: sy
+Or just: __sy__
 
 Sy shows all added, deleted and modified lines since the last commit via Vim its
-sign column. It supports several version control systems.
+sign column. It __supports several version control systems__.
 
-It's fast, highly configurable and well documented.
+It's __fast__, __highly configurable__ and __well documented__.
 
 Features:
 
@@ -22,7 +22,14 @@ Features:
 
 ![Example:signify in action](https://github.com/mhinz/vim-signify/raw/master/signify.png)
 
-Limits exist only in your mind! Vim on!
+Limits exist only in your mind!
+
+## Feedback, please!
+
+If you use any of my plugins, star it on github. This is a great way of getting
+feedback! Same for issues or feature requests.
+
+Thank you for flying mhi airlines. Get the Vim on!
 
 ## What about vim-gitgutter?
 

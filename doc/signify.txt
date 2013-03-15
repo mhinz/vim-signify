@@ -211,9 +211,10 @@ around with Vim and especially VimL.
 
 My nick on Freenode IRC is mhi^.
 
-For latest developments:
+For latest developments: https://github.com/mhinz
 
-https://github.com/mhinz
+If you use any of my plugins, star it on github. This is a great way of
+getting feedback! Same for issues or feature requests.
 
 Thank you for flying mhi airlines. Get the Vim on!
 
