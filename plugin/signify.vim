@@ -267,7 +267,7 @@ function! s:repo_get_diff_git(path) abort
   if executable('git')
     let orig_dir = getcwd()
     exe 'cd '. fnamemodify(a:path, ':h')
-    let diff = system('git diff --no-ext-diff -U0 -- '. a:path .' | grep "^@@ "')
+    let diff = system('git diff --no-ext-diff -U0 -- '. a:path .' | grep --color=never "^@@ "')
     if !v:shell_error
       exe 'cd '. orig_dir
       return diff
@@ -280,7 +280,7 @@ endfunction
 "  Functions -> s:repo_get_diff_hg  {{{2
 function! s:repo_get_diff_hg(path) abort
   if executable('hg')
-    let diff = system('hg diff --nodates -U0 -- '. a:path .' | grep "^@@ "')
+    let diff = system('hg diff --nodates -U0 -- '. a:path .' | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -288,7 +288,7 @@ endfunction
 "  Functions -> s:repo_get_diff_svn  {{{2
 function! s:repo_get_diff_svn(path) abort
   if executable('svn')
-    let diff = system('svn diff --diff-cmd diff -x -U0 -- '. a:path .' | grep "^@@ "')
+    let diff = system('svn diff --diff-cmd diff -x -U0 -- '. a:path .' | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -296,7 +296,7 @@ endfunction
 "  Functions -> s:repo_get_diff_bzr  {{{2
 function! s:repo_get_diff_bzr(path) abort
   if executable('bzr')
-    let diff = system('bzr diff --using diff --diff-options=-U0 -- '. a:path .' | grep "^@@ "')
+    let diff = system('bzr diff --using diff --diff-options=-U0 -- '. a:path .' | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -306,7 +306,7 @@ function! s:repo_get_diff_darcs(path) abort
   if executable('darcs')
     let orig_dir = getcwd()
     exe 'cd '. fnamemodify(a:path, ':h')
-    let diff = system('darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. a:path .' | grep "^@@ "')
+    let diff = system('darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. a:path .' | grep --color=never "^@@ "')
     if !v:shell_error
       exe 'cd '. orig_dir
       return diff
@@ -319,7 +319,7 @@ endfunction
 "  Functions -> s:repo_get_diff_cvs  {{{2
 function! s:repo_get_diff_cvs(path) abort
   if executable('cvs') && exists('g:signify_enable_cvs') && (g:signify_enable_cvs == 1)
-    let diff = system('cvs diff -U0 -- '. a:path .' 2>&1 | grep "^@@ "')
+    let diff = system('cvs diff -U0 -- '. a:path .' 2>&1 | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -327,7 +327,7 @@ endfunction
 "  Functions -> s:repo_get_diff_rcs  {{{2
 function! s:repo_get_diff_rcs(path) abort
   if executable('rcs')
-    let diff = system('rcsdiff -U0 '. a:path .' 2>/dev/null | grep "^@@ "')
+    let diff = system('rcsdiff -U0 '. a:path .' 2>/dev/null | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -337,7 +337,7 @@ function! s:repo_process_diff(path, diff) abort
   " Determine where we have to put our signs.
   for line in split(a:diff, '\n')
     " Parse diff output.
-    let tokens = matchlist(line, '\v^\@\@ -(\d+),?(\d*) \+(\d+),?(\d*)')
+    let tokens = matchlist(line, '^\v\@\@ -(\d+),?(\d*) \+(\d+),?(\d*)')
     if empty(tokens)
       echo 'signify: I cannot parse this line "'. line .'"'
       return
