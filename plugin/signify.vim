@@ -34,6 +34,7 @@ let g:loaded_signify = 1
 let s:line_highlight = 0   " disable line highlighting
 let s:signmode       = 0
 let s:sy             = {}  " the main data structure
+let s:other_signs_line_numbers = {}
 
 " overwrite non-signify signs by default
 let s:sign_overwrite = exists('g:signify_sign_overwrite') ? g:signify_sign_overwrite : 1
@@ -115,9 +116,9 @@ augroup signify
     autocmd FocusGained * call s:start(resolve(expand('<afile>:p')))
   endif
 
-  autocmd ColorScheme  * call s:colors_set()
-  autocmd BufEnter     * call s:colors_set() | call s:start(resolve(expand('<afile>:p')))
-  autocmd BufWritePost * call s:start(resolve(expand('<afile>:p')))
+  autocmd ColorScheme       * call s:colors_set()
+  autocmd VimEnter,BufEnter * call s:colors_set() | call s:start(resolve(expand('<afile>:p')))
+  autocmd BufWritePost      * call s:start(resolve(expand('<afile>:p')))
 augroup END
 
 com! -nargs=0 -bar        SignifyToggle          call s:toggle_signify()
@@ -215,7 +216,7 @@ function! s:sign_get_others(path) abort
 
   for line in split(signlist, '\n')
     if line =~ '\v^\s+\w+'
-      let lnum = matchlist(line, '\v^\w+\=(\d+)')[1]
+      let lnum = matchlist(line, '\v^\s+\w+\=(\d+)')[1]
       let s:other_signs_line_numbers[lnum] = 1
     endif
   endfor
