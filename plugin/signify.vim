@@ -395,6 +395,8 @@ function! s:colors_set() abort
   if has('gui_running')
     if exists('g:signify_sign_color_guibg')
       let guibg = g:signify_sign_color_guibg
+    elseif exists('g:signify_sign_color_inherit_from_linenr')
+      let guibg = synIDattr(hlID('LineNr'), 'bg', 'gui')
     endif
 
     if !exists('guibg')
@@ -408,7 +410,7 @@ function! s:colors_set() abort
       if empty(guibg) || guibg < 0
         exe 'hi SignifyAdd gui=bold guifg='. guifg_add
       else
-        exe 'hi SignifyAdd gui=bold guifg='. guifg_add    .' guibg='. guibg
+        exe 'hi SignifyAdd gui=bold guifg='. guifg_add .' guibg='. guibg
       endif
     endif
 
@@ -436,6 +438,8 @@ function! s:colors_set() abort
   else
     if exists('g:signify_sign_color_ctermbg')
       let ctermbg = g:signify_sign_color_ctermbg
+    elseif exists('g:signify_sign_color_inherit_from_linenr')
+      let guibg = synIDattr(hlID('LineNr'), 'bg', 'cterm')
     endif
 
     if !exists('ctermbg')
@@ -449,7 +453,7 @@ function! s:colors_set() abort
       if empty(ctermbg) || ctermbg < 0
         exe 'hi SignifyAdd cterm=bold ctermfg='. ctermfg_add
       else
-        exe 'hi SignifyAdd cterm=bold ctermfg='. ctermfg_add    .' ctermbg='. ctermbg
+        exe 'hi SignifyAdd cterm=bold ctermfg='. ctermfg_add .' ctermbg='. ctermbg
       endif
     endif
 
