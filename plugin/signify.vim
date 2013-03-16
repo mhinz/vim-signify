@@ -116,9 +116,8 @@ augroup signify
     autocmd FocusGained * call s:start(resolve(expand('<afile>:p')))
   endif
 
-  autocmd ColorScheme       * call s:colors_set()
-  autocmd VimEnter,BufEnter * call s:colors_set() | call s:start(resolve(expand('<afile>:p')))
-  autocmd BufWritePost      * call s:start(resolve(expand('<afile>:p')))
+  autocmd VimEnter,ColorScheme  * call s:colors_set()
+  autocmd BufEnter,BufWritePost * call s:start(resolve(expand('<afile>:p')))
 augroup END
 
 com! -nargs=0 -bar        SignifyToggle          call s:toggle_signify()
