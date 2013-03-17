@@ -105,19 +105,19 @@ augroup signify
   autocmd!
 
   if exists('g:signify_cursorhold_normal') && (g:signify_cursorhold_normal == 1)
-    autocmd CursorHold * write | call s:start(resolve(expand('<afile>:p')))
+    autocmd CursorHold * write | call s:start(shellescape(resolve(expand('<afile>:p'))))
   endif
 
   if exists('g:signify_cursorhold_insert') && (g:signify_cursorhold_insert == 1)
-    autocmd CursorHoldI * write | call s:start(resolve(expand('<afile>:p')))
+    autocmd CursorHoldI * write | call s:start(shellescape(resolve(expand('<afile>:p'))))
   endif
 
   if !has('gui_win32')
-    autocmd FocusGained * call s:start(resolve(expand('<afile>:p')))
+    autocmd FocusGained * call s:start(shellescape(resolve(expand('<afile>:p'))))
   endif
 
   autocmd VimEnter,ColorScheme  * call s:colors_set()
-  autocmd BufEnter,BufWritePost * call s:start(resolve(expand('<afile>:p')))
+  autocmd BufEnter,BufWritePost * call s:start(shellescape(resolve(expand('<afile>:p'))))
 augroup END
 
 com! -nargs=0 -bar        SignifyToggle          call s:toggle_signify()
@@ -133,7 +133,7 @@ function! s:start(path) abort
   endif
 
   if s:signmode
-    exe 'sign place 99999 line=1 name=SignifyPlaceholder  file='. a:path
+    exe 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
   endif
 
   " Check for exceptions.
@@ -479,7 +479,7 @@ endfunction
 
 "  Functions -> s:toggle_signify()  {{{2
 function! s:toggle_signify() abort
-  let path = resolve(expand('%:p'))
+  let path = shellescape(resolve(expand('%:p')))
 
   if empty(path)
     echo "signify: I don't sy empty buffers!"
@@ -520,12 +520,12 @@ function! s:toggle_line_highlighting() abort
 
     let s:line_highlight = 1
   endif
-  call s:start(resolve(expand('%:p')))
+  call s:start(shellescape(resolve(expand('%:p'))))
 endfunction
 
 "  Functions -> s:jump_to_next_hunk()  {{{2
 function! s:jump_to_next_hunk(count)
-  let path = resolve(expand('%:p'))
+  let path = shellescape(resolve(expand('%:p')))
 
   if !has_key(s:sy, path) || s:sy[path].id_jump == -1
     echo "signify: I cannot detect any changes!"
@@ -550,7 +550,7 @@ endfunction
 
 "  Functions -> s:jump_to_prev_hunk()  {{{2
 function! s:jump_to_prev_hunk(count)
-  let path = resolve(expand('%:p'))
+  let path = shellescape(resolve(expand('%:p')))
 
   if !has_key(s:sy, path) || s:sy[path].id_jump == -1
     echo "signify: I cannot detect any changes!"
