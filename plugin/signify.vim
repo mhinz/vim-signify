@@ -397,9 +397,7 @@ function! s:colors_set() abort
       let guibg = g:signify_sign_color_guibg
     elseif exists('g:signify_sign_color_inherit_from_linenr')
       let guibg = synIDattr(hlID('LineNr'), 'bg', 'gui')
-    endif
-
-    if !exists('guibg')
+    else
       let guibg = synIDattr(hlID('SignColumn'), 'bg', 'gui')
     endif
 
@@ -439,10 +437,8 @@ function! s:colors_set() abort
     if exists('g:signify_sign_color_ctermbg')
       let ctermbg = g:signify_sign_color_ctermbg
     elseif exists('g:signify_sign_color_inherit_from_linenr')
-      let guibg = synIDattr(hlID('LineNr'), 'bg', 'cterm')
-    endif
-
-    if !exists('ctermbg')
+      let ctermbg = synIDattr(hlID('LineNr'), 'bg', 'cterm')
+    else
       let ctermbg = synIDattr(hlID('SignColumn'), 'bg', 'cterm')
     endif
 

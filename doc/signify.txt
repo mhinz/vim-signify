@@ -161,7 +161,7 @@ The highlight groups to use with line highlighting.
 
     let g:signify_sign_color_inherit_from_linenr = 1
 
-Make SignColumn use the same color as LineNr.
+Make signs use the same background color as LineNr.
 
 
     let g:signify_enable_cvs = 1
