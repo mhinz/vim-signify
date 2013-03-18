@@ -105,11 +105,11 @@ augroup signify
   autocmd!
 
   if exists('g:signify_cursorhold_normal') && (g:signify_cursorhold_normal == 1)
-    autocmd CursorHold * write | call s:start(resolve(expand('<afile>:p')))
+    autocmd CursorHold * write | call s:start(s:file)
   endif
 
   if exists('g:signify_cursorhold_insert') && (g:signify_cursorhold_insert == 1)
-    autocmd CursorHoldI * write | call s:start(resolve(expand('<afile>:p')))
+    autocmd CursorHoldI * write | call s:start(s:file)
   endif
 
   if !has('gui_win32')
@@ -117,7 +117,8 @@ augroup signify
   endif
 
   autocmd VimEnter,ColorScheme  * call s:colors_set()
-  autocmd BufEnter,BufWritePost * call s:start(resolve(expand('<afile>:p')))
+  autocmd BufEnter              * let s:file = resolve(expand('<afile>:p'))
+  autocmd BufEnter,BufWritePost * call s:start(s:file)
 augroup END
 
 com! -nargs=0 -bar        SignifyToggle          call s:toggle_signify()
@@ -479,20 +480,18 @@ endfunction
 
 "  Functions -> s:toggle_signify()  {{{2
 function! s:toggle_signify() abort
-  let path = resolve(expand('%:p'))
-
-  if empty(path)
+  if empty(s:path)
     echo "signify: I don't sy empty buffers!"
     return
   endif
 
-  if has_key(s:sy, path)
-    if (s:sy[path].active == 1)
-      let s:sy[path].active = 0
-      call s:stop(path)
+  if has_key(s:sy, s:path)
+    if (s:sy[s:path].active == 1)
+      let s:sy[s:path].active = 0
+      call s:stop(s:path)
     else
-      let s:sy[path].active = 1
-      call s:start(path)
+      let s:sy[s:path].active = 1
+      call s:start(s:path)
     endif
   endif
 endfunction
@@ -520,57 +519,53 @@ function! s:toggle_line_highlighting() abort
 
     let s:line_highlight = 1
   endif
-  call s:start(resolve(expand('%:p')))
+  call s:start(s:file)
 endfunction
 
 "  Functions -> s:jump_to_next_hunk()  {{{2
 function! s:jump_to_next_hunk(count)
-  let path = resolve(expand('%:p'))
-
-  if !has_key(s:sy, path) || s:sy[path].id_jump == -1
+  if !has_key(s:sy, s:path) || s:sy[s:path].id_jump == -1
     echo "signify: I cannot detect any changes!"
     return
   endif
 
-  if s:sy[path].last_jump_was_next == 0
-    let s:sy[path].id_jump += 2
+  if s:sy[s:path].last_jump_was_next == 0
+    let s:sy[s:path].id_jump += 2
   endif
 
-  let s:sy[path].id_jump += a:count ? (a:count - 1) : 0
+  let s:sy[s:path].id_jump += a:count ? (a:count - 1) : 0
 
-  if s:sy[path].id_jump > s:sy[path].id_top
-    let s:sy[path].id_jump = s:sy[path].ids[0]
+  if s:sy[s:path].id_jump > s:sy[s:path].id_top
+    let s:sy[s:path].id_jump = s:sy[s:path].ids[0]
   endif
 
-  execute 'sign jump '. s:sy[path].id_jump .' file='. path
+  execute 'sign jump '. s:sy[s:path].id_jump .' file='. s:path
 
-  let s:sy[path].id_jump += 1
-  let s:sy[path].last_jump_was_next = 1
+  let s:sy[s:path].id_jump += 1
+  let s:sy[s:path].last_jump_was_next = 1
 endfunction
 
 "  Functions -> s:jump_to_prev_hunk()  {{{2
 function! s:jump_to_prev_hunk(count)
-  let path = resolve(expand('%:p'))
-
-  if !has_key(s:sy, path) || s:sy[path].id_jump == -1
+  if !has_key(s:sy, s:path) || s:sy[s:path].id_jump == -1
     echo "signify: I cannot detect any changes!"
     return
   endif
 
-  if s:sy[path].last_jump_was_next == 1
-    let s:sy[path].id_jump -= 2
+  if s:sy[s:path].last_jump_was_next == 1
+    let s:sy[s:path].id_jump -= 2
   endif
 
-  let s:sy[path].id_jump -= a:count ? (a:count - 1) : 0
+  let s:sy[s:path].id_jump -= a:count ? (a:count - 1) : 0
 
-  if s:sy[path].id_jump < s:sy[path].ids[0]
-    let s:sy[path].id_jump = s:sy[path].id_top
+  if s:sy[s:path].id_jump < s:sy[s:path].ids[0]
+    let s:sy[s:path].id_jump = s:sy[s:path].id_top
   endif
 
-  execute 'sign jump '. s:sy[path].id_jump .' file='. path
+  execute 'sign jump '. s:sy[s:path].id_jump .' file='. s:path
 
-  let s:sy[path].id_jump -= 1
-  let s:sy[path].last_jump_was_next = 0
+  let s:sy[s:path].id_jump -= 1
+  let s:sy[s:path].last_jump_was_next = 0
 endfunction
 
 "  Functions -> SignifyDebugListActiveBuffers()  {{{2
