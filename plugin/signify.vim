@@ -133,7 +133,7 @@ function! s:start(path) abort
   endif
 
   if s:signmode
-    exe 'sign place 99999 line=1 name=SignifyPlaceholder  file='. a:path
+    exe 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
   endif
 
   " Check for exceptions.
@@ -264,9 +264,9 @@ endfunction
 "  Functions -> s:repo_get_diff_git  {{{2
 function! s:repo_get_diff_git(path) abort
   if executable('git')
-    let orig_dir = getcwd()
-    exe 'cd '. fnamemodify(a:path, ':h')
-    let diff = system('git diff --no-ext-diff -U0 -- '. a:path .' | grep --color=never "^@@ "')
+    let orig_dir = fnameescape(getcwd())
+    exe 'cd '. fnameescape(fnamemodify(a:path, ':h'))
+    let diff = system('git diff --no-ext-diff -U0 -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
     if !v:shell_error
       exe 'cd '. orig_dir
       return diff
@@ -303,9 +303,9 @@ endfunction
 "  Functions -> s:repo_get_diff_darcs  {{{2
 function! s:repo_get_diff_darcs(path) abort
   if executable('darcs')
-    let orig_dir = getcwd()
-    exe 'cd '. fnamemodify(a:path, ':h')
-    let diff = system('darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. a:path .' | grep --color=never "^@@ "')
+    let orig_dir = fnameescape(getcwd())
+    exe 'cd '. fnameescape(fnamemodify(a:path, ':h'))
+    let diff = system('darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
     if !v:shell_error
       exe 'cd '. orig_dir
       return diff
