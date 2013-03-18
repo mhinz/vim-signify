@@ -44,56 +44,56 @@ let s:id_top   = s:id_start
 
 "  Default mappings  {{{1
 if exists('g:signify_mapping_next_hunk')
-  exe 'nnoremap '. g:signify_mapping_next_hunk .' :<c-u>exe v:count ."SignifyJumpToNextHunk"<cr>'
+  execute 'nnoremap '. g:signify_mapping_next_hunk .' :<c-u>execute v:count ."SignifyJumpToNextHunk"<cr>'
 else
-  nnoremap <leader>gj :<c-u>exe v:count .'SignifyJumpToNextHunk'<cr>
+  nnoremap <leader>gj :<c-u>execute v:count .'SignifyJumpToNextHunk'<cr>
 endif
 
 if exists('g:signify_mapping_prev_hunk')
-  exe 'nnoremap '. g:signify_mapping_prev_hunk .' :<c-u>exe v:count ."SignifyJumpToPrevHunk"<cr>'
+  execute 'nnoremap '. g:signify_mapping_prev_hunk .' :<c-u>execute v:count ."SignifyJumpToPrevHunk"<cr>'
 else
-  nnoremap <leader>gk :<c-u>exe v:count .'SignifyJumpToPrevHunk'<cr>
+  nnoremap <leader>gk :<c-u>execute v:count .'SignifyJumpToPrevHunk'<cr>
 endif
 
 if exists('g:signify_mapping_toggle_highlight')
-  exe 'nnoremap '. g:signify_mapping_toggle_highlight .' :SignifyToggleHighlight<cr>'
+  execute 'nnoremap '. g:signify_mapping_toggle_highlight .' :SignifyToggleHighlight<cr>'
 else
   nnoremap <leader>gh :SignifyToggleHighlight<cr>
 endif
 
 if exists('g:signify_mapping_toggle')
-  exe 'nnoremap '. g:signify_mapping_toggle .' :SignifyToggle<cr>'
+  execute 'nnoremap '. g:signify_mapping_toggle .' :SignifyToggle<cr>'
 else
   nnoremap <leader>gt :SignifyToggle<cr>
 endif
 
 "  Default signs  {{{1
 if exists('g:signify_sign_add')
-  exe 'sign define SignifyAdd text='. g:signify_sign_add .' texthl=SignifyAdd linehl=none'
+  execute 'sign define SignifyAdd text='. g:signify_sign_add .' texthl=SignifyAdd linehl=none'
 else
   sign define SignifyAdd text=+ texthl=SignifyAdd linehl=none
 endif
 
 if exists('g:signify_sign_delete')
-  exe 'sign define SignifyDelete text='. g:signify_sign_delete .' texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyDelete text='. g:signify_sign_delete .' texthl=SignifyDelete linehl=none'
 else
   sign define SignifyDelete text=_ texthl=SignifyDelete linehl=none
 endif
 
 if exists('g:signify_sign_delete_first_line')
-  exe 'sign define SignifyDeleteFirstLine text='. g:signify_sign_delete_first_line .' texthl=SignifyDeleteFirstLine linehl=none'
+  execute 'sign define SignifyDeleteFirstLine text='. g:signify_sign_delete_first_line .' texthl=SignifyDeleteFirstLine linehl=none'
 else
   sign define SignifyDeleteFirstLine text=‾ texthl=SignifyDelete linehl=none
 endif
 
 if exists('g:signify_sign_change')
-  exe 'sign define SignifyChange text='. g:signify_sign_change .' texthl=SignifyChange linehl=none'
+  execute 'sign define SignifyChange text='. g:signify_sign_change .' texthl=SignifyChange linehl=none'
 else
   sign define SignifyChange text=! texthl=SignifyChange linehl=none
 endif
 
 if exists('g:signify_sign_change_delete')
-  exe 'sign define SignifyChangeDelete text='. g:signify_sign_change_delete .' texthl=SignifyChange linehl=none'
+  execute 'sign define SignifyChangeDelete text='. g:signify_sign_change_delete .' texthl=SignifyChange linehl=none'
 else
   sign define SignifyChangeDelete text=!_ texthl=SignifyChange linehl=none
 endif
@@ -133,7 +133,7 @@ function! s:start(path) abort
   endif
 
   if s:signmode
-    exe 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
+    execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
   endif
 
   " Check for exceptions.
@@ -210,7 +210,7 @@ endfunction
 "  Functions -> s:sign_get_others()  {{{2
 function! s:sign_get_others(path) abort
   redir => signlist
-    sil! exe 'sign place file='. a:path
+    sil! execute 'sign place file='. a:path
   redir END
 
   for line in split(signlist, '\n')
@@ -229,7 +229,7 @@ function! s:sign_set(lnum, type, path)
   endif
 
   call add(s:sy[a:path].ids, s:id_top)
-  exe 'sign place '. s:id_top .' line='. a:lnum .' name='. a:type .' file='. a:path
+  execute 'sign place '. s:id_top .' line='. a:lnum .' name='. a:type .' file='. a:path
 
   let s:id_top += 1
 endfunction
@@ -237,7 +237,7 @@ endfunction
 "  Functions -> s:sign_remove_all()  {{{2
 function! s:sign_remove_all(path) abort
   for id in s:sy[a:path].ids
-    exe 'sign unplace '. id
+    execute 'sign unplace '. id
   endfor
 
   let s:other_signs_line_numbers = {}
@@ -265,13 +265,13 @@ endfunction
 function! s:repo_get_diff_git(path) abort
   if executable('git')
     let orig_dir = fnameescape(getcwd())
-    exe 'cd '. fnameescape(fnamemodify(a:path, ':h'))
+    execute 'cd '. fnameescape(fnamemodify(a:path, ':h'))
     let diff = system('git diff --no-ext-diff -U0 -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
     if !v:shell_error
-      exe 'cd '. orig_dir
+      execute 'cd '. orig_dir
       return diff
     endif
-    exe 'cd '. orig_dir
+    execute 'cd '. orig_dir
   endif
   return ''
 endfunction
@@ -304,13 +304,13 @@ endfunction
 function! s:repo_get_diff_darcs(path) abort
   if executable('darcs')
     let orig_dir = fnameescape(getcwd())
-    exe 'cd '. fnameescape(fnamemodify(a:path, ':h'))
+    execute 'cd '. fnameescape(fnamemodify(a:path, ':h'))
     let diff = system('darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
     if !v:shell_error
-      exe 'cd '. orig_dir
+      execute 'cd '. orig_dir
       return diff
     endif
-    exe 'cd '. orig_dir
+    execute 'cd '. orig_dir
   endif
   return ''
 endfunction
@@ -402,35 +402,35 @@ function! s:colors_set() abort
     endif
 
     if exists('g:signify_sign_color_group_add')
-      exe 'hi! link SignifyAdd '. g:signify_sign_color_group_add
+      execute 'hi! link SignifyAdd '. g:signify_sign_color_group_add
     else
       let guifg_add = exists('g:signify_sign_color_guifg_add') ? g:signify_sign_color_guifg_add : '#11ee11'
       if empty(guibg) || guibg < 0
-        exe 'hi SignifyAdd gui=bold guifg='. guifg_add
+        execute 'hi SignifyAdd gui=bold guifg='. guifg_add
       else
-        exe 'hi SignifyAdd gui=bold guifg='. guifg_add .' guibg='. guibg
+        execute 'hi SignifyAdd gui=bold guifg='. guifg_add .' guibg='. guibg
       endif
     endif
 
     if exists('g:signify_sign_color_group_delete')
-      exe 'hi! link SignifyDelete '. g:signify_sign_color_group_delete
+      execute 'hi! link SignifyDelete '. g:signify_sign_color_group_delete
     else
       let guifg_delete = exists('g:signify_sign_color_guifg_delete') ? g:signify_sign_color_guifg_delete : '#ee1111'
       if empty(guibg) || guibg < 0
-        exe 'hi SignifyDelete gui=bold guifg='. guifg_delete
+        execute 'hi SignifyDelete gui=bold guifg='. guifg_delete
       else
-        exe 'hi SignifyDelete gui=bold guifg='. guifg_delete .' guibg='. guibg
+        execute 'hi SignifyDelete gui=bold guifg='. guifg_delete .' guibg='. guibg
       endif
     endif
 
     if exists('g:signify_sign_color_group_change')
-      exe 'hi! link SignifyChange '. g:signify_sign_color_group_change
+      execute 'hi! link SignifyChange '. g:signify_sign_color_group_change
     else
       let guifg_change = exists('g:signify_sign_color_guifg_change') ? g:signify_sign_color_guifg_change : '#eeee11'
       if empty(guibg) || guibg < 0
-        exe 'hi SignifyChange gui=bold guifg='. guifg_change
+        execute 'hi SignifyChange gui=bold guifg='. guifg_change
       else
-        exe 'hi SignifyChange gui=bold guifg='. guifg_change .' guibg='. guibg
+        execute 'hi SignifyChange gui=bold guifg='. guifg_change .' guibg='. guibg
       endif
     endif
   else
@@ -443,35 +443,35 @@ function! s:colors_set() abort
     endif
 
     if exists('g:signify_sign_color_group_add')
-      exe 'hi! link SignifyAdd '. g:signify_sign_color_group_add
+      execute 'hi! link SignifyAdd '. g:signify_sign_color_group_add
     else
       let ctermfg_add = exists('g:signify_sign_color_ctermfg_add') ? g:signify_sign_color_ctermfg_add : 2
       if empty(ctermbg) || ctermbg < 0
-        exe 'hi SignifyAdd cterm=bold ctermfg='. ctermfg_add
+        execute 'hi SignifyAdd cterm=bold ctermfg='. ctermfg_add
       else
-        exe 'hi SignifyAdd cterm=bold ctermfg='. ctermfg_add .' ctermbg='. ctermbg
+        execute 'hi SignifyAdd cterm=bold ctermfg='. ctermfg_add .' ctermbg='. ctermbg
       endif
     endif
 
     if exists('g:signify_sign_color_group_delete')
-      exe 'hi! link SignifyDelete '. g:signify_sign_color_group_delete
+      execute 'hi! link SignifyDelete '. g:signify_sign_color_group_delete
     else
       let ctermfg_delete = exists('g:signify_sign_color_ctermfg_delete') ? g:signify_sign_color_ctermfg_delete : 1
       if empty(ctermbg) || ctermbg < 0
-        exe 'hi SignifyDelete cterm=bold ctermfg='. ctermfg_delete
+        execute 'hi SignifyDelete cterm=bold ctermfg='. ctermfg_delete
       else
-        exe 'hi SignifyDelete cterm=bold ctermfg='. ctermfg_delete .' ctermbg='. ctermbg
+        execute 'hi SignifyDelete cterm=bold ctermfg='. ctermfg_delete .' ctermbg='. ctermbg
       endif
     endif
 
     if exists('g:signify_sign_color_group_change')
-      exe 'hi! link SignifyChange '. g:signify_sign_color_group_change
+      execute 'hi! link SignifyChange '. g:signify_sign_color_group_change
     else
       let ctermfg_change = exists('g:signify_sign_color_ctermfg_change') ? g:signify_sign_color_ctermfg_change : 3
       if empty(ctermbg) || ctermbg < 0
-        exe 'hi SignifyChange cterm=bold ctermfg='. ctermfg_change
+        execute 'hi SignifyChange cterm=bold ctermfg='. ctermfg_change
       else
-        exe 'hi SignifyChange cterm=bold ctermfg='. ctermfg_change .' ctermbg='. ctermbg
+        execute 'hi SignifyChange cterm=bold ctermfg='. ctermfg_change .' ctermbg='. ctermbg
       endif
     endif
   endif
@@ -512,11 +512,11 @@ function! s:toggle_line_highlighting() abort
     let delete = exists('g:signify_line_color_delete') ? g:signify_line_color_delete : 'DiffDelete'
     let change = exists('g:signify_line_color_change') ? g:signify_line_color_change : 'DiffChange'
 
-    exe 'sign define SignifyAdd             text=+  texthl=SignifyAdd    linehl='. add
-    exe 'sign define SignifyChange          text=!  texthl=SignifyChange linehl='. change
-    exe 'sign define SignifyChangeDelete    text=!_ texthl=SignifyChange linehl='. change
-    exe 'sign define SignifyDelete          text=_  texthl=SignifyDelete linehl='. delete
-    exe 'sign define SignifyDeleteFirstLine text=‾  texthl=SignifyDelete linehl='. delete
+    execute 'sign define SignifyAdd             text=+  texthl=SignifyAdd    linehl='. add
+    execute 'sign define SignifyChange          text=!  texthl=SignifyChange linehl='. change
+    execute 'sign define SignifyChangeDelete    text=!_ texthl=SignifyChange linehl='. change
+    execute 'sign define SignifyDelete          text=_  texthl=SignifyDelete linehl='. delete
+    execute 'sign define SignifyDeleteFirstLine text=‾  texthl=SignifyDelete linehl='. delete
 
     let s:line_highlight = 1
   endif
@@ -542,7 +542,7 @@ function! s:jump_to_next_hunk(count)
     let s:sy[path].id_jump = s:sy[path].ids[0]
   endif
 
-  exe 'sign jump '. s:sy[path].id_jump .' file='. path
+  execute 'sign jump '. s:sy[path].id_jump .' file='. path
 
   let s:sy[path].id_jump += 1
   let s:sy[path].last_jump_was_next = 1
@@ -567,7 +567,7 @@ function! s:jump_to_prev_hunk(count)
     let s:sy[path].id_jump = s:sy[path].id_top
   endif
 
-  exe 'sign jump '. s:sy[path].id_jump .' file='. path
+  execute 'sign jump '. s:sy[path].id_jump .' file='. path
 
   let s:sy[path].id_jump -= 1
   let s:sy[path].last_jump_was_next = 0
