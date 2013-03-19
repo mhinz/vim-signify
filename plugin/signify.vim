@@ -187,6 +187,7 @@ function! s:start(path) abort
   sign unplace 99999
   let s:signmode = 1
   let s:sy[a:path].id_top = (s:id_top - 1)
+  let s:path = a:path
 endfunction
 
 "  Functions -> s:stop()  {{{2
