@@ -211,9 +211,6 @@ Default mapping:  <leader>gp
 ==============================================================================
 5. About the author                                           *signify-author*
 
-The author of signify is a lazy bum who somehow enjoys wasting time toying
-around with Vim and especially VimL.
-
 My nick on Freenode IRC is mhi^.
 
 For latest developments: https://github.com/mhinz
