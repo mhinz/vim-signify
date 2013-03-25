@@ -87,10 +87,6 @@ Current the following VCS are supported:
 - cvs
 - rcs
 
-Note: CVS detection is disabled by default, because it can lead to considerable
-delay if the current repo is not a CVS one and the environment variable $CVSROOT
-is set nevertheless because a remote connection could be made.
-
 #### quick jumping between changed lines
 
 There are mappings for jumping forth and back between changed lines (so-called
@@ -165,6 +161,8 @@ For more info: `:h signify-options`
 __NOTE__: The shown assignments are only examples, not defaults.
 
 ```vim
+let g:signify_vcs_list = [ 'git', 'hg' ]
+
 let g:signify_mapping_next_hunk = '<leader>gn'
 let g:signify_mapping_prev_hunk = '<leader>gp'
 

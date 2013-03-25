@@ -39,6 +39,8 @@ let s:other_signs_line_numbers = {}
 " overwrite non-signify signs by default
 let s:sign_overwrite = exists('g:signify_sign_overwrite') ? g:signify_sign_overwrite : 1
 
+let s:vcs_list = exists('g:signify_vcs_list') ? g:signify_vcs_list : [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'cvs', 'rcs' ]
+
 let s:id_start = 0x100
 let s:id_top   = s:id_start
 
@@ -204,9 +206,9 @@ function! s:stop(path) abort
     call remove(s:sy, a:path)
   endif
 
-  aug signify
-    au! * <buffer>
-  aug END
+  augroup signify
+    autocmd! * <buffer>
+  augroup END
 endfunction
 
 "  Functions -> s:sign_get_others()  {{{2
@@ -253,7 +255,7 @@ function! s:repo_detect(path) abort
     echo 'signify: I cannot work without grep and diff!'
   endif
 
-  for type in [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'cvs', 'rcs' ]
+  for type in s:vcs_list
     let diff = s:repo_get_diff_{type}(a:path)
     if !empty(diff)
       return [ diff, type ]
@@ -319,7 +321,7 @@ endfunction
 
 "  Functions -> s:repo_get_diff_cvs  {{{2
 function! s:repo_get_diff_cvs(path) abort
-  if executable('cvs') && exists('g:signify_enable_cvs') && (g:signify_enable_cvs == 1)
+  if executable('cvs')
     let diff = system('cvs diff -U0 -- '. a:path .' 2>&1 | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif

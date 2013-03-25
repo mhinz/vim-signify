@@ -89,6 +89,15 @@ Put these variables into your vimrc. The shown assignments are only examples,
 not defaults.
 
 
+    let g:signify_vcs_list = [ 'git', 'hg' ]
+
+A list of VCS to check for. This can improve buffer loading time since by
+default all supported VCS will be checked for.
+
+NOTE: This only happens once at buffer loading. Afterwards, the VCS will be
+remembered anyway.
+
+
     let g:signify_mapping_next_hunk = '<leader>gj'
     let g:signify_mapping_prev_hunk = '<leader>gk'
 
