@@ -44,6 +44,20 @@ let s:vcs_list = exists('g:signify_vcs_list') ? g:signify_vcs_list : [ 'git', 'h
 let s:id_start = 0x100
 let s:id_top   = s:id_start
 
+if has('win32')
+  if $VIMRUNTIME =~ ' '
+    let s:difftool = (&sh =~ '\<cmd') ? ('"'. $VIMRUNTIME .'\diff"') : (substitute($VIMRUNTIME, ' ', '" ', '') .'\diff"')
+  else
+    let s:difftool = $VIMRUNTIME .'\diff'
+  endif
+else
+  if !executable('diff')
+    echomsg 'signify: No diff tool found!'
+    finish
+  endif
+  let s:difftool = 'diff'
+endif
+
 "  Default mappings  {{{1
 if !maparg('[c', 'n')
   nnoremap <silent> ]c :<c-u>execute v:count .'SignifyJumpToNextHunk'<cr>
@@ -245,10 +259,6 @@ endfunction
 
 "  Functions -> s:repo_detect()  {{{1
 function! s:repo_detect(path) abort
-  if !executable('diff')
-    echo 'signify: I cannot work without diff!'
-  endif
-
   for type in s:vcs_list
     let diff = s:repo_get_diff_{type}(a:path)
     if !empty(diff)
@@ -278,7 +288,7 @@ endfunction
 "  Functions -> s:repo_get_diff_svn  {{{1
 function! s:repo_get_diff_svn(path) abort
   if executable('svn')
-    let diff = system('svn diff --diff-cmd diff -x -U0 -- '. shellescape(a:path))
+    let diff = system('svn diff --diff-cmd '. s:difftool .' -x -U0 -- '. shellescape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -286,7 +296,7 @@ endfunction
 "  Functions -> s:repo_get_diff_bzr  {{{1
 function! s:repo_get_diff_bzr(path) abort
   if executable('bzr')
-    let diff = system('bzr diff --using diff --diff-options=-U0 -- '. shellescape(a:path))
+    let diff = system('bzr diff --using '. s:difftool .' --diff-options=-U0 -- '. shellescape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -294,7 +304,7 @@ endfunction
 "  Functions -> s:repo_get_diff_darcs  {{{1
 function! s:repo_get_diff_darcs(path) abort
   if executable('darcs')
-    let diff = system('cd '. shellescape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. shellescape(a:path))
+    let diff = system('cd '. shellescape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="'. s:difftool .' -U0 %1 %2" -- '. shellescape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
