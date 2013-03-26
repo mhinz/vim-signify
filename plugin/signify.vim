@@ -133,8 +133,7 @@ com! -nargs=0 -bar        SignifyToggleHighlight call s:toggle_line_highlighting
 com! -nargs=0 -bar -count SignifyJumpToNextHunk  call s:jump_to_next_hunk(<count>)
 com! -nargs=0 -bar -count SignifyJumpToPrevHunk  call s:jump_to_prev_hunk(<count>)
 
-"  Internal functions  {{{1
-"  Functions -> s:start()  {{{2
+"  Functions -> s:start()  {{{1
 function! s:start(path) abort
   if empty(a:path) || !filereadable(a:path) || &ft == 'help'
     return
@@ -187,7 +186,7 @@ function! s:start(path) abort
   let s:sy[a:path].id_top = (s:id_top - 1)
 endfunction
 
-"  Functions -> s:stop()  {{{2
+"  Functions -> s:stop()  {{{1
 function! s:stop(path) abort
   if !has_key(s:sy, a:path)
     return
@@ -206,7 +205,7 @@ function! s:stop(path) abort
   augroup END
 endfunction
 
-"  Functions -> s:sign_get_others()  {{{2
+"  Functions -> s:sign_get_others()  {{{1
 function! s:sign_get_others(path) abort
   redir => signlist
     sil! execute 'sign place file='. a:path
@@ -220,7 +219,7 @@ function! s:sign_get_others(path) abort
   endfor
 endfunction
 
-"  Functions -> s:sign_set()  {{{2
+"  Functions -> s:sign_set()  {{{1
 function! s:sign_set(lnum, type, path)
   " Preserve non-signify signs
   if !s:sign_overwrite && has_key(s:other_signs_line_numbers, a:lnum)
@@ -233,7 +232,7 @@ function! s:sign_set(lnum, type, path)
   let s:id_top += 1
 endfunction
 
-"  Functions -> s:sign_remove_all()  {{{2
+"  Functions -> s:sign_remove_all()  {{{1
 function! s:sign_remove_all(path) abort
   for id in s:sy[a:path].ids
     execute 'sign unplace '. id
@@ -244,7 +243,7 @@ function! s:sign_remove_all(path) abort
   let s:sy[a:path].ids = []
 endfunction
 
-"  Functions -> s:repo_detect()  {{{2
+"  Functions -> s:repo_detect()  {{{1
 function! s:repo_detect(path) abort
   if !executable('grep') || !executable('diff')
     echo 'signify: I cannot work without grep and diff!'
@@ -260,7 +259,7 @@ function! s:repo_detect(path) abort
   return [ '', '' ]
 endfunction
 
-"  Functions -> s:repo_get_diff_git  {{{2
+"  Functions -> s:repo_get_diff_git  {{{1
 function! s:repo_get_diff_git(path) abort
   if executable('git')
     let diff = system('cd '. shellescape(fnamemodify(a:path, ':h')) .' && git diff --no-ext-diff -U0 -- '. shellescape(a:path) .' | grep --color=never "^@@ "')
@@ -268,7 +267,7 @@ function! s:repo_get_diff_git(path) abort
   endif
 endfunction
 
-"  Functions -> s:repo_get_diff_hg  {{{2
+"  Functions -> s:repo_get_diff_hg  {{{1
 function! s:repo_get_diff_hg(path) abort
   if executable('hg')
     let diff = system('hg diff --nodates -U0 -- '. shellescape(a:path) .' | grep --color=never "^@@ "')
@@ -276,7 +275,7 @@ function! s:repo_get_diff_hg(path) abort
   endif
 endfunction
 
-"  Functions -> s:repo_get_diff_svn  {{{2
+"  Functions -> s:repo_get_diff_svn  {{{1
 function! s:repo_get_diff_svn(path) abort
   if executable('svn')
     let diff = system('svn diff --diff-cmd diff -x -U0 -- '. shellescape(a:path) .' | grep --color=never "^@@ "')
@@ -284,7 +283,7 @@ function! s:repo_get_diff_svn(path) abort
   endif
 endfunction
 
-"  Functions -> s:repo_get_diff_bzr  {{{2
+"  Functions -> s:repo_get_diff_bzr  {{{1
 function! s:repo_get_diff_bzr(path) abort
   if executable('bzr')
     let diff = system('bzr diff --using diff --diff-options=-U0 -- '. shellescape(a:path) .' | grep --color=never "^@@ "')
@@ -292,7 +291,7 @@ function! s:repo_get_diff_bzr(path) abort
   endif
 endfunction
 
-"  Functions -> s:repo_get_diff_darcs  {{{2
+"  Functions -> s:repo_get_diff_darcs  {{{1
 function! s:repo_get_diff_darcs(path) abort
   if executable('darcs')
     let diff = system('cd '. shellescape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. shellescape(a:path) .' | grep --color=never "^@@ "')
@@ -300,7 +299,7 @@ function! s:repo_get_diff_darcs(path) abort
   endif
 endfunction
 
-"  Functions -> s:repo_get_diff_cvs  {{{2
+"  Functions -> s:repo_get_diff_cvs  {{{1
 function! s:repo_get_diff_cvs(path) abort
   if executable('cvs')
     let diff = system('cd '. shellescape(fnamemodify(a:path, ':h')) .' && cvs diff -U0 -- '. shellescape(fnamemodify(a:path, ':t')) .' | grep --color=never "^@@ "')
@@ -308,7 +307,7 @@ function! s:repo_get_diff_cvs(path) abort
   endif
 endfunction
 
-"  Functions -> s:repo_get_diff_rcs  {{{2
+"  Functions -> s:repo_get_diff_rcs  {{{1
 function! s:repo_get_diff_rcs(path) abort
   if executable('rcs')
     let diff = system('rcsdiff -U0 '. shellescape(a:path) .' 2>/dev/null | grep --color=never "^@@ "')
@@ -316,7 +315,7 @@ function! s:repo_get_diff_rcs(path) abort
   endif
 endfunction
 
-"  Functions -> s:repo_process_diff()  {{{2
+"  Functions -> s:repo_process_diff()  {{{1
 function! s:repo_process_diff(path, diff) abort
   " Determine where we have to put our signs.
   for line in split(a:diff, '\n')
@@ -375,7 +374,7 @@ function! s:repo_process_diff(path, diff) abort
   endfor
 endfunction
 
-"  Functions -> s:colors_set()  {{{2
+"  Functions -> s:colors_set()  {{{1
 function! s:colors_set() abort
   if has('gui_running')
     if exists('g:signify_sign_color_guibg')
@@ -462,7 +461,7 @@ function! s:colors_set() abort
   endif
 endfunction
 
-"  Functions -> s:toggle_signify()  {{{2
+"  Functions -> s:toggle_signify()  {{{1
 function! s:toggle_signify() abort
   if empty(s:path)
     echo 'signify: I cannot sy empty buffers!'
@@ -482,7 +481,7 @@ function! s:toggle_signify() abort
   endif
 endfunction
 
-"  Functions -> s:toggle_line_highlighting()  {{{2
+"  Functions -> s:toggle_line_highlighting()  {{{1
 function! s:toggle_line_highlighting() abort
   if !has_key(s:sy, s:path)
     echo 'signify: I cannot detect any changes!'
@@ -513,7 +512,7 @@ function! s:toggle_line_highlighting() abort
   call s:start(s:path)
 endfunction
 
-"  Functions -> s:jump_to_next_hunk()  {{{2
+"  Functions -> s:jump_to_next_hunk()  {{{1
 function! s:jump_to_next_hunk(count)
   if !has_key(s:sy, s:path) || s:sy[s:path].id_jump == -1
     echo 'signify: I cannot detect any changes!'
@@ -536,7 +535,7 @@ function! s:jump_to_next_hunk(count)
   let s:sy[s:path].last_jump_was_next = 1
 endfunction
 
-"  Functions -> s:jump_to_prev_hunk()  {{{2
+"  Functions -> s:jump_to_prev_hunk()  {{{1
 function! s:jump_to_prev_hunk(count)
   if !has_key(s:sy, s:path) || s:sy[s:path].id_jump == -1
     echo 'signify: I cannot detect any changes!'
@@ -559,7 +558,7 @@ function! s:jump_to_prev_hunk(count)
   let s:sy[s:path].last_jump_was_next = 0
 endfunction
 
-"  Functions -> SignifyDebugListActiveBuffers()  {{{2
+"  Functions -> SignifyDebugListActiveBuffers()  {{{1
 function! SignifyDebugListActiveBuffers() abort
   if len(s:sy) == 0
     echo 'No active buffers!'
