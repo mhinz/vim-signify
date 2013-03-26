@@ -239,6 +239,7 @@ People who contributed to sy. Format: Person (Github account)
 Jeremy Mack     (mutewinter)
 Chong Li        (chongli)
 Robin Munn      (rmunn)
+Martin Hoch     (rtwo)
 
 
 ==============================================================================
