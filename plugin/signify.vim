@@ -313,7 +313,9 @@ endfunction
 "  Functions -> s:repo_get_diff_cvs  {{{2
 function! s:repo_get_diff_cvs(path) abort
   if executable('cvs')
-    let diff = system('cvs diff -U0 -- '. a:path .' 2>&1 | grep --color=never "^@@ "')
+    let realFileName = fnamemodify(a:path, ':t')
+    let dir = fnamemodify(a:path, ":p:h")
+    let diff = system('cd '.dir.' && cvs diff -U0 -- '. realFileName .' 2>&1 | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
