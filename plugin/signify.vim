@@ -46,27 +46,27 @@ let s:id_top   = s:id_start
 
 "  Default mappings  {{{1
 if exists('g:signify_mapping_next_hunk')
-  execute 'nnoremap '. g:signify_mapping_next_hunk .' :<c-u>execute v:count ."SignifyJumpToNextHunk"<cr>'
+  execute 'nnoremap <silent> '. g:signify_mapping_next_hunk .' :<c-u>execute v:count ."SignifyJumpToNextHunk"<cr>'
 else
-  nnoremap <leader>gj :<c-u>execute v:count .'SignifyJumpToNextHunk'<cr>
+  nnoremap <silent> <leader>gj :<c-u>execute v:count .'SignifyJumpToNextHunk'<cr>
 endif
 
 if exists('g:signify_mapping_prev_hunk')
-  execute 'nnoremap '. g:signify_mapping_prev_hunk .' :<c-u>execute v:count ."SignifyJumpToPrevHunk"<cr>'
+  execute 'nnoremap <silent> '. g:signify_mapping_prev_hunk .' :<c-u>execute v:count ."SignifyJumpToPrevHunk"<cr>'
 else
-  nnoremap <leader>gk :<c-u>execute v:count .'SignifyJumpToPrevHunk'<cr>
+  nnoremap <silent> <leader>gk :<c-u>execute v:count .'SignifyJumpToPrevHunk'<cr>
 endif
 
 if exists('g:signify_mapping_toggle_highlight')
-  execute 'nnoremap '. g:signify_mapping_toggle_highlight .' :SignifyToggleHighlight<cr>'
+  execute 'nnoremap <silent> '. g:signify_mapping_toggle_highlight .' :SignifyToggleHighlight<cr>'
 else
-  nnoremap <leader>gh :SignifyToggleHighlight<cr>
+  nnoremap <silent> <leader>gh :SignifyToggleHighlight<cr>
 endif
 
 if exists('g:signify_mapping_toggle')
-  execute 'nnoremap '. g:signify_mapping_toggle .' :SignifyToggle<cr>'
+  execute 'nnoremap <silent> '. g:signify_mapping_toggle .' :SignifyToggle<cr>'
 else
-  nnoremap <leader>gt :SignifyToggle<cr>
+  nnoremap <silent> <leader>gt :SignifyToggle<cr>
 endif
 
 "  Default signs  {{{1
