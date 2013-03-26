@@ -207,14 +207,18 @@ Default mapping:  <leader>gh
 
     :SignifyJumpToNextHunk
 
-Jump to the next hunk.
-Default mapping:  <leader>gn
+Jump to the next hunk. There are two mappings available:
+
+Hardcoded mapping:     [c
+Configurable mapping:  <leader>gn
 
 
     :SignifyJumpToPrevHunk
 
-Jump to the previous hunk.  
-Default mapping:  <leader>gp
+Jump to the previous hunk. There are two mappings available:
+
+Hardcoded mapping:     ]c
+Configurable mapping:  <leader>gp
 
 
 ==============================================================================
