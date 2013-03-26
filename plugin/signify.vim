@@ -264,7 +264,7 @@ endfunction
 "  Functions -> s:repo_get_diff_git  {{{2
 function! s:repo_get_diff_git(path) abort
   if executable('git')
-    let diff = system('cd '. fnameescape(fnamemodify(a:path, ':h')) .' && git diff --no-ext-diff -U0 -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
+    let diff = system('cd '. shellescape(fnamemodify(a:path, ':h')) .' && git diff --no-ext-diff -U0 -- '. shellescape(a:path) .' | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -272,7 +272,7 @@ endfunction
 "  Functions -> s:repo_get_diff_hg  {{{2
 function! s:repo_get_diff_hg(path) abort
   if executable('hg')
-    let diff = system('hg diff --nodates -U0 -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
+    let diff = system('hg diff --nodates -U0 -- '. shellescape(a:path) .' | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -280,7 +280,7 @@ endfunction
 "  Functions -> s:repo_get_diff_svn  {{{2
 function! s:repo_get_diff_svn(path) abort
   if executable('svn')
-    let diff = system('svn diff --diff-cmd diff -x -U0 -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
+    let diff = system('svn diff --diff-cmd diff -x -U0 -- '. shellescape(a:path) .' | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -288,7 +288,7 @@ endfunction
 "  Functions -> s:repo_get_diff_bzr  {{{2
 function! s:repo_get_diff_bzr(path) abort
   if executable('bzr')
-    let diff = system('bzr diff --using diff --diff-options=-U0 -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
+    let diff = system('bzr diff --using diff --diff-options=-U0 -- '. shellescape(a:path) .' | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -296,7 +296,7 @@ endfunction
 "  Functions -> s:repo_get_diff_darcs  {{{2
 function! s:repo_get_diff_darcs(path) abort
   if executable('darcs')
-    let diff = system('cd '. fnameescape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
+    let diff = system('cd '. shellescape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. shellescape(a:path) .' | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -304,7 +304,7 @@ endfunction
 "  Functions -> s:repo_get_diff_cvs  {{{2
 function! s:repo_get_diff_cvs(path) abort
   if executable('cvs')
-    let diff = system('cd '. fnameescape(fnamemodify(a:path, ':h')) .' && cvs diff -U0 -- '. fnameescape(fnamemodify(a:path, ':t')) .' | grep --color=never "^@@ "')
+    let diff = system('cd '. shellescape(fnamemodify(a:path, ':h')) .' && cvs diff -U0 -- '. shellescape(fnamemodify(a:path, ':t')) .' | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -312,7 +312,7 @@ endfunction
 "  Functions -> s:repo_get_diff_rcs  {{{2
 function! s:repo_get_diff_rcs(path) abort
   if executable('rcs')
-    let diff = system('rcsdiff -U0 '. fnameescape(a:path) .' 2>/dev/null | grep --color=never "^@@ "')
+    let diff = system('rcsdiff -U0 '. shellescape(a:path) .' 2>/dev/null | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
