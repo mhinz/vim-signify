@@ -259,16 +259,9 @@ endfunction
 "  Functions -> s:repo_get_diff_git  {{{2
 function! s:repo_get_diff_git(path) abort
   if executable('git')
-    let orig_dir = fnameescape(getcwd())
-    execute 'cd '. fnameescape(fnamemodify(a:path, ':h'))
-    let diff = system('git diff --no-ext-diff -U0 -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
-    if !v:shell_error
-      execute 'cd '. orig_dir
-      return diff
-    endif
-    execute 'cd '. orig_dir
+    let diff = system('cd '. fnameescape(fnamemodify(a:path, ':h')) .' && git diff --no-ext-diff -U0 -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
+    return v:shell_error ? '' : diff
   endif
-  return ''
 endfunction
 
 "  Functions -> s:repo_get_diff_hg  {{{2
@@ -298,16 +291,9 @@ endfunction
 "  Functions -> s:repo_get_diff_darcs  {{{2
 function! s:repo_get_diff_darcs(path) abort
   if executable('darcs')
-    let orig_dir = fnameescape(getcwd())
-    execute 'cd '. fnameescape(fnamemodify(a:path, ':h'))
-    let diff = system('darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
-    if !v:shell_error
-      execute 'cd '. orig_dir
-      return diff
-    endif
-    execute 'cd '. orig_dir
+    let diff = system('cd '. fnameescape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="diff -U0 %1 %2" -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
+    return v:shell_error ? '' : diff
   endif
-  return ''
 endfunction
 
 "  Functions -> s:repo_get_diff_cvs  {{{2
