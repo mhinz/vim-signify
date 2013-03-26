@@ -139,20 +139,11 @@ function! s:start(path) abort
     execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
   endif
 
-  " Check for exceptions.
-  if exists('g:signify_exceptions_filetype')
-    for i in g:signify_exceptions_filetype
-      if i == &ft
-        return
-      endif
-    endfor
+  if exists('g:signify_skip_filetype') && has_key(g:signify_skip_filetype, &ft)
+    return
   endif
-  if exists('g:signify_exceptions_filename')
-    for i in g:signify_exceptions_filename
-      if i == a:path
-        return
-      endif
-    endfor
+  if exists('g:signify_skip_filename') && has_key(g:signify_skip_filename, a:path)
+    return
   endif
 
   " New buffer.. add to list.

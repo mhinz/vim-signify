@@ -15,7 +15,7 @@ Features:
 - fully configurable through global variables (options and mappings)
 - optional preserving of signs from other plugins
 - you can toggle the plugin per buffer
-- exception lists for filetypes and filenames
+- skip certain filetypes and filenames
 - good documentation
 
 - quick developer response! :-)
@@ -126,16 +126,16 @@ it:
 let g:signify_mapping_toggle = '<leader>gt'
 ```
 
-#### exception lists for filetypes and filenames
+#### skip certain filetypes and filenames
 
 If you want to disable Sy for certain kinds of filename or file types,
-you explicitely have to create exception lists:
+you explicitely have to create "skip dicts":
 
 Example:
 
 ```vim
-let g:signify_exceptions_filetype = [ 'vim', 'c' ]
-let g:signify_exceptions_filename = [ '.vimrc' ]
+let g:signify_skip_filetype = { 'vim': 1, 'c': 1 }
+let g:signify_skip_filename = { '/home/user/.vimrc': 1 }
 ```
 
 #### good documentation
@@ -169,8 +169,8 @@ let g:signify_mapping_prev_hunk = '<leader>gp'
 let g:signify_mapping_toggle_highlight = '<leader>gh'
 let g:signify_mapping_toggle           = '<leader>gt'
 
-let g:signify_exceptions_filetype = [ 'vim', 'c' ]
-let g:signify_exceptions_filename = [ '.vimrc' ]
+let g:signify_skip_filetype = { 'vim': 1, 'c': 1 }
+let g:signify_skip_filename = { '/home/user/.vimrc': 1 }
 
 let g:signify_sign_overwrite = 1
 

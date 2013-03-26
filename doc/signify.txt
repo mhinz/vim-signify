@@ -114,8 +114,8 @@ Mapping for toggling line highlighting for lines containing changes.
 Mapping for toggling the plugin for the current buffer only.
 
 
-    let g:signify_exceptions_filetype = [ 'vim', 'c' ]
-    let g:signify_exceptions_filename = [ '.vimrc' ]
+    let g:signify_skip_filetype = { 'vim': 1, 'c': 1 }
+    let g:signify_skip_filename = { '/home/user/.vimrc': 1 }
 
 Don't activate the plugin for these filetypes and/or filenames.
 
