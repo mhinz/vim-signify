@@ -100,7 +100,7 @@ let g:signify_mapping_prev_hunk = '<leader>gk'
 Note: In case you don't know about the mapleader, have a look at `:h mapleader`.
 The default is the '\' button.
 
-Following Vim conventions you can also use __[c__ and __]c__.
+Following Vim conventions you can also use __]c__ and __[c__.
 
 #### apart from signs there is also optional line highlighting
 

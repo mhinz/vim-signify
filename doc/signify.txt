@@ -209,7 +209,7 @@ Default mapping:  <leader>gh
 
 Jump to the next hunk. There are two mappings available:
 
-Hardcoded mapping:     [c
+Hardcoded mapping:     ]c
 Configurable mapping:  <leader>gj
 
 
@@ -217,7 +217,7 @@ Configurable mapping:  <leader>gj
 
 Jump to the previous hunk. There are two mappings available:
 
-Hardcoded mapping:     ]c
+Hardcoded mapping:     [c
 Configurable mapping:  <leader>gk
 
 

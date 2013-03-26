@@ -46,8 +46,8 @@ let s:id_top   = s:id_start
 
 "  Default mappings  {{{1
 if !maparg('[c', 'n')
-  nnoremap <silent> [c :<c-u>execute v:count .'SignifyJumpToNextHunk'<cr>
-  nnoremap <silent> ]c :<c-u>execute v:count .'SignifyJumpToPrevHunk'<cr>
+  nnoremap <silent> ]c :<c-u>execute v:count .'SignifyJumpToNextHunk'<cr>
+  nnoremap <silent> [c :<c-u>execute v:count .'SignifyJumpToPrevHunk'<cr>
 endif
 
 if exists('g:signify_mapping_next_hunk')
