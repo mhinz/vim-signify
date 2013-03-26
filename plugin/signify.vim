@@ -112,11 +112,11 @@ augroup signify
   autocmd!
 
   if exists('g:signify_cursorhold_normal') && (g:signify_cursorhold_normal == 1)
-    autocmd CursorHold * write | call s:start(s:file)
+    autocmd CursorHold * write | call s:start(s:path)
   endif
 
   if exists('g:signify_cursorhold_insert') && (g:signify_cursorhold_insert == 1)
-    autocmd CursorHoldI * write | call s:start(s:file)
+    autocmd CursorHoldI * write | call s:start(s:path)
   endif
 
   if !has('gui_win32')
@@ -124,8 +124,8 @@ augroup signify
   endif
 
   autocmd VimEnter,ColorScheme  * call s:colors_set()
-  autocmd BufEnter              * let s:file = resolve(expand('<afile>:p'))
-  autocmd BufEnter,BufWritePost * call s:start(s:file)
+  autocmd BufEnter              * let s:path = resolve(expand('<afile>:p'))
+  autocmd BufEnter,BufWritePost * call s:start(s:path)
 augroup END
 
 com! -nargs=0 -bar        SignifyToggle          call s:toggle_signify()
@@ -185,7 +185,6 @@ function! s:start(path) abort
   sign unplace 99999
   let s:signmode = 1
   let s:sy[a:path].id_top = (s:id_top - 1)
-  let s:path = a:path
 endfunction
 
 "  Functions -> s:stop()  {{{2
@@ -466,7 +465,7 @@ endfunction
 "  Functions -> s:toggle_signify()  {{{2
 function! s:toggle_signify() abort
   if empty(s:path)
-    echo "signify: I don't sy empty buffers!"
+    echo 'signify: I cannot sy empty buffers!'
     return
   endif
 
@@ -478,11 +477,18 @@ function! s:toggle_signify() abort
       let s:sy[s:path].active = 1
       call s:start(s:path)
     endif
+  else
+    call s:start(s:path)
   endif
 endfunction
 
 "  Functions -> s:toggle_line_highlighting()  {{{2
 function! s:toggle_line_highlighting() abort
+  if !has_key(s:sy, s:path)
+    echo 'signify: I cannot detect any changes!'
+    return
+  endif
+
   if s:line_highlight
     sign define SignifyAdd             text=+  texthl=SignifyAdd    linehl=none
     sign define SignifyChange          text=!  texthl=SignifyChange linehl=none
@@ -504,13 +510,13 @@ function! s:toggle_line_highlighting() abort
 
     let s:line_highlight = 1
   endif
-  call s:start(s:file)
+  call s:start(s:path)
 endfunction
 
 "  Functions -> s:jump_to_next_hunk()  {{{2
 function! s:jump_to_next_hunk(count)
   if !has_key(s:sy, s:path) || s:sy[s:path].id_jump == -1
-    echo "signify: I cannot detect any changes!"
+    echo 'signify: I cannot detect any changes!'
     return
   endif
 
@@ -533,7 +539,7 @@ endfunction
 "  Functions -> s:jump_to_prev_hunk()  {{{2
 function! s:jump_to_prev_hunk(count)
   if !has_key(s:sy, s:path) || s:sy[s:path].id_jump == -1
-    echo "signify: I cannot detect any changes!"
+    echo 'signify: I cannot detect any changes!'
     return
   endif
 
