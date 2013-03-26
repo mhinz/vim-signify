@@ -267,7 +267,7 @@ endfunction
 "  Functions -> s:repo_get_diff_hg  {{{2
 function! s:repo_get_diff_hg(path) abort
   if executable('hg')
-    let diff = system('hg diff --nodates -U0 -- '. a:path .' | grep --color=never "^@@ "')
+    let diff = system('hg diff --nodates -U0 -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -275,7 +275,7 @@ endfunction
 "  Functions -> s:repo_get_diff_svn  {{{2
 function! s:repo_get_diff_svn(path) abort
   if executable('svn')
-    let diff = system('svn diff --diff-cmd diff -x -U0 -- '. a:path .' | grep --color=never "^@@ "')
+    let diff = system('svn diff --diff-cmd diff -x -U0 -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -283,7 +283,7 @@ endfunction
 "  Functions -> s:repo_get_diff_bzr  {{{2
 function! s:repo_get_diff_bzr(path) abort
   if executable('bzr')
-    let diff = system('bzr diff --using diff --diff-options=-U0 -- '. a:path .' | grep --color=never "^@@ "')
+    let diff = system('bzr diff --using diff --diff-options=-U0 -- '. fnameescape(a:path) .' | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -307,7 +307,7 @@ endfunction
 "  Functions -> s:repo_get_diff_rcs  {{{2
 function! s:repo_get_diff_rcs(path) abort
   if executable('rcs')
-    let diff = system('rcsdiff -U0 '. a:path .' 2>/dev/null | grep --color=never "^@@ "')
+    let diff = system('rcsdiff -U0 '. fnameescape(a:path) .' 2>/dev/null | grep --color=never "^@@ "')
     return v:shell_error ? '' : diff
   endif
 endfunction
