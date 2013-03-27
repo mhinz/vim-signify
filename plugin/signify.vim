@@ -563,7 +563,7 @@ endfunction
 
 "  Functions -> s:s:escape()  {{{1
 function s:escape(path) abort
-  if has('+shellslash')
+  if exists('+shellslash')
     let old_ssl = &shellslash
     set noshellslash
   endif
