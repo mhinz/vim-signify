@@ -225,11 +225,9 @@ function! s:sign_get_others(path) abort
     sil! execute 'sign place file='. a:path
   redir END
 
-  for line in split(signlist, '\n')
-    if line =~ '\v^\s+\w+'
-      let lnum = matchlist(line, '\v^\s+\w+\=(\d+)')[1]
-      let s:other_signs_line_numbers[lnum] = 1
-    endif
+  for line in filter(split(signlist, '\n'), 'v:val =~ "\v^\s+\w+"')
+    let lnum = matchlist(line, '\v^\s+\w+\=(\d+)')[1]
+    let s:other_signs_line_numbers[lnum] = 1
   endfor
 endfunction
 
@@ -328,19 +326,10 @@ endfunction
 "  Functions -> s:repo_process_diff()  {{{1
 function! s:repo_process_diff(path, diff) abort
   " Determine where we have to put our signs.
-  for line in split(a:diff, '\n')
-    " Parse diff output.
-    if line !~ '^@@'
-      continue
-    endif
-
+  for line in filter(split(a:diff, '\n'), 'v:val =~ "^@@"')
     let tokens = matchlist(line, '^\v\@\@ -(\d+),?(\d*) \+(\d+),?(\d*)')
-    if empty(tokens)
-      echo 'signify: I cannot parse this line "'. line .'"'
-      return
-    endif
 
-    let [ old_line, old_count, new_line, new_count ] = [ str2nr(tokens[1]), (tokens[2] == '') ? 1 : str2nr(tokens[2]), str2nr(tokens[3]), (tokens[4] == '') ? 1 : str2nr(tokens[4]) ]
+    let [ old_line, old_count, new_line, new_count ] = [ str2nr(tokens[1]), empty(tokens[2]) ? 1 : str2nr(tokens[2]), str2nr(tokens[3]), empty(tokens[4]) ? 1 : str2nr(tokens[4]) ]
 
     " A new line was added.
     if (old_count == 0) && (new_count >= 1)
