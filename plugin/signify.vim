@@ -272,7 +272,7 @@ endfunction
 "  Functions -> s:repo_get_diff_git  {{{1
 function! s:repo_get_diff_git(path) abort
   if executable('git')
-    let diff = system('cd '. shellescape(fnamemodify(a:path, ':h')) .' && git diff --no-ext-diff -U0 -- '. shellescape(a:path))
+    let diff = system('cd '. s:escape(fnamemodify(a:path, ':h')) .' && git diff --no-ext-diff -U0 -- '. s:escape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -280,7 +280,7 @@ endfunction
 "  Functions -> s:repo_get_diff_hg  {{{1
 function! s:repo_get_diff_hg(path) abort
   if executable('hg')
-    let diff = system('hg diff --nodates -U0 -- '. shellescape(a:path))
+    let diff = system('hg diff --nodates -U0 -- '. s:escape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -288,7 +288,7 @@ endfunction
 "  Functions -> s:repo_get_diff_svn  {{{1
 function! s:repo_get_diff_svn(path) abort
   if executable('svn')
-    let diff = system('svn diff --diff-cmd '. s:difftool .' -x -U0 -- '. shellescape(a:path))
+    let diff = system('svn diff --diff-cmd '. s:difftool .' -x -U0 -- '. s:escape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -296,7 +296,7 @@ endfunction
 "  Functions -> s:repo_get_diff_bzr  {{{1
 function! s:repo_get_diff_bzr(path) abort
   if executable('bzr')
-    let diff = system('bzr diff --using '. s:difftool .' --diff-options=-U0 -- '. shellescape(a:path))
+    let diff = system('bzr diff --using '. s:difftool .' --diff-options=-U0 -- '. s:escape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -304,7 +304,7 @@ endfunction
 "  Functions -> s:repo_get_diff_darcs  {{{1
 function! s:repo_get_diff_darcs(path) abort
   if executable('darcs')
-    let diff = system('cd '. shellescape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="'. s:difftool .' -U0 %1 %2" -- '. shellescape(a:path))
+    let diff = system('cd '. s:escape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="'. s:difftool .' -U0 %1 %2" -- '. s:escape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -312,7 +312,7 @@ endfunction
 "  Functions -> s:repo_get_diff_cvs  {{{1
 function! s:repo_get_diff_cvs(path) abort
   if executable('cvs')
-    let diff = system('cd '. shellescape(fnamemodify(a:path, ':h')) .' && cvs diff -U0 -- '. shellescape(fnamemodify(a:path, ':t')))
+    let diff = system('cd '. s:escape(fnamemodify(a:path, ':h')) .' && cvs diff -U0 -- '. s:escape(fnamemodify(a:path, ':t')))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -320,7 +320,7 @@ endfunction
 "  Functions -> s:repo_get_diff_rcs  {{{1
 function! s:repo_get_diff_rcs(path) abort
   if executable('rcs')
-    let diff = system('rcsdiff -U0 '. shellescape(a:path) .' 2>/dev/null')
+    let diff = system('rcsdiff -U0 '. s:escape(a:path) .' 2>/dev/null')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -570,6 +570,22 @@ function! s:jump_to_prev_hunk(count)
 
   let s:sy[s:path].id_jump -= 1
   let s:sy[s:path].last_jump_was_next = 0
+endfunction
+
+"  Functions -> s:s:escape()  {{{1
+function s:escape(path) abort
+  if has('+shellslash')
+    let old_ssl = &shellslash
+    set noshellslash
+  endif
+
+  let path = shellescape(a:path)
+
+  if exists('old_ssl')
+    let &shellslash = old_ssl
+  endif
+
+  return path
 endfunction
 
 "  Functions -> SignifyDebugListActiveBuffers()  {{{1
