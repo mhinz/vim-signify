@@ -152,11 +152,18 @@ You should know by now!
 Installation
 ------------
 
-I suggest using tpope's pathogen:
+If you have no preferred installation method, I suggest using tpope's pathogen:
 
-- https://github.com/tpope/vim-pathogen
+1. git clone https://github.com/tpope/vim-pathogen ~/.vim/bundle/vim-pathogen
+1. mkdir -p ~/.vim/autoload && cd ~/.vim/autoload
+1. ln -s ../bundle/vim-pathogen/autoload/pathogen.vim
 
-Afterwards, just clone vim-signify into ~/.vim/bundle/.
+Afterwards installing Sy is as easy as pie:
+
+2. git clone https://github.com/mhinz/vim-signify ~/.vim/bundle/vim-signify
+2. start Vim
+2. :Helptags
+2. :h signify
 
 Documentation
 -------------
