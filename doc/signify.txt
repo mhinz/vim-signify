@@ -118,6 +118,7 @@ Mapping for toggling the plugin for the current buffer only.
     let g:signify_skip_filename = { '/home/user/.vimrc': 1 }
 
 Don't activate the plugin for these filetypes and/or filenames.
+NOTE: Filenames have to be absolute paths.
 
 
     let g:signify_sign_overwrite = 1

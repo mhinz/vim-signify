@@ -145,6 +145,8 @@ let g:signify_skip_filetype = { 'vim': 1, 'c': 1 }
 let g:signify_skip_filename = { '/home/user/.vimrc': 1 }
 ```
 
+__NOTE__: Filenames have to be absolute paths!
+
 #### good documentation
 
 You should know by now!
