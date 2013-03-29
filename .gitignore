@@ -1,0 +1,8 @@
+*
+!*/
+
+!.gitignore
+!doc/signify.txt
+!plugin/signify.vim
+!README.md
+!signify.png
