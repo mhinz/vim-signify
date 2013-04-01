@@ -157,10 +157,11 @@ function! s:start(path) abort
     execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
   endif
 
-  if exists('g:signify_skip_filetype') && has_key(g:signify_skip_filetype, &ft)
-    return
-  endif
-  if exists('g:signify_skip_filename') && has_key(g:signify_skip_filename, a:path)
+  if empty(a:path)
+        \ || !filereadable(a:path)
+        \ || (&ft == 'help')
+        \ || (exists('g:signify_skip_filetype') && has_key(g:signify_skip_filetype, &ft))
+        \ || (exists('g:signify_skip_filename') && has_key(g:signify_skip_filename, a:path))
     return
   endif
 
