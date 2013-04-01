@@ -154,7 +154,6 @@ function! s:start(path) abort
 
   if empty(a:path)
         \ || !filereadable(a:path)
-        \ || (&ft == 'help')
         \ || (exists('g:signify_skip_filetype') && has_key(g:signify_skip_filetype, &ft))
         \ || (exists('g:signify_skip_filename') && has_key(g:signify_skip_filename, a:path))
     return
