@@ -31,9 +31,8 @@ endif
 let g:loaded_signify = 1
 
 "  Default values  {{{1
+let s:sy = {}  " the main data structure
 let s:line_highlight = 0   " disable line highlighting
-let s:signmode       = 0
-let s:sy             = {}  " the main data structure
 let s:other_signs_line_numbers = {}
 
 " overwrite non-signify signs by default
@@ -149,11 +148,7 @@ com! -nargs=0 -bar -count SignifyJumpToPrevHunk  call s:jump_to_prev_hunk(<count
 
 "  Functions -> s:start()  {{{1
 function! s:start(path) abort
-  if empty(a:path) || !filereadable(a:path) || &ft == 'help'
-    return
-  endif
-
-  if s:signmode
+  if exists('b:signmode') && b:signmode
     execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
   endif
 
@@ -169,20 +164,21 @@ function! s:start(path) abort
   if !has_key(s:sy, a:path)
     let [ diff, type ] = s:repo_detect(a:path)
     if empty(diff)
+      sign unplace 99999
       return
     endif
     let s:sy[a:path] = { 'active': 1, 'type': type, 'ids': [], 'id_jump': s:id_top, 'id_top': s:id_top, 'last_jump_was_next': -1 }
   " Inactive buffer.. bail out.
   elseif !s:sy[a:path].active
     sign unplace 99999
-    let s:signmode = 0
+    let b:signmode = 0
     return
   else
     call s:sign_remove_all(a:path)
     let diff = s:repo_get_diff_{s:sy[a:path].type}(a:path)
     if empty(diff)
       sign unplace 99999
-      let s:signmode = 0
+      let b:signmode = 0
       return
     endif
     let s:sy[a:path].id_top  = s:id_top
@@ -197,7 +193,7 @@ function! s:start(path) abort
   call s:repo_process_diff(a:path, diff)
 
   sign unplace 99999
-  let s:signmode = 1
+  let b:signmode = 1
   let s:sy[a:path].id_top = (s:id_top - 1)
 endfunction
 
