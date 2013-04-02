@@ -196,7 +196,7 @@ endfunction
 "  Functions -> s:sign_get_others()  {{{1
 function! s:sign_get_others(path) abort
   redir => signlist
-    sil! execute 'sign place file='. a:path
+    silent! execute 'sign place file='. a:path
   redir END
 
   for line in filter(split(signlist, '\n'), 'v:val =~ "\v^\s+\w+"')
