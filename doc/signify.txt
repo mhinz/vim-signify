@@ -252,7 +252,9 @@ Morgan Fouesneau  (mfouesneau)
 ==============================================================================
 7. Licence                                                   *signify-license*
 
-Distributed under a 3-clause BSD license.
+Copyright © Marco Hinz. Distributed under the same terms as Vim itself.
+
+See |license|.
 
 
 vim: tw=78
