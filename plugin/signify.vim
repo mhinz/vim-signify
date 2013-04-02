@@ -357,7 +357,7 @@ function! s:colors_set() abort
   if has('gui_running')
     if exists('g:signify_sign_color_guibg')
       let guibg = g:signify_sign_color_guibg
-    elseif exists('g:signify_sign_color_inherit_from_linenr')
+    elseif exists('g:signify_sign_color_inherit_from_linenr') && g:signify_sign_color_inherit_from_linenr
       let guibg = synIDattr(hlID('LineNr'), 'bg', 'gui')
     else
       let guibg = synIDattr(hlID('SignColumn'), 'bg', 'gui')
