@@ -96,7 +96,7 @@ else
   sign define SignifyChangeDelete text=!_ texthl=SignifyChange linehl=none
 endif
 
-sign define SignifyPlaceholder text=~ texthl=SignifyChange linehl=none
+sign define SignifyPlaceholder text=. texthl=SignifyChange linehl=none
 
 "  Initial stuff  {{{1
 augroup signify
