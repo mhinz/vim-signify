@@ -17,7 +17,7 @@
 
 
 ==============================================================================
-CONTENTS                                                    *signify-contents*
+CONTENTS                                                      *signify-contents*
 
     1.Intro..........................................|signify-intro|
     2.Usage..........................................|signify-usage|
@@ -30,7 +30,7 @@ CONTENTS                                                    *signify-contents*
 
 
 ==============================================================================
-1. Intro                                                       *signify-intro*
+1. Intro                                                         *signify-intro*
 
 Signify, or just sy for short, is an quite unobtrusive plugin. If there is
 information about changes (in form of patch hunks) since the last commit, they
@@ -40,7 +40,7 @@ Easy-peasy!
 
 
 ==============================================================================
-2. Usage                                                       *signify-usage*
+2. Usage                                                         *signify-usage*
 
 The usage is pretty straight-forward. By default you should only notice a
 difference, if you're working in a directory that is managed by a supported
@@ -83,7 +83,7 @@ combination of ! and _. The sign is shown on the same line.
 
 
 ==============================================================================
-3. Options                                                   *signify-options*
+3. Options                                                     *signify-options*
 
 Put these variables into your vimrc. The shown assignments are only examples,
 not defaults.
@@ -190,8 +190,8 @@ Important: This also saves the buffer to disk!
 
 
 ==============================================================================
-4. Commands                                                 *signify-commands*
-4. Mappings                                                 *signify-mappings*
+4. Commands                                                   *signify-commands*
+4. Mappings                                                   *signify-mappings*
 
 
     :SignifyToggle
@@ -223,7 +223,7 @@ Configurable mapping:  <leader>gk
 
 
 ==============================================================================
-5. About the author                                           *signify-author*
+5. About the author                                             *signify-author*
 
 My nick on Freenode IRC is mhi^.
 
@@ -236,7 +236,7 @@ Thank you for flying mhi airlines. Get the Vim on!
 
 
 ==============================================================================
-6. Credits                                                   *signify-credits*
+6. Credits                                                     *signify-credits*
 
 People who contributed to sy. Format: Person (Github account)
 
@@ -250,7 +250,7 @@ Morgan Fouesneau  (mfouesneau)
 
 
 ==============================================================================
-7. Licence                                                   *signify-license*
+7. Licence                                                     *signify-license*
 
 Copyright © Marco Hinz. Distributed under the same terms as Vim itself.
 
