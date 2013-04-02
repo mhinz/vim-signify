@@ -301,7 +301,7 @@ endfunction
 function! s:repo_process_diff(path, diff) abort
   " Determine where we have to put our signs.
   for line in filter(split(a:diff, '\n'), 'v:val =~ "^@@"')
-    let tokens = matchlist(line, '^\v\@\@ -(\d+),?(\d*) \+(\d+),?(\d*)')
+    let tokens = matchlist(line, '^@@ -\v(\d+),?(\d*) \+(\d+),?(\d*)')
 
     let [ old_line, old_count, new_line, new_count ] = [ str2nr(tokens[1]), empty(tokens[2]) ? 1 : str2nr(tokens[2]), str2nr(tokens[3]), empty(tokens[4]) ? 1 : str2nr(tokens[4]) ]
 
