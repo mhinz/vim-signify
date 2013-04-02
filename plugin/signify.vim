@@ -490,6 +490,29 @@ function! s:toggle_line_highlighting() abort
   call s:start(s:path)
 endfunction
 
+" Function: s:jump_to_next_hunk {{{1
+function! s:jump_to_next_hunk(count)
+  if !has_key(s:sy, s:path) || s:sy[s:path].id_jump == -1
+    echo 'signify: I cannot detect any changes!'
+    return
+  endif
+
+  if s:sy[s:path].last_jump_was_next == 0
+    let s:sy[s:path].id_jump += 2
+  endif
+
+  let s:sy[s:path].id_jump += a:count ? (a:count - 1) : 0
+
+  if s:sy[s:path].id_jump > s:sy[s:path].id_top
+    let s:sy[s:path].id_jump = s:sy[s:path].ids[0]
+  endif
+
+  execute 'sign jump '. s:sy[s:path].id_jump .' file='. s:path
+
+  let s:sy[s:path].id_jump += 1
+  let s:sy[s:path].last_jump_was_next = 1
+endfunction
+
 " Function: s:jump_to_prev_hunk {{{1
 function! s:jump_to_prev_hunk(count)
   if !has_key(s:sy, s:path) || s:sy[s:path].id_jump == -1
