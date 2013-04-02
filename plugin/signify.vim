@@ -553,13 +553,16 @@ endfunction
 
 "  Functions -> SignifyDebugListActiveBuffers()  {{{1
 function! SignifyDebugListActiveBuffers() abort
-  if len(s:sy) == 0
+  if empty(s:sy)
     echo 'No active buffers!'
     return
   endif
 
-  for i in items(s:sy)
-    echo i
+  for [path, stats] in items(s:sy)
+    echo "\n". path ."\n". repeat('=', strlen(path))
+    for stat in sort(keys(stats))
+      echo printf("%20s  =  %s\n", stat, string(stats[stat]))
+    endfor
   endfor
 endfunction
 
