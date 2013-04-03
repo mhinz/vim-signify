@@ -131,7 +131,7 @@ endif
 
 " Function: s:start {{{1
 function! s:start(path) abort
-  if exists('b:signmode') && b:signmode
+  if get(b:, 'signmode')
     execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
   endif
 
