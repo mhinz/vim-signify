@@ -72,21 +72,25 @@ sign define SignifyPlaceholder text=. texthl=SignifyChange linehl=none
 augroup signify
   autocmd!
 
-  if exists('g:signify_cursorhold_normal') && (g:signify_cursorhold_normal == 1)
+  autocmd BufEnter             * let s:path = resolve(expand('<afile>:p'))
+  autocmd BufWritePost         * call s:start(s:path)
+  autocmd VimEnter,ColorScheme * call s:colors_set()
+
+  if get(g:, 'signify_update_on_bufenter', 1)
+    autocmd BufEnter * call s:start(s:path)
+  endif
+
+  if get(g:, 'signify_cursorhold_normal')
     autocmd CursorHold * write | call s:start(s:path)
   endif
 
-  if exists('g:signify_cursorhold_insert') && (g:signify_cursorhold_insert == 1)
+  if get(g:, 'signify_cursorhold_insert')
     autocmd CursorHoldI * write | call s:start(s:path)
   endif
 
   if !has('gui_win32')
-    autocmd FocusGained * call s:start(resolve(expand('<afile>:p')))
+    autocmd FocusGained * call s:start(s:path)
   endif
-
-  autocmd VimEnter,ColorScheme  * call s:colors_set()
-  autocmd BufEnter              * let s:path = resolve(expand('<afile>:p'))
-  autocmd BufEnter,BufWritePost * call s:start(s:path)
 augroup END
 
 " Init: commands {{{1
