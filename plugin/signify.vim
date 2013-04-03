@@ -81,11 +81,17 @@ augroup signify
   endif
 
   if get(g:, 'signify_cursorhold_normal')
-    autocmd CursorHold * silent update | call s:start(s:path)
+    autocmd CursorHold *
+          \ if filewritable(s:path) && empty(&buftype) |
+          \   update | call s:start(s:path) |
+          \ endif
   endif
 
   if get(g:, 'signify_cursorhold_insert')
-    autocmd CursorHoldI * silent update | call s:start(s:path)
+    autocmd CursorHoldI *
+          \ if filewritable(s:path) && empty(&buftype) |
+          \   update | call s:start(s:path) |
+          \ endif
   endif
 
   if !has('gui_win32')
