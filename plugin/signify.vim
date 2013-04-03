@@ -80,13 +80,16 @@ augroup signify
     autocmd CursorHoldI * write | call s:start(s:path)
   endif
 
+  if get(g:, 'g:signify_bufenter', 0) == 1
+    autocmd BufEnter * let s:path = resolve(expand('<afile>:p')) | call s:start(s:path)
+  endif
+
   if !has('gui_win32')
     autocmd FocusGained * call s:start(resolve(expand('<afile>:p')))
   endif
 
   autocmd VimEnter,ColorScheme  * call s:colors_set()
-  autocmd BufEnter              * let s:path = resolve(expand('<afile>:p'))
-  autocmd BufEnter,BufWritePost * call s:start(s:path)
+  autocmd BufWritePost * let s:path = resolve(expand('<afile>:p')) | call s:start(s:path)
 augroup END
 
 " Init: commands {{{1
