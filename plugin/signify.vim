@@ -14,9 +14,8 @@ let s:line_highlight = 0   " disable line highlighting
 let s:other_signs_line_numbers = {}
 
 " overwrite non-signify signs by default
-let s:sign_overwrite = exists('g:signify_sign_overwrite') ? g:signify_sign_overwrite : 1
-
-let s:vcs_list = exists('g:signify_vcs_list') ? g:signify_vcs_list : [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'cvs', 'rcs' ]
+let s:sign_overwrite = get(g:, 'signify_sign_overwrite', 1)
+let s:vcs_list       = get(g:, 'signify_vcs_list', [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'cvs', 'rcs' ])
 
 let s:id_start = 0x100
 let s:id_top   = s:id_start
@@ -366,7 +365,7 @@ function! s:colors_set() abort
   if has('gui_running')
     if exists('g:signify_sign_color_guibg')
       let guibg = g:signify_sign_color_guibg
-    elseif exists('g:signify_sign_color_inherit_from_linenr') && g:signify_sign_color_inherit_from_linenr
+    elseif get(g:, 'signify_sign_color_inherit_from_linenr')
       let guibg = synIDattr(hlID('LineNr'), 'bg', 'gui')
     else
       let guibg = synIDattr(hlID('SignColumn'), 'bg', 'gui')
@@ -375,7 +374,7 @@ function! s:colors_set() abort
     if exists('g:signify_sign_color_group_add')
       execute 'hi! link SignifyAdd '. g:signify_sign_color_group_add
     else
-      let guifg_add = exists('g:signify_sign_color_guifg_add') ? g:signify_sign_color_guifg_add : '#11ee11'
+      let guifg_add = get(g:, 'signify_sign_color_guifg_add', '#11ee11')
       if empty(guibg) || guibg < 0
         execute 'hi SignifyAdd gui=bold guifg='. guifg_add
       else
@@ -386,7 +385,7 @@ function! s:colors_set() abort
     if exists('g:signify_sign_color_group_delete')
       execute 'hi! link SignifyDelete '. g:signify_sign_color_group_delete
     else
-      let guifg_delete = exists('g:signify_sign_color_guifg_delete') ? g:signify_sign_color_guifg_delete : '#ee1111'
+      let guifg_delete = get(g:, 'signify_sign_color_guifg_delete', '#ee1111')
       if empty(guibg) || guibg < 0
         execute 'hi SignifyDelete gui=bold guifg='. guifg_delete
       else
@@ -397,7 +396,7 @@ function! s:colors_set() abort
     if exists('g:signify_sign_color_group_change')
       execute 'hi! link SignifyChange '. g:signify_sign_color_group_change
     else
-      let guifg_change = exists('g:signify_sign_color_guifg_change') ? g:signify_sign_color_guifg_change : '#eeee11'
+      let guifg_change = get(g:, 'signify_sign_color_guifg_change', '#eeee11')
       if empty(guibg) || guibg < 0
         execute 'hi SignifyChange gui=bold guifg='. guifg_change
       else
@@ -407,7 +406,7 @@ function! s:colors_set() abort
   else
     if exists('g:signify_sign_color_ctermbg')
       let ctermbg = g:signify_sign_color_ctermbg
-    elseif exists('g:signify_sign_color_inherit_from_linenr')
+    elseif get(g:, 'signify_sign_color_inherit_from_linenr')
       let ctermbg = synIDattr(hlID('LineNr'), 'bg', 'cterm')
     else
       let ctermbg = synIDattr(hlID('SignColumn'), 'bg', 'cterm')
@@ -416,7 +415,7 @@ function! s:colors_set() abort
     if exists('g:signify_sign_color_group_add')
       execute 'hi! link SignifyAdd '. g:signify_sign_color_group_add
     else
-      let ctermfg_add = exists('g:signify_sign_color_ctermfg_add') ? g:signify_sign_color_ctermfg_add : 2
+      let ctermfg_add = get(g:, 'signify_sign_color_ctermfg_add', 2)
       if empty(ctermbg) || ctermbg < 0
         execute 'hi SignifyAdd cterm=bold ctermfg='. ctermfg_add
       else
@@ -427,7 +426,7 @@ function! s:colors_set() abort
     if exists('g:signify_sign_color_group_delete')
       execute 'hi! link SignifyDelete '. g:signify_sign_color_group_delete
     else
-      let ctermfg_delete = exists('g:signify_sign_color_ctermfg_delete') ? g:signify_sign_color_ctermfg_delete : 1
+      let ctermfg_delete = get(g:, 'signify_sign_color_ctermfg_delete', 1)
       if empty(ctermbg) || ctermbg < 0
         execute 'hi SignifyDelete cterm=bold ctermfg='. ctermfg_delete
       else
@@ -438,7 +437,7 @@ function! s:colors_set() abort
     if exists('g:signify_sign_color_group_change')
       execute 'hi! link SignifyChange '. g:signify_sign_color_group_change
     else
-      let ctermfg_change = exists('g:signify_sign_color_ctermfg_change') ? g:signify_sign_color_ctermfg_change : 3
+      let ctermfg_change = get(g:, 'signify_sign_color_ctermfg_change', 3)
       if empty(ctermbg) || ctermbg < 0
         execute 'hi SignifyChange cterm=bold ctermfg='. ctermfg_change
       else
@@ -484,9 +483,9 @@ function! s:toggle_line_highlighting() abort
 
     let s:line_highlight = 0
   else
-    let add    = exists('g:signify_line_color_add')    ? g:signify_line_color_add    : 'DiffAdd'
-    let delete = exists('g:signify_line_color_delete') ? g:signify_line_color_delete : 'DiffDelete'
-    let change = exists('g:signify_line_color_change') ? g:signify_line_color_change : 'DiffChange'
+    let add    = get(g:, 'signify_line_color_add',    'DiffAdd')
+    let delete = get(g:, 'signify_line_color_delete', 'DiffDelete')
+    let change = get(g:, 'signify_line_color_change', 'DiffChange')
 
     execute 'sign define SignifyAdd             text=+  texthl=SignifyAdd    linehl='. add
     execute 'sign define SignifyChange          text=!  texthl=SignifyChange linehl='. change
