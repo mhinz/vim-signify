@@ -188,11 +188,6 @@ The highlight groups to use with line highlighting.
 Make signs use the same background color as LineNr.
 
 
-    let g:signify_enable_cvs = 1
-
-Enable CVS repo detection.
-
-
     let g:signify_cursorhold_normal = 1
     let g:signify_cursorhold_insert = 1
 

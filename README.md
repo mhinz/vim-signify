@@ -220,8 +220,6 @@ let g:signify_line_color_add    = 'DiffAdd'
 let g:signify_line_color_delete = 'DiffDelete'
 let g:signify_line_color_change = 'DiffChange'
 
-let g:signify_enable_cvs = 1
-
 let g:signify_cursorhold_normal = 1
 let g:signify_cursorhold_insert = 1
 ```
