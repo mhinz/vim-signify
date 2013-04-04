@@ -10,7 +10,6 @@ let g:loaded_signify = 1
 
 " Init: values {{{1
 let s:sy = {}  " the main data structure
-let s:line_highlight = 0   " disable line highlighting
 let s:other_signs_line_numbers = {}
 
 " overwrite non-signify signs by default
@@ -100,7 +99,7 @@ augroup END
 
 " Init: commands {{{1
 com! -nargs=0 -bar        SignifyToggle          call s:toggle_signify()
-com! -nargs=0 -bar        SignifyToggleHighlight call s:toggle_line_highlighting()
+com! -nargs=0 -bar        SignifyToggleHighlight call s:line_highlighting_toggle()
 com! -nargs=0 -bar -count SignifyJumpToNextHunk  call s:jump_to_next_hunk(<count>)
 com! -nargs=0 -bar -count SignifyJumpToPrevHunk  call s:jump_to_prev_hunk(<count>)
 
@@ -170,6 +169,14 @@ function! s:start(path) abort
     let s:sy[a:path].id_top  = s:id_top
     let s:sy[a:path].id_jump = s:id_top
     let s:sy[a:path].last_jump_was_next = -1
+  endif
+
+  if !exists('s:line_highlight')
+    if get(g:, 'signify_line_highlight')
+      call s:line_highlighting_enable()
+    else
+      call s:line_highlighting_disable()
+    endif
   endif
 
   if !s:sign_overwrite
@@ -467,34 +474,45 @@ function! s:toggle_signify() abort
   endif
 endfunction
 
-" Function: s:toggle_line_highlighting {{{1
-function! s:toggle_line_highlighting() abort
+" Function: s:line_highlighting_enable {{{1
+function! s:line_highlighting_enable() abort
+  let add    = get(g:, 'signify_line_color_add',    'DiffAdd')
+  let delete = get(g:, 'signify_line_color_delete', 'DiffDelete')
+  let change = get(g:, 'signify_line_color_change', 'DiffChange')
+
+  execute 'sign define SignifyAdd             text=+  texthl=SignifyAdd    linehl='. add
+  execute 'sign define SignifyChange          text=!  texthl=SignifyChange linehl='. change
+  execute 'sign define SignifyChangeDelete    text=!_ texthl=SignifyChange linehl='. change
+  execute 'sign define SignifyDelete          text=_  texthl=SignifyDelete linehl='. delete
+  execute 'sign define SignifyDeleteFirstLine text=‾  texthl=SignifyDelete linehl='. delete
+
+  let s:line_highlight = 1
+endfunction
+
+" Function: s:line_highlighting_disable {{{1
+function! s:line_highlighting_disable() abort
+  sign define SignifyAdd             text=+  texthl=SignifyAdd    linehl=none
+  sign define SignifyChange          text=!  texthl=SignifyChange linehl=none
+  sign define SignifyChangeDelete    text=!_ texthl=SignifyChange linehl=none
+  sign define SignifyDelete          text=_  texthl=SignifyDelete linehl=none
+  sign define SignifyDeleteFirstLine text=‾  texthl=SignifyDelete linehl=none
+
+  let s:line_highlight = 0
+endfunction
+
+" Function: s:line_highlighting_toggle {{{1
+function! s:line_highlighting_toggle() abort
   if !has_key(s:sy, s:path)
     echo 'signify: I cannot detect any changes!'
     return
   endif
 
   if s:line_highlight
-    sign define SignifyAdd             text=+  texthl=SignifyAdd    linehl=none
-    sign define SignifyChange          text=!  texthl=SignifyChange linehl=none
-    sign define SignifyChangeDelete    text=!_ texthl=SignifyChange linehl=none
-    sign define SignifyDelete          text=_  texthl=SignifyDelete linehl=none
-    sign define SignifyDeleteFirstLine text=‾  texthl=SignifyDelete linehl=none
-
-    let s:line_highlight = 0
+    call s:line_highlighting_disable()
   else
-    let add    = get(g:, 'signify_line_color_add',    'DiffAdd')
-    let delete = get(g:, 'signify_line_color_delete', 'DiffDelete')
-    let change = get(g:, 'signify_line_color_change', 'DiffChange')
-
-    execute 'sign define SignifyAdd             text=+  texthl=SignifyAdd    linehl='. add
-    execute 'sign define SignifyChange          text=!  texthl=SignifyChange linehl='. change
-    execute 'sign define SignifyChangeDelete    text=!_ texthl=SignifyChange linehl='. change
-    execute 'sign define SignifyDelete          text=_  texthl=SignifyDelete linehl='. delete
-    execute 'sign define SignifyDeleteFirstLine text=‾  texthl=SignifyDelete linehl='. delete
-
-    let s:line_highlight = 1
+    call s:line_highlighting_enable()
   endif
+
   call s:start(s:path)
 endfunction
 
@@ -560,7 +578,7 @@ function s:escape(path) abort
   return path
 endfunction
 
-" Function: SignifyDebugListActiveBuffers() {{{1
+" Function: SignifyDebugListActiveBuffers {{{1
 function! SignifyDebugListActiveBuffers() abort
   if empty(s:sy)
     echo 'No active buffers!'

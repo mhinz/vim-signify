@@ -135,6 +135,11 @@ NOTE: Disable this if you're working in huge repositories and experience
 delays.
 
 
+    let g:signify_line_highlight = 1
+
+Enable line highlighting in addation to using signs.
+
+
     let g:signify_sign_add               = '+'
     let g:signify_sign_change            = '*'
     let g:signify_sign_change_delete     = '!_'
