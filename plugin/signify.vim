@@ -462,7 +462,7 @@ function! s:toggle_signify() abort
   endif
 
   if has_key(s:sy, s:path)
-    if (s:sy[s:path].active == 1)
+    if s:sy[s:path].active
       let s:sy[s:path].active = 0
       call s:stop(s:path)
     else
