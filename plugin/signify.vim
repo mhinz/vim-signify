@@ -568,4 +568,4 @@ function! SignifyDebugListActiveBuffers() abort
   endfor
 endfunction
 
-" vim:set et sw=2 sts=2:
+" vim: et sw=2 sts=2
