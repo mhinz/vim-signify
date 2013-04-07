@@ -283,7 +283,7 @@ endfunction
 function! s:repo_get_diff_bzr(path) abort
   if executable('bzr')
     let diff = system('bzr diff --using '. s:difftool .' --diff-options=-U0 -- '. s:escape(a:path))
-    return v:shell_error ? '' : diff
+    return ((v:shell_error == 0) || (v:shell_error == 1) || (v:shell_error == 2)) ? diff : ''
   endif
 endfunction
 
@@ -460,7 +460,7 @@ function! s:toggle_signify() abort
   endif
 
   if has_key(s:sy, s:path)
-    if (s:sy[s:path].active == 1)
+    if s:sy[s:path].active
       let s:sy[s:path].active = 0
       call s:stop(s:path)
     else
