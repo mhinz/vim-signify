@@ -19,6 +19,16 @@ let s:vcs_list       = get(g:, 'signify_vcs_list', [ 'git', 'hg', 'svn', 'darcs'
 let s:id_start = 0x100
 let s:id_top   = s:id_start
 
+let s:line_color_add    = get(g:, 'signify_line_color_add',    'DiffAdd')
+let s:line_color_delete = get(g:, 'signify_line_color_delete', 'DiffDelete')
+let s:line_color_change = get(g:, 'signify_line_color_change', 'DiffChange')
+
+let s:sign_add               = get(g:, 'signify_sign_add',               '+')
+let s:sign_delete            = get(g:, 'signify_sign_delete',            '_')
+let s:sign_delete_first_line = get(g:, 'signify_sign_delete_first_line', '‾')
+let s:sign_change            = get(g:, 'signify_sign_change',            '!')
+let s:sign_change_delete     = get(g:, 'signify_sign_change_delete',     '!_')
+
 if has('win32')
   if $VIMRUNTIME =~ ' '
     let s:difftool = (&sh =~ '\<cmd') ? ('"'. $VIMRUNTIME .'\diff"') : (substitute($VIMRUNTIME, ' ', '" ', '') .'\diff"')
@@ -31,37 +41,6 @@ else
     finish
   endif
   let s:difftool = 'diff'
-endif
-
-" Init: signs {{{1
-if exists('g:signify_sign_add')
-  execute 'sign define SignifyAdd text='. g:signify_sign_add .' texthl=SignifyAdd linehl=none'
-else
-  sign define SignifyAdd text=+ texthl=SignifyAdd linehl=none
-endif
-
-if exists('g:signify_sign_delete')
-  execute 'sign define SignifyDelete text='. g:signify_sign_delete .' texthl=SignifyDelete linehl=none'
-else
-  sign define SignifyDelete text=_ texthl=SignifyDelete linehl=none
-endif
-
-if exists('g:signify_sign_delete_first_line')
-  execute 'sign define SignifyDeleteFirstLine text='. g:signify_sign_delete_first_line .' texthl=SignifyDeleteFirstLine linehl=none'
-else
-  sign define SignifyDeleteFirstLine text=‾ texthl=SignifyDelete linehl=none
-endif
-
-if exists('g:signify_sign_change')
-  execute 'sign define SignifyChange text='. g:signify_sign_change .' texthl=SignifyChange linehl=none'
-else
-  sign define SignifyChange text=! texthl=SignifyChange linehl=none
-endif
-
-if exists('g:signify_sign_change_delete')
-  execute 'sign define SignifyChangeDelete text='. g:signify_sign_change_delete .' texthl=SignifyChange linehl=none'
-else
-  sign define SignifyChangeDelete text=!_ texthl=SignifyChange linehl=none
 endif
 
 sign define SignifyPlaceholder text=. texthl=SignifyChange linehl=none
@@ -476,26 +455,22 @@ endfunction
 
 " Function: s:line_highlighting_enable {{{1
 function! s:line_highlighting_enable() abort
-  let add    = get(g:, 'signify_line_color_add',    'DiffAdd')
-  let delete = get(g:, 'signify_line_color_delete', 'DiffDelete')
-  let change = get(g:, 'signify_line_color_change', 'DiffChange')
-
-  execute 'sign define SignifyAdd             text=+  texthl=SignifyAdd    linehl='. add
-  execute 'sign define SignifyChange          text=!  texthl=SignifyChange linehl='. change
-  execute 'sign define SignifyChangeDelete    text=!_ texthl=SignifyChange linehl='. change
-  execute 'sign define SignifyDelete          text=_  texthl=SignifyDelete linehl='. delete
-  execute 'sign define SignifyDeleteFirstLine text=‾  texthl=SignifyDelete linehl='. delete
+  execute 'sign define SignifyAdd text='. s:sign_add .' texthl=SignifyAdd linehl='. s:line_color_add
+  execute 'sign define SignifyChange text='. s:sign_change .' texthl=SignifyChange linehl='. s:line_color_change
+  execute 'sign define SignifyChangeDelete text='. s:sign_delete .' texthl=SignifyChange linehl='. s:line_color_change
+  execute 'sign define SignifyDelete text='. s:sign_delete .' texthl=SignifyDelete linehl='. s:line_color_delete
+  execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line .' texthl=SignifyDelete linehl='. s:line_color_delete
 
   let s:line_highlight = 1
 endfunction
 
 " Function: s:line_highlighting_disable {{{1
 function! s:line_highlighting_disable() abort
-  sign define SignifyAdd             text=+  texthl=SignifyAdd    linehl=none
-  sign define SignifyChange          text=!  texthl=SignifyChange linehl=none
-  sign define SignifyChangeDelete    text=!_ texthl=SignifyChange linehl=none
-  sign define SignifyDelete          text=_  texthl=SignifyDelete linehl=none
-  sign define SignifyDeleteFirstLine text=‾  texthl=SignifyDelete linehl=none
+  execute 'sign define SignifyAdd text='. s:sign_add .' texthl=SignifyAdd linehl=none'
+  execute 'sign define SignifyChange text='. s:sign_change .' texthl=SignifyChange linehl=none'
+  execute 'sign define SignifyChangeDelete text='. s:sign_delete .' texthl=SignifyChange linehl=none'
+  execute 'sign define SignifyDelete text='. s:sign_delete .' texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line .' texthl=SignifyDelete linehl=none'
 
   let s:line_highlight = 0
 endfunction
