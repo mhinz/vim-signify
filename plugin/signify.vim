@@ -457,7 +457,7 @@ endfunction
 function! s:line_highlighting_enable() abort
   execute 'sign define SignifyAdd text='. s:sign_add .' texthl=SignifyAdd linehl='. s:line_color_add
   execute 'sign define SignifyChange text='. s:sign_change .' texthl=SignifyChange linehl='. s:line_color_change
-  execute 'sign define SignifyChangeDelete text='. s:sign_delete .' texthl=SignifyChange linehl='. s:line_color_change
+  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifyChange linehl='. s:line_color_change
   execute 'sign define SignifyDelete text='. s:sign_delete .' texthl=SignifyDelete linehl='. s:line_color_delete
   execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line .' texthl=SignifyDelete linehl='. s:line_color_delete
 
@@ -468,7 +468,7 @@ endfunction
 function! s:line_highlighting_disable() abort
   execute 'sign define SignifyAdd text='. s:sign_add .' texthl=SignifyAdd linehl=none'
   execute 'sign define SignifyChange text='. s:sign_change .' texthl=SignifyChange linehl=none'
-  execute 'sign define SignifyChangeDelete text='. s:sign_delete .' texthl=SignifyChange linehl=none'
+  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifyChange linehl=none'
   execute 'sign define SignifyDelete text='. s:sign_delete .' texthl=SignifyDelete linehl=none'
   execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line .' texthl=SignifyDelete linehl=none'
 
