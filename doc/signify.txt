@@ -275,6 +275,7 @@ fritzophrenic     (fritzophrenic)
 Morgan Fouesneau  (mfouesneau)
 Zhao Cai          (zhaocai)
 Otto Modinos      (otommod)
+Ryan Kois         (kid-icarus)
 
 
 ==============================================================================
