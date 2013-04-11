@@ -135,31 +135,22 @@ function! s:start(path) abort
     return
   endif
 
-  if get(b:, 'signmode')
-    execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
-  endif
-
-
   " New buffer.. add to list.
   if !has_key(s:sy, a:path)
     let [ diff, type ] = s:repo_detect(a:path)
     if empty(diff)
-      sign unplace 99999
       return
     endif
-
     let s:sy[a:path] = { 'active': 1, 'type': type, 'ids': [], 'id_jump': s:id_top, 'id_top': s:id_top, 'last_jump_was_next': -1 }
   " Inactive buffer.. bail out.
   elseif !s:sy[a:path].active
-    sign unplace 99999
-    let b:signmode = 0
     return
   else
+    execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
     call s:sign_remove_all(a:path)
     let diff = s:repo_get_diff_{s:sy[a:path].type}(a:path)
     if empty(diff)
       sign unplace 99999
-      let b:signmode = 0
       return
     endif
     let s:sy[a:path].id_top  = s:id_top
@@ -187,7 +178,6 @@ function! s:start(path) abort
   endif
 
   sign unplace 99999
-  let b:signmode = 1
   let s:sy[a:path].id_top = (s:id_top - 1)
 endfunction
 
