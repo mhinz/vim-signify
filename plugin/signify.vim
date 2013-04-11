@@ -51,7 +51,7 @@ augroup signify
 
   autocmd BufEnter             * let s:path = resolve(expand('<afile>:p'))
   autocmd BufWritePost         * call s:start(s:path)
-  autocmd BufDelete            * call s:stop(s:path) | call remove(s:sy, s:path)
+  autocmd BufDelete            * call s:stop(s:path) | if has_key(s:sy, s:path) | call remove(s:sy, s:path) | endif
   autocmd VimEnter,ColorScheme * call s:colors_set()
 
   if get(g:, 'signify_update_on_bufenter', 1)
