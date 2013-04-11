@@ -51,6 +51,7 @@ augroup signify
 
   autocmd BufEnter             * let s:path = resolve(expand('<afile>:p'))
   autocmd BufWritePost         * call s:start(s:path)
+  autocmd BufDelete            * call s:stop(s:path) | call remove(s:sy, s:path)
   autocmd VimEnter,ColorScheme * call s:colors_set()
 
   if get(g:, 'signify_update_on_bufenter', 1)
@@ -116,7 +117,6 @@ function! s:toggle_signify() abort
 
   if has_key(s:sy, s:path)
     if s:sy[s:path].active
-      let s:sy[s:path].active = 0
       call s:stop(s:path)
     else
       let s:sy[s:path].active = 1
@@ -202,15 +202,11 @@ function! s:stop(path) abort
   silent! nunmap <buffer> ]c
   silent! nunmap <buffer> [c
 
-  if !s:sy[a:path].active
-    return
-  else
-    call remove(s:sy, a:path)
-  endif
-
   augroup signify
     autocmd! * <buffer>
   augroup END
+
+  let s:sy[s:path].active = 0
 endfunction
 
 " Function: s:sign_get_others {{{1
