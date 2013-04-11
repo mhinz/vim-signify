@@ -83,11 +83,6 @@ com! -nargs=0 -bar -count SignifyJumpToNextHunk  call s:jump_to_next_hunk(<count
 com! -nargs=0 -bar -count SignifyJumpToPrevHunk  call s:jump_to_prev_hunk(<count>)
 
 " Init: mappings {{{1
-if !maparg('[c', 'n')
-  nnoremap <silent> ]c :<c-u>execute v:count .'SignifyJumpToNextHunk'<cr>
-  nnoremap <silent> [c :<c-u>execute v:count .'SignifyJumpToPrevHunk'<cr>
-endif
-
 if exists('g:signify_mapping_next_hunk')
   execute 'nnoremap <silent> '. g:signify_mapping_next_hunk .' :<c-u>execute v:count ."SignifyJumpToNextHunk"<cr>'
 else
@@ -131,6 +126,7 @@ function! s:start(path) abort
       sign unplace 99999
       return
     endif
+
     let s:sy[a:path] = { 'active': 1, 'type': type, 'ids': [], 'id_jump': s:id_top, 'id_top': s:id_top, 'last_jump_was_next': -1 }
   " Inactive buffer.. bail out.
   elseif !s:sy[a:path].active
@@ -164,6 +160,11 @@ function! s:start(path) abort
 
   call s:repo_process_diff(a:path, diff)
 
+  if !maparg('[c', 'n')
+    nnoremap <buffer><silent> ]c :<c-u>execute v:count .'SignifyJumpToNextHunk'<cr>
+    nnoremap <buffer><silent> [c :<c-u>execute v:count .'SignifyJumpToPrevHunk'<cr>
+  endif
+
   sign unplace 99999
   let b:signmode = 1
   let s:sy[a:path].id_top = (s:id_top - 1)
@@ -176,6 +177,9 @@ function! s:stop(path) abort
   endif
 
   call s:sign_remove_all(a:path)
+
+  silent! nunmap <buffer> ]c
+  silent! nunmap <buffer> [c
 
   if !s:sy[a:path].active
     return
