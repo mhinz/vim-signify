@@ -107,6 +107,26 @@ else
   nnoremap <silent> <leader>gt :SignifyToggle<cr>
 endif
 
+" Function: s:toggle_signify {{{1
+function! s:toggle_signify() abort
+  if empty(s:path)
+    echo 'signify: I cannot sy empty buffers!'
+    return
+  endif
+
+  if has_key(s:sy, s:path)
+    if s:sy[s:path].active
+      let s:sy[s:path].active = 0
+      call s:stop(s:path)
+    else
+      let s:sy[s:path].active = 1
+      call s:start(s:path)
+    endif
+  else
+    call s:start(s:path)
+  endif
+endfunction
+
 " Function: s:start {{{1
 function! s:start(path) abort
   if !filereadable(a:path)
@@ -118,6 +138,7 @@ function! s:start(path) abort
   if get(b:, 'signmode')
     execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
   endif
+
 
   " New buffer.. add to list.
   if !has_key(s:sy, a:path)
@@ -434,26 +455,6 @@ function! s:colors_set() abort
         execute 'hi SignifyChange cterm=bold ctermfg='. ctermfg_change .' ctermbg='. ctermbg
       endif
     endif
-  endif
-endfunction
-
-" Function: s:toggle_signify {{{1
-function! s:toggle_signify() abort
-  if empty(s:path)
-    echo 'signify: I cannot sy empty buffers!'
-    return
-  endif
-
-  if has_key(s:sy, s:path)
-    if s:sy[s:path].active
-      let s:sy[s:path].active = 0
-      call s:stop(s:path)
-    else
-      let s:sy[s:path].active = 1
-      call s:start(s:path)
-    endif
-  else
-    call s:start(s:path)
   endif
 endfunction
 
