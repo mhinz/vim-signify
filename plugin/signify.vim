@@ -109,14 +109,14 @@ endif
 
 " Function: s:start {{{1
 function! s:start(path) abort
-  if get(b:, 'signmode')
-    execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
-  endif
-
   if !filereadable(a:path)
         \ || (exists('g:signify_skip_filetype') && has_key(g:signify_skip_filetype, &ft))
         \ || (exists('g:signify_skip_filename') && has_key(g:signify_skip_filename, a:path))
     return
+  endif
+
+  if get(b:, 'signmode')
+    execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
   endif
 
   " New buffer.. add to list.
