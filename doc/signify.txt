@@ -81,6 +81,10 @@ same. The sign is shown on the same line.
 A line was changed and one or more of the lines below were deleted. A
 combination of ! and _. The sign is shown on the same line.
 
+    ‾
+
+This is used instead of _ in the special case of the first line being removed.
+
 
 ==============================================================================
 3. Options                                                     *signify-options*

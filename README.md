@@ -73,6 +73,12 @@ A line was changed. Something was changed, but the amount of lines stayed the sa
 
 A line was changed and one or more of the lines below were deleted. A combination of **!** and **_**. The sign is shown on the same line.
 
+
+`‾`
+
+The first line was deleted. This special case is indicated by **‾** rather than
+**_**.
+
 Longer introduction
 -------------------
 
