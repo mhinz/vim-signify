@@ -150,12 +150,11 @@ function! s:start(path) abort
   " Inactive buffer.. bail out.
   elseif !s:sy[a:path].active
     return
+  " Update signs.
   else
-    execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
-    call s:sign_remove_all(a:path)
     let diff = s:repo_get_diff_{s:sy[a:path].type}(a:path)
     if empty(diff)
-      sign unplace 99999
+      call s:sign_remove_all(a:path)
       return
     endif
     let s:sy[a:path].id_top  = s:id_top
@@ -175,14 +174,16 @@ function! s:start(path) abort
     call s:sign_get_others(a:path)
   endif
 
+  execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
+  call s:sign_remove_all(a:path)
   call s:repo_process_diff(a:path, diff)
+  sign unplace 99999
 
   if !maparg('[c', 'n')
     nnoremap <buffer><silent> ]c :<c-u>execute v:count .'SignifyJumpToNextHunk'<cr>
     nnoremap <buffer><silent> [c :<c-u>execute v:count .'SignifyJumpToPrevHunk'<cr>
   endif
 
-  sign unplace 99999
   let s:sy[a:path].id_top = (s:id_top - 1)
 endfunction
 
@@ -236,7 +237,6 @@ function! s:sign_remove_all(path) abort
   endfor
 
   let s:other_signs_line_numbers = {}
-  let s:sy[a:path].id_jump = -1
   let s:sy[a:path].ids = []
 endfunction
 
