@@ -58,16 +58,16 @@ augroup signify
   endif
 
   if get(g:, 'signify_cursorhold_normal')
-    autocmd CursorHold *
+    autocmd CursorHold * nested
           \ if has_key(s:sy, s:path) && s:sy[s:path].active && &modified |
-          \   update | call s:start(s:path) |
+          \   write |
           \ endif
   endif
 
   if get(g:, 'signify_cursorhold_insert')
-    autocmd CursorHoldI *
+    autocmd CursorHoldI * nested
           \ if has_key(s:sy, s:path) && s:sy[s:path].active && &modified |
-          \   update | call s:start(s:path) |
+          \   write |
           \ endif
   endif
 
