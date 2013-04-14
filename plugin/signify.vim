@@ -59,11 +59,17 @@ augroup signify
   endif
 
   if get(g:, 'signify_cursorhold_normal')
-    autocmd CursorHold * if has_key(s:sy, s:path) && filewritable(s:path) | update | call s:start(s:path) | endif
+    autocmd CursorHold *
+          \ if &modified && has_key(s:sy, s:path) && s:sy[s:path].active && filewritable(s:path) |
+          \   update | call s:start(s:path) |
+          \ endif
   endif
 
   if get(g:, 'signify_cursorhold_insert')
-    autocmd CursorHoldI * if has_key(s:sy, s:path) && filewritable(s:path) | update | call s:start(s:path) | endif
+    autocmd CursorHoldI *
+          \ if &modified && has_key(s:sy, s:path) && s:sy[s:path].active && filewritable(s:path) |
+          \   update | call s:start(s:path) |
+          \ endif
   endif
 
   if !has('gui_win32')
@@ -123,7 +129,8 @@ endfunction
 
 " Function: s:start {{{1
 function! s:start(path) abort
-  if !filereadable(a:path)
+  if !&modified
+        \ || !filereadable(a:path)
         \ || (exists('g:signify_skip_filetype') && has_key(g:signify_skip_filetype, &ft))
         \ || (exists('g:signify_skip_filename') && has_key(g:signify_skip_filename, a:path))
     return
