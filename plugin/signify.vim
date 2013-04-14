@@ -124,7 +124,6 @@ endfunction
 " Function: s:start {{{1
 function! s:start(path) abort
   if !filereadable(a:path)
-        \ || !empty(&buftype)
         \ || (exists('g:signify_skip_filetype') && has_key(g:signify_skip_filetype, &ft))
         \ || (exists('g:signify_skip_filename') && has_key(g:signify_skip_filename, a:path))
     return
