@@ -51,7 +51,6 @@ augroup signify
 
   autocmd BufEnter             * let s:path = resolve(expand('<afile>:p'))
   autocmd BufWritePost         * call s:start(s:path)
-  autocmd BufDelete            * call s:stop(s:path) | if has_key(s:sy, s:path) | call remove(s:sy, s:path) | endif
   autocmd VimEnter,ColorScheme * call s:colors_set()
 
   if get(g:, 'signify_update_on_bufenter', 1)
@@ -60,14 +59,14 @@ augroup signify
 
   if get(g:, 'signify_cursorhold_normal')
     autocmd CursorHold *
-          \ if has_key(s:sy, s:path) && s:sy[s:path].active && &modified && filewritable(s:path) |
+          \ if has_key(s:sy, s:path) && s:sy[s:path].active && &modified |
           \   update | call s:start(s:path) |
           \ endif
   endif
 
   if get(g:, 'signify_cursorhold_insert')
     autocmd CursorHoldI *
-          \ if has_key(s:sy, s:path) && s:sy[s:path].active && &modified && filewritable(s:path) |
+          \ if has_key(s:sy, s:path) && s:sy[s:path].active && &modified |
           \   update | call s:start(s:path) |
           \ endif
   endif
@@ -75,6 +74,12 @@ augroup signify
   if !has('gui_win32')
     autocmd FocusGained * call s:start(s:path)
   endif
+
+  autocmd BufDelete *
+        \ call s:stop(s:path)
+        \ if has_key(s:sy, s:path)
+        \   call remove(s:sy, s:path)
+        \ endif
 augroup END
 
 " Init: commands {{{1
