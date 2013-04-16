@@ -53,6 +53,7 @@ version control system:
     - subversion
     - cvs
     - rcs
+    - fossil
 
 The plugin defines 4 new kinds of signs and their corresponding highlighting
 groups. It tries to inherent existing colors from the SignColumn group, if
@@ -96,7 +97,7 @@ not defaults.
 
     let g:signify_vcs_list = [ 'git', 'hg' ]
 
-Default: ['git', 'hg', 'svn', 'darcs', 'bzr', 'cvs', 'rcs']
+Default: ['git', 'hg', 'svn', 'darcs', 'bzr', 'fossil', 'cvs', 'rcs']
 
 This variable determines the VCS to check for and in what order. If you only
 use git and mercurial, you can shorten the list to the shown example. If you

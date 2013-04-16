@@ -10,7 +10,7 @@ It's __fast__, __highly configurable__ and __well documented__.
 
 Features:
 
-- supports git, mercurial, darcs, bazaar, subversion, cvs, rcs
+- supports git, mercurial, darcs, bazaar, subversion, cvs, rcs, fossil
 - quick jumping between changed lines
 - apart from signs there is also optional line highlighting
 - fully configurable through global variables (options and mappings)
@@ -97,6 +97,7 @@ Current the following VCS are supported:
 - subversion (svn)
 - cvs
 - rcs
+- fossil
 
 #### quick jumping between changed lines
 

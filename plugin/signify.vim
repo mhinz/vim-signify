@@ -14,7 +14,7 @@ let s:other_signs_line_numbers = {}
 
 " overwrite non-signify signs by default
 let s:sign_overwrite = get(g:, 'signify_sign_overwrite', 1)
-let s:vcs_list       = get(g:, 'signify_vcs_list', [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'cvs', 'rcs' ])
+let s:vcs_list       = get(g:, 'signify_vcs_list', [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'fossil', 'cvs', 'rcs' ])
 
 let s:id_start = 0x100
 let s:id_top   = s:id_start
@@ -288,6 +288,14 @@ endfunction
 function! s:repo_get_diff_darcs(path) abort
   if executable('darcs')
     let diff = system('cd '. s:escape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="'. s:difftool .' -U0 %1 %2" -- '. s:escape(a:path))
+    return v:shell_error ? '' : diff
+  endif
+endfunction
+
+" Function: s:repo_get_diff_fossil {{{1
+function! s:repo_get_diff_fossil(path) abort
+  if executable('fossil')
+    let diff = system('cd '. s:escape(fnamemodify(a:path, ':h')) .' && fossil set diff-command "'. s:difftool .' -U 0" && fossil diff --unified -c 0 -- '. s:escape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
