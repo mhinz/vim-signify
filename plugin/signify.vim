@@ -1,7 +1,7 @@
 " Plugin:      https://github.com/mhinz/vim-signify
 " Description: show a diff from a version control system via the signcolumn
 " Maintainer:  Marco Hinz <http://github.com/mhinz>
-" Version:     1.6
+" Version:     1.7
 
 if exists('g:loaded_signify') || !has('signs') || &cp
   finish
