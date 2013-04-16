@@ -331,14 +331,14 @@ function! s:repo_process_diff(path, diff) abort
         call s:sign_set(new_line + offset, 'SignifyAdd', a:path)
         let offset += 1
       endwhile
-      " An old line was removed.
+    " An old line was removed.
     elseif (old_count >= 1) && (new_count == 0)
       if new_line == 0
         call s:sign_set(1, 'SignifyDeleteFirstLine', a:path)
       else
-        call s:sign_set(new_line, 'SignifyDelete', a:path)
+        call s:sign_set(new_line, (old_count > 9) ? 'SignifyDeleteMore' : 'SignifyDelete'. old_count, a:path)
       endif
-      " A line was changed.
+    " A line was changed.
     elseif (old_count == new_count)
       let offset = 0
       while offset < new_count
@@ -354,7 +354,7 @@ function! s:repo_process_diff(path, diff) abort
           let offset += 1
         endwhile
         call s:sign_set(new_line + offset - 1, 'SignifyChangeDelete', a:path)
-        " (old_count < new_count): Lines were changed && added.
+      " (old_count < new_count): Lines were changed && added.
       else
         let offset = 0
         while offset < old_count
@@ -462,7 +462,16 @@ function! s:line_highlighting_enable() abort
   execute 'sign define SignifyAdd text='. s:sign_add .' texthl=SignifyAdd linehl='. s:line_color_add
   execute 'sign define SignifyChange text='. s:sign_change .' texthl=SignifyChange linehl='. s:line_color_change
   execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifyChange linehl='. s:line_color_change
-  execute 'sign define SignifyDelete text='. s:sign_delete .' texthl=SignifyDelete linehl='. s:line_color_delete
+  execute 'sign define SignifyDelete1 text='. s:sign_delete .'1 texthl=SignifyDelete linehl='. s:line_color_delete
+  execute 'sign define SignifyDelete2 text='. s:sign_delete .'2 texthl=SignifyDelete linehl='. s:line_color_delete
+  execute 'sign define SignifyDelete3 text='. s:sign_delete .'3 texthl=SignifyDelete linehl='. s:line_color_delete
+  execute 'sign define SignifyDelete4 text='. s:sign_delete .'4 texthl=SignifyDelete linehl='. s:line_color_delete
+  execute 'sign define SignifyDelete5 text='. s:sign_delete .'5 texthl=SignifyDelete linehl='. s:line_color_delete
+  execute 'sign define SignifyDelete6 text='. s:sign_delete .'6 texthl=SignifyDelete linehl='. s:line_color_delete
+  execute 'sign define SignifyDelete7 text='. s:sign_delete .'7 texthl=SignifyDelete linehl='. s:line_color_delete
+  execute 'sign define SignifyDelete8 text='. s:sign_delete .'8 texthl=SignifyDelete linehl='. s:line_color_delete
+  execute 'sign define SignifyDelete9 text='. s:sign_delete .'9 texthl=SignifyDelete linehl='. s:line_color_delete
+  execute 'sign define SignifyDeleteMore text='. s:sign_delete .'# texthl=SignifyDelete linehl='. s:line_color_delete
   execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line .' texthl=SignifyDelete linehl='. s:line_color_delete
 
   let s:line_highlight = 1
@@ -473,7 +482,16 @@ function! s:line_highlighting_disable() abort
   execute 'sign define SignifyAdd text='. s:sign_add .' texthl=SignifyAdd linehl=none'
   execute 'sign define SignifyChange text='. s:sign_change .' texthl=SignifyChange linehl=none'
   execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifyChange linehl=none'
-  execute 'sign define SignifyDelete text='. s:sign_delete .' texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyDelete1 text='. s:sign_delete .'1 texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyDelete2 text='. s:sign_delete .'2 texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyDelete3 text='. s:sign_delete .'3 texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyDelete4 text='. s:sign_delete .'4 texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyDelete5 text='. s:sign_delete .'5 texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyDelete6 text='. s:sign_delete .'6 texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyDelete7 text='. s:sign_delete .'7 texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyDelete8 text='. s:sign_delete .'8 texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyDelete9 text='. s:sign_delete .'9 texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyDeleteMore text='. s:sign_delete .'# texthl=SignifyDelete linehl=none'
   execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line .' texthl=SignifyDelete linehl=none'
 
   let s:line_highlight = 0
