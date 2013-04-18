@@ -372,6 +372,8 @@ endfunction
 
 " Function: s:colors_set {{{1
 function! s:colors_set() abort
+  let weight = get(g:, 'signify_sign_weight', 'bold')
+
   if has('gui_running')
     if exists('g:signify_sign_color_guibg')
       let guibg = g:signify_sign_color_guibg
@@ -386,9 +388,9 @@ function! s:colors_set() abort
     else
       let guifg_add = get(g:, 'signify_sign_color_guifg_add', '#11ee11')
       if empty(guibg) || guibg < 0
-        execute 'hi SignifyAdd gui=bold guifg='. guifg_add
+        execute 'hi SignifyAdd gui='. weight .' guifg='. guifg_add
       else
-        execute 'hi SignifyAdd gui=bold guifg='. guifg_add .' guibg='. guibg
+        execute 'hi SignifyAdd gui='. weight .' guifg='. guifg_add .' guibg='. guibg
       endif
     endif
 
@@ -397,9 +399,9 @@ function! s:colors_set() abort
     else
       let guifg_delete = get(g:, 'signify_sign_color_guifg_delete', '#ee1111')
       if empty(guibg) || guibg < 0
-        execute 'hi SignifyDelete gui=bold guifg='. guifg_delete
+        execute 'hi SignifyDelete gui='. weight .' guifg='. guifg_delete
       else
-        execute 'hi SignifyDelete gui=bold guifg='. guifg_delete .' guibg='. guibg
+        execute 'hi SignifyDelete gui='. weight .' guifg='. guifg_delete .' guibg='. guibg
       endif
     endif
 
@@ -408,9 +410,9 @@ function! s:colors_set() abort
     else
       let guifg_change = get(g:, 'signify_sign_color_guifg_change', '#eeee11')
       if empty(guibg) || guibg < 0
-        execute 'hi SignifyChange gui=bold guifg='. guifg_change
+        execute 'hi SignifyChange gui='. weight .' guifg='. guifg_change
       else
-        execute 'hi SignifyChange gui=bold guifg='. guifg_change .' guibg='. guibg
+        execute 'hi SignifyChange gui='. weight .' guifg='. guifg_change .' guibg='. guibg
       endif
     endif
   else
@@ -427,9 +429,9 @@ function! s:colors_set() abort
     else
       let ctermfg_add = get(g:, 'signify_sign_color_ctermfg_add', 2)
       if empty(ctermbg) || ctermbg < 0
-        execute 'hi SignifyAdd cterm=bold ctermfg='. ctermfg_add
+        execute 'hi SignifyAdd cterm='. weight .' ctermfg='. ctermfg_add
       else
-        execute 'hi SignifyAdd cterm=bold ctermfg='. ctermfg_add .' ctermbg='. ctermbg
+        execute 'hi SignifyAdd cterm='. weight .' ctermfg='. ctermfg_add .' ctermbg='. ctermbg
       endif
     endif
 
@@ -438,9 +440,9 @@ function! s:colors_set() abort
     else
       let ctermfg_delete = get(g:, 'signify_sign_color_ctermfg_delete', 1)
       if empty(ctermbg) || ctermbg < 0
-        execute 'hi SignifyDelete cterm=bold ctermfg='. ctermfg_delete
+        execute 'hi SignifyDelete cterm='. weight .' ctermfg='. ctermfg_delete
       else
-        execute 'hi SignifyDelete cterm=bold ctermfg='. ctermfg_delete .' ctermbg='. ctermbg
+        execute 'hi SignifyDelete cterm='. weight .' ctermfg='. ctermfg_delete .' ctermbg='. ctermbg
       endif
     endif
 
@@ -449,9 +451,9 @@ function! s:colors_set() abort
     else
       let ctermfg_change = get(g:, 'signify_sign_color_ctermfg_change', 3)
       if empty(ctermbg) || ctermbg < 0
-        execute 'hi SignifyChange cterm=bold ctermfg='. ctermfg_change
+        execute 'hi SignifyChange cterm='. weight .' ctermfg='. ctermfg_change
       else
-        execute 'hi SignifyChange cterm=bold ctermfg='. ctermfg_change .' ctermbg='. ctermbg
+        execute 'hi SignifyChange cterm='. weight .' ctermfg='. ctermfg_change .' ctermbg='. ctermbg
       endif
     endif
   endif

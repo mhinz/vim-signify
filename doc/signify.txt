@@ -165,6 +165,17 @@ Enable line highlighting in addation to using signs.
 
 ============-
 
+    let g:signify_sign_weight = 'bold'
+
+Possible values: 'bold' (default), 'none'
+
+Use either bold or normal font weight.
+
+NOTE: If you experience colors not getting set properly, try changing this
+variable to 'none'.
+
+============-
+
     let g:signify_sign_add               = '+'
     let g:signify_sign_change            = '*'
     let g:signify_sign_change_delete     = '!_'
@@ -283,15 +294,17 @@ Thank you for flying mhi airlines. Get the Vim on!
 People who contributed to sy. Format: Person (Github account)
 
 
-Jeremy Mack       (mutewinter)
-Chong Li          (chongli)
-Robin Munn        (rmunn)
-Martin Hoch       (rtwo)
-fritzophrenic     (Ben Fritz)
-Morgan Fouesneau  (mfouesneau)
-Zhao Cai          (zhaocai)
-Otto Modinos      (otommod)
-Ryan Kois         (kid-icarus)
+Jeremy Mack            (mutewinter)
+Chong Li               (chongli)
+Robin Munn             (rmunn)
+Martin Hoch            (rtwo)
+fritzophrenic          (Ben Fritz)
+Morgan Fouesneau       (mfouesneau)
+Zhao Cai               (zhaocai)
+Otto Modinos           (otommod)
+Ryan Kois              (kid-icarus)
+Jon Kinney             (j2fly)
+Israel Chauca Fuentes  (Raimondi)
 
 
 ==============================================================================
