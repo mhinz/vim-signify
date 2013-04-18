@@ -167,12 +167,12 @@ Enable line highlighting in addation to using signs.
 
     let g:signify_sign_weight = 'bold'
 
-Possible values: 'bold' (default), 'none'
+Possible values: 'bold' (default), 'NONE'
 
 Use either bold or normal font weight.
 
 NOTE: If you experience colors not getting set properly, try changing this
-variable to 'none'.
+variable to 'NONE'.
 
 ============-
 

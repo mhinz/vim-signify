@@ -43,7 +43,7 @@ else
   let s:difftool = 'diff'
 endif
 
-sign define SignifyPlaceholder text=. texthl=SignifyChange linehl=none
+sign define SignifyPlaceholder text=. texthl=SignifyChange linehl=NONE
 
 " Init: autocmds {{{1
 augroup signify
@@ -472,11 +472,11 @@ endfunction
 
 " Function: s:line_highlighting_disable {{{1
 function! s:line_highlighting_disable() abort
-  execute 'sign define SignifyAdd text='. s:sign_add .' texthl=SignifyAdd linehl=none'
-  execute 'sign define SignifyChange text='. s:sign_change .' texthl=SignifyChange linehl=none'
-  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifyChange linehl=none'
-  execute 'sign define SignifyDelete text='. s:sign_delete .' texthl=SignifyDelete linehl=none'
-  execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line .' texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyAdd text='. s:sign_add .' texthl=SignifyAdd linehl=NONE'
+  execute 'sign define SignifyChange text='. s:sign_change .' texthl=SignifyChange linehl=NONE'
+  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifyChange linehl=NONE'
+  execute 'sign define SignifyDelete text='. s:sign_delete .' texthl=SignifyDelete linehl=NONE'
+  execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line .' texthl=SignifyDelete linehl=NONE'
 
   let s:line_highlight = 0
 endfunction
