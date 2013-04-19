@@ -88,7 +88,7 @@ This plugin is based on the diffing features of the supported version control
 systems. Since not all VCS support the same options, sometimes we have to fall
 back to the 'diff' executable.
 
-Current the following VCS are supported:
+Currently the following VCS are supported:
 
 - git
 - mercurial (hg)
