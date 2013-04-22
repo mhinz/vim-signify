@@ -1,3 +1,10 @@
+
+
+NEWS: Sy is pretty stable at the moment, so there will be no commits (apart from
+bugfixes/feature requests) in the next ~month. I'm mainly working at Sy 2.0 at the
+moment. Stay tuned! :-)
+
+
 vim-signify
 -----------
 
