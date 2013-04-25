@@ -19,9 +19,10 @@ let s:vcs_list       = get(g:, 'signify_vcs_list', [ 'git', 'hg', 'svn', 'darcs'
 let s:id_start = 0x100
 let s:id_top   = s:id_start
 
-let s:line_color_add    = get(g:, 'signify_line_color_add',    'DiffAdd')
-let s:line_color_delete = get(g:, 'signify_line_color_delete', 'DiffDelete')
-let s:line_color_change = get(g:, 'signify_line_color_change', 'DiffChange')
+let s:line_color_add           = get(g:, 'signify_line_color_add',           'DiffAdd')
+let s:line_color_delete        = get(g:, 'signify_line_color_delete',        'DiffDelete')
+let s:line_color_change        = get(g:, 'signify_line_color_change',        'DiffChange')
+let s:line_color_change_delete = get(g:, 'signify_line_color_change_delete', 'DiffChange')
 
 let s:sign_add               = get(g:, 'signify_sign_add',               '+')
 let s:sign_delete            = get(g:, 'signify_sign_delete',            '_')
@@ -463,7 +464,7 @@ endfunction
 function! s:line_highlighting_enable() abort
   execute 'sign define SignifyAdd text='. s:sign_add .' texthl=SignifyAdd linehl='. s:line_color_add
   execute 'sign define SignifyChange text='. s:sign_change .' texthl=SignifyChange linehl='. s:line_color_change
-  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifyChange linehl='. s:line_color_change
+  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifyChange linehl='. s:line_color_change_delete
   execute 'sign define SignifyDelete text='. s:sign_delete .' texthl=SignifyDelete linehl='. s:line_color_delete
   execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line .' texthl=SignifyDelete linehl='. s:line_color_delete
 

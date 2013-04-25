@@ -215,9 +215,10 @@ Example:
 
 ============-
 
-    let g:signify_line_color_add    = 'DiffAdd'
-    let g:signify_line_color_delete = 'DiffDelete'
-    let g:signify_line_color_change = 'DiffChange'
+    let g:signify_line_color_add           = 'DiffAdd'
+    let g:signify_line_color_delete        = 'DiffDelete'
+    let g:signify_line_color_change        = 'DiffChange'
+    let g:signify_line_color_change_delete = 'DiffChange'
 
 The highlight groups to use with line highlighting.
 

@@ -133,9 +133,10 @@ let g:signify_mapping_toggle_highlight = '<leader>gh'
 You can also change the highlighting classes for these lines. The defaults are:
 
 ```vim
-let g:signify_line_color_add    = 'DiffAdd'
-let g:signify_line_color_delete = 'DiffDelete'
-let g:signify_line_color_change = 'DiffChange'
+let g:signify_line_color_add           = 'DiffAdd'
+let g:signify_line_color_delete        = 'DiffDelete'
+let g:signify_line_color_change        = 'DiffChange'
+let g:signify_line_color_change_delete = 'DiffChange'
 ```
 
 #### you can toggle the plugin per buffer
