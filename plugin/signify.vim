@@ -77,9 +77,11 @@ augroup signify
   endif
 
   autocmd BufDelete *
-        \ call s:stop(s:path) |
-        \ if has_key(s:sy, s:path) |
-        \   call remove(s:sy, s:path) |
+        \ if exists('s:path') |
+        \   call s:stop(s:path) |
+        \   if has_key(s:sy, s:path) |
+        \     call remove(s:sy, s:path) |
+        \   endif |
         \ endif
 augroup END
 
