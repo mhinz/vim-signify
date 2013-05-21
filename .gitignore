@@ -2,7 +2,8 @@
 !*/
 
 !.gitignore
+!CONTRIBUTING.md
+!README.md
 !doc/signify.txt
 !plugin/signify.vim
-!README.md
 !signify.png
