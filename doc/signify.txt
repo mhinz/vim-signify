@@ -238,6 +238,16 @@ thus not every 'updatetime' miliseconds.
 
 NOTE: This also saves the buffer to disk!
 
+============-
+
+    let g:signify_difftool = 'gnudiff'
+
+This will avoid the attempt to find the proper diff tool for version control
+systems that rely on an external diff tool that supports the -U0 flag. These
+are: svn, bzr, darcs, fossil.
+
+Otherwise 'diff' will be used.
+
 
 ==============================================================================
 4. Commands                                                   *signify-commands*

@@ -30,18 +30,24 @@ let s:sign_delete_first_line = get(g:, 'signify_sign_delete_first_line', '‾')
 let s:sign_change            = get(g:, 'signify_sign_change',            '!')
 let s:sign_change_delete     = get(g:, 'signify_sign_change_delete',     '!_')
 
-if has('win32')
-  if $VIMRUNTIME =~ ' '
-    let s:difftool = (&sh =~ '\<cmd') ? ('"'. $VIMRUNTIME .'\diff"') : (substitute($VIMRUNTIME, ' ', '" ', '') .'\diff"')
-  else
-    let s:difftool = $VIMRUNTIME .'\diff'
-  endif
+if get(g:, 'signify_difftool')
+  let s:difftool = g:signify_difftool
 else
-  if !executable('diff')
-    echomsg 'signify: No diff tool found!'
-    finish
+  if has('win32')
+    if $VIMRUNTIME =~ ' '
+      let s:difftool = (&sh =~ '\<cmd')
+            \ ? ('"'. $VIMRUNTIME .'\diff"')
+            \ : (substitute($VIMRUNTIME, ' ', '" ', '') .'\diff"')
+    else
+      let s:difftool = $VIMRUNTIME .'\diff'
+    endif
+  else
+    if !executable('diff')
+      echomsg 'signify: No diff tool found!'
+      finish
+    endif
+    let s:difftool = 'diff'
   endif
-  let s:difftool = 'diff'
 endif
 
 sign define SignifyPlaceholder text=. texthl=SignifyChange linehl=NONE
