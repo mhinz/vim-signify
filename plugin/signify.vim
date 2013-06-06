@@ -54,7 +54,7 @@ augroup signify
   autocmd BufRead,BufWritePost * call s:start(s:path)
   autocmd VimEnter,ColorScheme * call s:colors_set()
 
-  if get(g:, 'signify_update_on_bufenter', 1)
+  if get(g:, 'signify_update_on_bufenter')
     autocmd BufEnter * if &modified | call s:start(s:path) | endif
   endif
 
