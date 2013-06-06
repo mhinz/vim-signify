@@ -50,12 +50,12 @@ sign define SignifyPlaceholder text=. texthl=SignifyChange linehl=NONE
 augroup signify
   autocmd!
 
-  autocmd BufEnter             * let s:path = resolve(expand('<afile>:p'))
-  autocmd BufWritePost         * call s:start(s:path)
+  autocmd BufRead              * let s:path = resolve(expand('<afile>:p'))
+  autocmd BufRead,BufWritePost * call s:start(s:path)
   autocmd VimEnter,ColorScheme * call s:colors_set()
 
   if get(g:, 'signify_update_on_bufenter', 1)
-    autocmd BufEnter * call s:start(s:path)
+    autocmd BufEnter * if &modified | call s:start(s:path) | endif
   endif
 
   if get(g:, 'signify_cursorhold_normal')
