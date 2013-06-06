@@ -55,7 +55,10 @@ augroup signify
   autocmd VimEnter,ColorScheme * call s:colors_set()
 
   if get(g:, 'signify_update_on_bufenter')
-    autocmd BufEnter * if &modified | call s:start(s:path) | endif
+    autocmd BufEnter * nested
+          \ if has_key(s:sy, s:path) && s:sy[s:path].active && &modified |
+          \   write |
+          \ endif
   endif
 
   if get(g:, 'signify_cursorhold_normal')

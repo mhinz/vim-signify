@@ -154,6 +154,8 @@ Overwrite signs set by other plugins by default.
 
 Update signs when entering a buffer that was modified.
 
+NOTE: This also saves the buffer to disk!
+
 ============-
 
     let g:signify_line_highlight = 1
