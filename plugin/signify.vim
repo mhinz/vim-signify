@@ -50,7 +50,7 @@ sign define SignifyPlaceholder text=. texthl=SignifyChange linehl=NONE
 augroup signify
   autocmd!
 
-  autocmd BufRead              * let s:path = resolve(expand('<afile>:p'))
+  autocmd BufRead,BufEnter     * let s:path = resolve(expand('<afile>:p'))
   autocmd BufRead,BufWritePost * call s:start(s:path)
   autocmd VimEnter,ColorScheme * call s:colors_set()
 
