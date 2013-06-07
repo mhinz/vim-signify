@@ -197,6 +197,8 @@ __NOTE__: The shown assignments are only examples, not defaults.
 ```vim
 let g:signify_vcs_list = [ 'git', 'hg' ]
 
+let g:signify_difftool = 'gnudiff'
+
 let g:signify_mapping_next_hunk = '<leader>gj'
 let g:signify_mapping_prev_hunk = '<leader>gk'
 
@@ -209,6 +211,7 @@ let g:signify_skip_filename = { '/home/user/.vimrc': 1 }
 let g:signify_sign_overwrite = 1
 
 let g:signify_update_on_bufenter = 1
+
 
 let g:signify_line_highlight = 1
 
