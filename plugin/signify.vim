@@ -30,7 +30,7 @@ let s:sign_delete_first_line = get(g:, 'signify_sign_delete_first_line', '‾')
 let s:sign_change            = get(g:, 'signify_sign_change',            '!')
 let s:sign_change_delete     = get(g:, 'signify_sign_change_delete',     '!_')
 
-if get(g:, 'signify_difftool')
+if !empty(get(g:, 'signify_difftool'))
   let s:difftool = g:signify_difftool
 else
   if has('win32')
