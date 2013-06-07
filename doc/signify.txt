@@ -66,11 +66,11 @@ Sign explanation:
 
 A new line was added. The sign is shown on the same line as the new line.
 
-    _
+    _1
 
-A line was deleted. The sign is shown on the line above the deleted line.
-Special case: The first line was deleted. In this case the sign is shown on
-the same line.
+A line was deleted. The sign is shown on the line above the deleted line. The
+second character indicates the number of deleted lines: 1-9, and # for
+everything above.
 
     !
 

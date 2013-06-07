@@ -68,23 +68,26 @@ Sign explanation
 
 A new line was added. The sign is shown on the same line as the new line.
 
-`_`
+`_1`
 
-A line was deleted. The sign is shown on the line above the deleted line. Special case: The first line was deleted. In this case the sign is shown on the same line.
+A line was deleted. The sign is shown on the line above the deleted line. The
+second character indicates the number of deleted lines: 1-9, and # for
+everything above.
 
 `!`
 
-A line was changed. Something was changed, but the amount of lines stayed the same. The sign is shown on the same line.
+A line was changed. Something was changed, but the amount of lines stayed the
+same. The sign is shown on the same line.
 
 `!_`
 
-A line was changed and one or more of the lines below were deleted. A combination of **!** and **_**. The sign is shown on the same line.
+A line was changed and one or more of the lines below were deleted. A
+combination of **!** and **_**. The sign is shown on the same line.
 
 
 `‾`
 
-The first line was deleted. This special case is indicated by **‾** rather than
-**_**.
+This is used instead of _ in the special case of the first line being removed.
 
 Longer introduction
 -------------------
