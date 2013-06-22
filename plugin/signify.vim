@@ -86,11 +86,10 @@ augroup signify
   endif
 
   autocmd BufDelete *
-        \ if exists('s:path') |
-        \   call s:stop(s:path) |
-        \   if has_key(s:sy, s:path) |
-        \     call remove(s:sy, s:path) |
-        \   endif |
+        \ let path = resolve(expand('<afile>:p')) |
+        \ call s:stop(path) |
+        \ if has_key(s:sy, path) |
+        \   call remove(s:sy, path) |
         \ endif
 augroup END
 
