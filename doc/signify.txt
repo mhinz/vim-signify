@@ -160,7 +160,7 @@ NOTE: This also saves the buffer to disk!
 
     let g:signify_line_highlight = 1
 
-Enable line highlighting in addation to using signs.
+Enable line highlighting in addition to using signs.
 
 ============-
 
