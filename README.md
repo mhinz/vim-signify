@@ -190,9 +190,11 @@ Documentation
 Configuration
 -------------
 
+__NOTE__: The shown assignments are only examples. You can find the default
+values in the help.
+
 For more info: `:h signify-options`
 
-__NOTE__: The shown assignments are only examples, not defaults.
 
 ```vim
 let g:signify_vcs_list = [ 'git', 'hg' ]
@@ -211,7 +213,6 @@ let g:signify_skip_filename = { '/home/user/.vimrc': 1 }
 let g:signify_sign_overwrite = 1
 
 let g:signify_update_on_bufenter = 1
-
 
 let g:signify_line_highlight = 1
 
