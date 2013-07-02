@@ -335,37 +335,74 @@ function! s:repo_process_diff(path, diff) abort
 
     let [ old_line, old_count, new_line, new_count ] = [ str2nr(tokens[1]), empty(tokens[2]) ? 1 : str2nr(tokens[2]), str2nr(tokens[3]), empty(tokens[4]) ? 1 : str2nr(tokens[4]) ]
 
-    " A new line was added.
+    " 2 lines added:
+
+    " @@ -5,0 +6,2 @@ this is line 5
+    " +this is line 5
+    " +this is line 5
+
     if (old_count == 0) && (new_count >= 1)
       let offset = 0
       while offset < new_count
         call s:sign_set(new_line + offset, 'SignifyAdd', a:path)
         let offset += 1
       endwhile
-    " An old line was removed.
+
+    " 2 lines removed:
+
+    " @@ -6,2 +5,0 @@ this is line 5
+    " -this is line 6
+    " -this is line 7
+
     elseif (old_count >= 1) && (new_count == 0)
       if new_line == 0
         call s:sign_set(1, 'SignifyDeleteFirstLine', a:path)
       else
         call s:sign_set(new_line, (old_count > 9) ? 'SignifyDeleteMore' : 'SignifyDelete'. old_count, a:path)
       endif
-    " A line was changed.
-    elseif (old_count == new_count)
+
+    " 2 lines changed:
+
+    " @@ -5,2 +5,2 @@ this is line 4
+    " -this is line 5
+    " -this is line 6
+    " +this os line 5
+    " +this os line 6
+
+    elseif old_count == new_count
       let offset = 0
       while offset < new_count
         call s:sign_set(new_line + offset, 'SignifyChange', a:path)
         let offset += 1
       endwhile
     else
-      " Lines were changed && deleted.
-      if (old_count > new_count)
+
+      " 2 lines changed; 2 lines deleted:
+
+      " @@ -5,4 +5,2 @@ this is line 4
+      " -this is line 5
+      " -this is line 6
+      " -this is line 7
+      " -this is line 8
+      " +this os line 5
+      " +this os line 6
+
+      if old_count > new_count
         let offset = 0
-        while offset < new_count
+        while offset < (new_count - 1)
           call s:sign_set(new_line + offset, 'SignifyChange', a:path)
           let offset += 1
         endwhile
-        call s:sign_set(new_line + offset - 1, 'SignifyChangeDelete', a:path)
-      " (old_count < new_count): Lines were changed && added.
+        call s:sign_set(new_line + offset, 'SignifyChangeDelete', a:path)
+
+      " lines changed and added:
+
+      " @@ -5 +5,3 @@ this is line 4
+      " -this is line 5
+      " +this os line 5
+      " +this is line 42
+      " +this is line 666
+
       else
         let offset = 0
         while offset < old_count
