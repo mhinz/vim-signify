@@ -9,3 +9,6 @@ fi
 for i in {0..255}; do
     tput setab $i && echo -n " $i "
 done
+
+tput sgr0
+echo
