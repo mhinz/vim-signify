@@ -264,9 +264,9 @@ Personally I use (256 colors terminal):
     highlight SignifySignDelete cterm=bold ctermbg=237  ctermfg=167
     highlight SignifySignChange cterm=bold ctermbg=237  ctermfg=227
 
-For Unix people there is a small script, showcolors.sh, in the repo that shows
-all 256 colors available to the terminal. That makes picking the right numbers
-much easier.
+For Unix people there is a small script, showcolors.bash, in the repo that
+shows all 256 colors available to the terminal. That makes picking the right
+numbers much easier.
 
 
 ==============================================================================
