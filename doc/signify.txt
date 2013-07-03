@@ -24,9 +24,10 @@ CONTENTS                                                      *signify-contents*
     3.Options........................................|signify-options|
     4.Commands.......................................|signify-commands|
     4.Mappings.......................................|signify-mappings|
-    5.Author.........................................|signify-author|
-    6.Credits........................................|signify-credits|
-    7.License........................................|signify-license|
+    5.Colors.........................................|signify-colors|
+    6.Author.........................................|signify-author|
+    7.Credits........................................|signify-credits|
+    8.License........................................|signify-license|
 
 
 ==============================================================================
@@ -54,11 +55,6 @@ version control system:
     - cvs
     - rcs
     - fossil
-
-The plugin defines 4 new kinds of signs and their corresponding highlighting
-groups. It tries to inherent existing colors from the SignColumn group, if
-that fails, it sets its own colors. In case you don't like these colors, you
-can change them easily through variables.
 
 Sign explanation:
 
@@ -162,18 +158,7 @@ NOTE: This also saves the buffer to disk!
 
     let g:signify_line_highlight = 0
 
-Enable line highlighting in addition to using signs.
-
-============-
-
-    let g:signify_sign_weight = 'bold'
-
-Possible values: 'bold', 'NONE'
-
-Use either bold or normal font weight.
-
-NOTE: If you experience colors not getting set properly, try changing this
-variable to 'NONE'.
+Enable line highlighting in addition to using signs by default.
 
 ============-
 
@@ -185,51 +170,6 @@ variable to 'NONE'.
 
 The sign to use if a line was added, deleted or changed or a combination of
 these.
-
-============-
-
-    let g:signify_sign_color_guifg_add      = '#11ee11'
-    let g:signify_sign_color_guifg_delete   = '#ee1111'
-    let g:signify_sign_color_guifg_change   = '#eeee11'
-    let g:signify_sign_color_guibg          = '#111111'
-
-    let g:signify_sign_color_ctermfg_add    = 2
-    let g:signify_sign_color_ctermfg_delete = 1
-    let g:signify_sign_color_ctermfg_change = 3
-    let g:signify_sign_color_ctermbg        = 0
-
-The colors of your signs.
-
-Default: The bg options do not exist.
-
-============-
-
-    let g:signify_sign_color_group_add    = 'MyAdd'
-    let g:signify_sign_color_group_delete = 'MyDelete'
-    let g:signify_sign_color_group_change = 'MyChange'
-
-Link to another highlight group for setting sign colors. If this option is
-set, any other sign color option for that change class will be ignored.
-
-Example:
-    is set:   g:signify_sign_color_group_delete
-    ignored:  g:signify_sign_color_ctermfg_delete
-    ignored:  g:signify_sign_color_guifg_delete
-
-============-
-
-    let g:signify_line_color_add           = 'DiffAdd'
-    let g:signify_line_color_delete        = 'DiffDelete'
-    let g:signify_line_color_change        = 'DiffChange'
-    let g:signify_line_color_change_delete = 'DiffChange'
-
-The highlight groups to use with line highlighting.
-
-============-
-
-    let g:signify_sign_color_inherit_from_linenr = 0
-
-Make signs use the same background color as LineNr.
 
 ============-
 
@@ -292,7 +232,45 @@ Configurable mapping:  <leader>gk
 
 
 ==============================================================================
-5. About the author                                             *signify-author*
+5. Colors                                                       *signify-colors*
+
+This plugin defines highlighting groups for two different places: for lines
+and signs. Per default these don't really exist but are linked to the standard
+highlighting groups: DiffAdd, DiffChange, DiffDelete:
+
+    highlight link SignifyLineAdd    DiffAdd
+    highlight link SignifyLineChange DiffChange
+    highlight link SignifyLineDelete DiffDelete
+
+    highlight link SignifySignAdd    DiffAdd
+    highlight link SignifySignChange DiffChange
+    highlight link SignifySignDelete DiffDelete
+
+Thus if you do not want to change the standard highlighting groups, but want
+different colors for either your signs or lines, you can define one of these 6
+Signify groups yourself in your vimrc.
+
+Personally I use (256 colors terminal):
+
+    " highlight lines in Sy and vimdiff etc.)
+
+    highlight DiffAdd           cterm=bold ctermbg=none ctermfg=119
+    highlight DiffDelete        cterm=bold ctermbg=none ctermfg=167
+    highlight DiffChange        cterm=bold ctermbg=none ctermfg=227
+
+    " highlight signs in Sy
+
+    highlight SignifySignAdd    cterm=bold ctermbg=237  ctermfg=119
+    highlight SignifySignDelete cterm=bold ctermbg=237  ctermfg=167
+    highlight SignifySignChange cterm=bold ctermbg=237  ctermfg=227
+
+For Unix people there is a small script, showcolors.sh, in the repo that shows
+all 256 colors available to the terminal. That makes picking the right numbers
+much easier.
+
+
+==============================================================================
+6. About the author                                             *signify-author*
 
 My nick on Freenode IRC is mhi^.
 
@@ -305,7 +283,7 @@ Thank you for flying mhi airlines. Get the Vim on!
 
 
 ==============================================================================
-6. Credits                                                     *signify-credits*
+7. Credits                                                     *signify-credits*
 
 People who contributed to sy. Format: Person (Github account)
 
@@ -324,7 +302,7 @@ Israel Chauca Fuentes  (Raimondi)
 
 
 ==============================================================================
-7. Licence                                                     *signify-license*
+8. Licence                                                     *signify-license*
 
 Copyright © Marco Hinz. Distributed under the same terms as Vim itself.
 

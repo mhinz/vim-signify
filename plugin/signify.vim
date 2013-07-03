@@ -19,11 +19,6 @@ let s:vcs_list       = get(g:, 'signify_vcs_list', [ 'git', 'hg', 'svn', 'darcs'
 let s:id_start = 0x100
 let s:id_top   = s:id_start
 
-let s:line_color_add           = get(g:, 'signify_line_color_add',           'DiffAdd')
-let s:line_color_delete        = get(g:, 'signify_line_color_delete',        'DiffDelete')
-let s:line_color_change        = get(g:, 'signify_line_color_change',        'DiffChange')
-let s:line_color_change_delete = get(g:, 'signify_line_color_change_delete', 'DiffChange')
-
 let s:sign_add               = get(g:, 'signify_sign_add',               '+')
 let s:sign_delete            = get(g:, 'signify_sign_delete',            '_')
 let s:sign_delete_first_line = get(g:, 'signify_sign_delete_first_line', '‾')
@@ -50,7 +45,15 @@ else
   endif
 endif
 
-sign define SignifyPlaceholder text=. texthl=SignifyChange linehl=NONE
+highlight link SignifyLineAdd    DiffAdd
+highlight link SignifyLineChange DiffChange
+highlight link SignifyLineDelete DiffDelete
+
+highlight link SignifySignAdd    DiffAdd
+highlight link SignifySignChange DiffChange
+highlight link SignifySignDelete DiffDelete
+
+sign define SignifyPlaceholder text=. texthl=SignifySignChange linehl=NONE
 
 " Init: autocmds {{{1
 augroup signify
@@ -58,7 +61,6 @@ augroup signify
 
   autocmd BufRead,BufEnter     * let s:path = resolve(expand('<afile>:p'))
   autocmd BufRead,BufWritePost * call s:start(s:path)
-  autocmd VimEnter,ColorScheme * call s:colors_set()
 
   if get(g:, 'signify_update_on_bufenter')
     autocmd BufEnter * nested
@@ -127,7 +129,7 @@ endif
 " Function: s:toggle_signify {{{1
 function! s:toggle_signify() abort
   if empty(s:path)
-    echo 'signify: I cannot sy empty buffers!'
+    echomsg 'signify: I cannot sy empty buffers!'
     return
   endif
 
@@ -418,131 +420,43 @@ function! s:repo_process_diff(path, diff) abort
   endfor
 endfunction
 
-" Function: s:colors_set {{{1
-function! s:colors_set() abort
-  let weight = get(g:, 'signify_sign_weight', 'bold')
-
-  if has('gui_running')
-    if exists('g:signify_sign_color_guibg')
-      let guibg = g:signify_sign_color_guibg
-    elseif get(g:, 'signify_sign_color_inherit_from_linenr')
-      let guibg = synIDattr(synIDtrans(hlID('LineNr')), 'bg', 'gui')
-    else
-      let guibg = synIDattr(synIDtrans(hlID('SignColumn')), 'bg', 'gui')
-    endif
-
-    if exists('g:signify_sign_color_group_add')
-      execute 'hi! link SignifyAdd '. g:signify_sign_color_group_add
-    else
-      let guifg_add = get(g:, 'signify_sign_color_guifg_add', '#11ee11')
-      if empty(guibg) || guibg < 0
-        execute 'hi SignifyAdd gui='. weight .' guifg='. guifg_add
-      else
-        execute 'hi SignifyAdd gui='. weight .' guifg='. guifg_add .' guibg='. guibg
-      endif
-    endif
-
-    if exists('g:signify_sign_color_group_delete')
-      execute 'hi! link SignifyDelete '. g:signify_sign_color_group_delete
-    else
-      let guifg_delete = get(g:, 'signify_sign_color_guifg_delete', '#ee1111')
-      if empty(guibg) || guibg < 0
-        execute 'hi SignifyDelete gui='. weight .' guifg='. guifg_delete
-      else
-        execute 'hi SignifyDelete gui='. weight .' guifg='. guifg_delete .' guibg='. guibg
-      endif
-    endif
-
-    if exists('g:signify_sign_color_group_change')
-      execute 'hi! link SignifyChange '. g:signify_sign_color_group_change
-    else
-      let guifg_change = get(g:, 'signify_sign_color_guifg_change', '#eeee11')
-      if empty(guibg) || guibg < 0
-        execute 'hi SignifyChange gui='. weight .' guifg='. guifg_change
-      else
-        execute 'hi SignifyChange gui='. weight .' guifg='. guifg_change .' guibg='. guibg
-      endif
-    endif
-  else
-    if exists('g:signify_sign_color_ctermbg')
-      let ctermbg = g:signify_sign_color_ctermbg
-    elseif get(g:, 'signify_sign_color_inherit_from_linenr')
-      let ctermbg = synIDattr(synIDtrans(hlID('LineNr')), 'bg', 'cterm')
-    else
-      let ctermbg = synIDattr(synIDtrans(hlID('SignColumn')), 'bg', 'cterm')
-    endif
-
-    if exists('g:signify_sign_color_group_add')
-      execute 'hi! link SignifyAdd '. g:signify_sign_color_group_add
-    else
-      let ctermfg_add = get(g:, 'signify_sign_color_ctermfg_add', 2)
-      if empty(ctermbg) || ctermbg < 0
-        execute 'hi SignifyAdd cterm='. weight .' ctermfg='. ctermfg_add
-      else
-        execute 'hi SignifyAdd cterm='. weight .' ctermfg='. ctermfg_add .' ctermbg='. ctermbg
-      endif
-    endif
-
-    if exists('g:signify_sign_color_group_delete')
-      execute 'hi! link SignifyDelete '. g:signify_sign_color_group_delete
-    else
-      let ctermfg_delete = get(g:, 'signify_sign_color_ctermfg_delete', 1)
-      if empty(ctermbg) || ctermbg < 0
-        execute 'hi SignifyDelete cterm='. weight .' ctermfg='. ctermfg_delete
-      else
-        execute 'hi SignifyDelete cterm='. weight .' ctermfg='. ctermfg_delete .' ctermbg='. ctermbg
-      endif
-    endif
-
-    if exists('g:signify_sign_color_group_change')
-      execute 'hi! link SignifyChange '. g:signify_sign_color_group_change
-    else
-      let ctermfg_change = get(g:, 'signify_sign_color_ctermfg_change', 3)
-      if empty(ctermbg) || ctermbg < 0
-        execute 'hi SignifyChange cterm='. weight .' ctermfg='. ctermfg_change
-      else
-        execute 'hi SignifyChange cterm='. weight .' ctermfg='. ctermfg_change .' ctermbg='. ctermbg
-      endif
-    endif
-  endif
-endfunction
 
 " Function: s:line_highlighting_enable {{{1
 function! s:line_highlighting_enable() abort
-  execute 'sign define SignifyAdd text='. s:sign_add .' texthl=SignifyAdd linehl='. s:line_color_add
-  execute 'sign define SignifyChange text='. s:sign_change .' texthl=SignifyChange linehl='. s:line_color_change
-  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifyChange linehl='. s:line_color_change
-  execute 'sign define SignifyDelete1 text='. s:sign_delete .'1 texthl=SignifyDelete linehl='. s:line_color_delete
-  execute 'sign define SignifyDelete2 text='. s:sign_delete .'2 texthl=SignifyDelete linehl='. s:line_color_delete
-  execute 'sign define SignifyDelete3 text='. s:sign_delete .'3 texthl=SignifyDelete linehl='. s:line_color_delete
-  execute 'sign define SignifyDelete4 text='. s:sign_delete .'4 texthl=SignifyDelete linehl='. s:line_color_delete
-  execute 'sign define SignifyDelete5 text='. s:sign_delete .'5 texthl=SignifyDelete linehl='. s:line_color_delete
-  execute 'sign define SignifyDelete6 text='. s:sign_delete .'6 texthl=SignifyDelete linehl='. s:line_color_delete
-  execute 'sign define SignifyDelete7 text='. s:sign_delete .'7 texthl=SignifyDelete linehl='. s:line_color_delete
-  execute 'sign define SignifyDelete8 text='. s:sign_delete .'8 texthl=SignifyDelete linehl='. s:line_color_delete
-  execute 'sign define SignifyDelete9 text='. s:sign_delete .'9 texthl=SignifyDelete linehl='. s:line_color_delete
-  execute 'sign define SignifyDeleteMore text='. s:sign_delete .'# texthl=SignifyDelete linehl='. s:line_color_delete
-  execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line .' texthl=SignifyDelete linehl='. s:line_color_delete
+  execute 'sign define SignifyAdd text='. s:sign_add ' texthl=SignifySignAdd linehl=SignifyLineAdd'
+  execute 'sign define SignifyChange text='. s:sign_change ' texthl=SignifySignChange linehl=SignifyLineChange'
+  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifySignChange linehl=SignifyLineChange'
+  execute 'sign define SignifyDelete1 text='. s:sign_delete .'1 texthl=SignifySignDelete linehl=SignifyLineDelete'
+  execute 'sign define SignifyDelete2 text='. s:sign_delete .'2 texthl=SignifySignDelete linehl=SignifyLineDelete'
+  execute 'sign define SignifyDelete3 text='. s:sign_delete .'3 texthl=SignifySignDelete linehl=SignifyLineDelete'
+  execute 'sign define SignifyDelete4 text='. s:sign_delete .'4 texthl=SignifySignDelete linehl=SignifyLineDelete'
+  execute 'sign define SignifyDelete5 text='. s:sign_delete .'5 texthl=SignifySignDelete linehl=SignifyLineDelete'
+  execute 'sign define SignifyDelete6 text='. s:sign_delete .'6 texthl=SignifySignDelete linehl=SignifyLineDelete'
+  execute 'sign define SignifyDelete7 text='. s:sign_delete .'7 texthl=SignifySignDelete linehl=SignifyLineDelete'
+  execute 'sign define SignifyDelete8 text='. s:sign_delete .'8 texthl=SignifySignDelete linehl=SignifyLineDelete'
+  execute 'sign define SignifyDelete9 text='. s:sign_delete .'9 texthl=SignifySignDelete linehl=SignifyLineDelete'
+  execute 'sign define SignifyDeleteMore text='. s:sign_delete .'# texthl=SignifySignDelete linehl=SignifyLineDelete'
+  execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line ' texthl=SignifySignDelete linehl=SignifyLineDelete'
 
   let s:line_highlight = 1
 endfunction
 
 " Function: s:line_highlighting_disable {{{1
 function! s:line_highlighting_disable() abort
-  execute 'sign define SignifyAdd text='. s:sign_add .' texthl=SignifyAdd linehl=none'
-  execute 'sign define SignifyChange text='. s:sign_change .' texthl=SignifyChange linehl=none'
-  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifyChange linehl=none'
-  execute 'sign define SignifyDelete1 text='. s:sign_delete .'1 texthl=SignifyDelete linehl=none'
-  execute 'sign define SignifyDelete2 text='. s:sign_delete .'2 texthl=SignifyDelete linehl=none'
-  execute 'sign define SignifyDelete3 text='. s:sign_delete .'3 texthl=SignifyDelete linehl=none'
-  execute 'sign define SignifyDelete4 text='. s:sign_delete .'4 texthl=SignifyDelete linehl=none'
-  execute 'sign define SignifyDelete5 text='. s:sign_delete .'5 texthl=SignifyDelete linehl=none'
-  execute 'sign define SignifyDelete6 text='. s:sign_delete .'6 texthl=SignifyDelete linehl=none'
-  execute 'sign define SignifyDelete7 text='. s:sign_delete .'7 texthl=SignifyDelete linehl=none'
-  execute 'sign define SignifyDelete8 text='. s:sign_delete .'8 texthl=SignifyDelete linehl=none'
-  execute 'sign define SignifyDelete9 text='. s:sign_delete .'9 texthl=SignifyDelete linehl=none'
-  execute 'sign define SignifyDeleteMore text='. s:sign_delete .'# texthl=SignifyDelete linehl=none'
-  execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line .' texthl=SignifyDelete linehl=none'
+  execute 'sign define SignifyAdd text='. s:sign_add ' texthl=SignifySignAdd linehl=none'
+  execute 'sign define SignifyChange text='. s:sign_change ' texthl=SignifySignChange linehl=none'
+  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifySignChange linehl=none'
+  execute 'sign define SignifyDelete1 text='. s:sign_delete .'1 texthl=SignifySignDelete linehl=none'
+  execute 'sign define SignifyDelete2 text='. s:sign_delete .'2 texthl=SignifySignDelete linehl=none'
+  execute 'sign define SignifyDelete3 text='. s:sign_delete .'3 texthl=SignifySignDelete linehl=none'
+  execute 'sign define SignifyDelete4 text='. s:sign_delete .'4 texthl=SignifySignDelete linehl=none'
+  execute 'sign define SignifyDelete5 text='. s:sign_delete .'5 texthl=SignifySignDelete linehl=none'
+  execute 'sign define SignifyDelete6 text='. s:sign_delete .'6 texthl=SignifySignDelete linehl=none'
+  execute 'sign define SignifyDelete7 text='. s:sign_delete .'7 texthl=SignifySignDelete linehl=none'
+  execute 'sign define SignifyDelete8 text='. s:sign_delete .'8 texthl=SignifySignDelete linehl=none'
+  execute 'sign define SignifyDelete9 text='. s:sign_delete .'9 texthl=SignifySignDelete linehl=none'
+  execute 'sign define SignifyDeleteMore text='. s:sign_delete .'# texthl=SignifySignDelete linehl=none'
+  execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line ' texthl=SignifySignDelete linehl=none'
 
   let s:line_highlight = 0
 endfunction
@@ -550,7 +464,7 @@ endfunction
 " Function: s:line_highlighting_toggle {{{1
 function! s:line_highlighting_toggle() abort
   if !has_key(s:sy, s:path)
-    echo 'signify: I cannot detect any changes!'
+    echomsg 'signify: I cannot detect any changes!'
     return
   endif
 
@@ -566,7 +480,7 @@ endfunction
 " Function: s:jump_to_next_hunk {{{1
 function! s:jump_to_next_hunk(count)
   if !has_key(s:sy, s:path) || s:sy[s:path].id_jump == -1
-    echo 'signify: I cannot detect any changes!'
+    echomsg 'signify: I cannot detect any changes!'
     return
   endif
 
@@ -589,7 +503,7 @@ endfunction
 " Function: s:jump_to_prev_hunk {{{1
 function! s:jump_to_prev_hunk(count)
   if !has_key(s:sy, s:path) || s:sy[s:path].id_jump == -1
-    echo 'signify: I cannot detect any changes!'
+    echomsg 'signify: I cannot detect any changes!'
     return
   endif
 
@@ -628,14 +542,14 @@ endfunction
 " Function: SignifyDebugListActiveBuffers {{{1
 function! SignifyDebugListActiveBuffers() abort
   if empty(s:sy)
-    echo 'No active buffers!'
+    echomsg 'No active buffers!'
     return
   endif
 
   for [path, stats] in items(s:sy)
-    echo "\n". path ."\n". repeat('=', strlen(path))
+    echomsg "\n". path ."\n". repeat('=', strlen(path))
     for stat in sort(keys(stats))
-      echo printf("%20s  =  %s\n", stat, string(stats[stat]))
+      echomsg printf("%20s  =  %s\n", stat, string(stats[stat]))
     endfor
   endfor
 endfunction

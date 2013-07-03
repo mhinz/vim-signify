@@ -133,15 +133,6 @@ the concerned lines:
 let g:signify_mapping_toggle_highlight = '<leader>gh'
 ```
 
-You can also change the highlighting classes for these lines. The defaults are:
-
-```vim
-let g:signify_line_color_add           = 'DiffAdd'
-let g:signify_line_color_delete        = 'DiffDelete'
-let g:signify_line_color_change        = 'DiffChange'
-let g:signify_line_color_change_delete = 'DiffChange'
-```
-
 #### you can toggle the plugin per buffer
 
 In case you want to disable the plugin for the current buffer, you can toggle
@@ -219,31 +210,11 @@ let g:signify_update_on_bufenter = 1
 
 let g:signify_line_highlight = 1
 
-let g:signify_sign_weight = 'bold'
-
 let g:signify_sign_add               = '+'
 let g:signify_sign_delete            = '-'
 let g:signify_sign_change            = '*'
 let g:signify_sign_change_delete     = '*_'
 let g:signify_sign_delete_first_line = '‾'
-
-let g:signify_sign_color_guifg_add      = '#00ff00'
-let g:signify_sign_color_guifg_delete   = '#ff0000'
-let g:signify_sign_color_guifg_change   = '#ffff00'
-let g:signify_sign_color_guibg          = '#111111'
-
-let g:signify_sign_color_ctermfg_add    = 2
-let g:signify_sign_color_ctermfg_delete = 1
-let g:signify_sign_color_ctermfg_change = 3
-let g:signify_sign_color_ctermbg        = 0
-
-let g:signify_sign_color_group_add    = 'MyAdd'
-let g:signify_sign_color_group_delete = 'MyDelete'
-let g:signify_sign_color_group_change = 'MyChange'
-
-let g:signify_line_color_add    = 'DiffAdd'
-let g:signify_line_color_delete = 'DiffDelete'
-let g:signify_line_color_change = 'DiffChange'
 
 let g:signify_cursorhold_normal = 1
 let g:signify_cursorhold_insert = 1
