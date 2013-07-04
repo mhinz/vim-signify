@@ -159,7 +159,7 @@ function! s:start(path) abort
     if empty(diff)
       return
     endif
-    let s:sy[a:path] = { 'active': 1, 'type': type, 'ids': [], 'id_jump': s:id_top, 'id_top': s:id_top, 'last_jump_was_next': -1 }
+    let s:sy[a:path] = { 'active': 1, 'type': type, 'hunks': [], 'id_top': s:id_top }
   " Inactive buffer.. bail out.
   elseif !s:sy[a:path].active
     return
@@ -171,8 +171,6 @@ function! s:start(path) abort
       return
     endif
     let s:sy[a:path].id_top  = s:id_top
-    let s:sy[a:path].id_jump = s:id_top
-    let s:sy[a:path].last_jump_was_next = -1
   endif
 
   if !exists('s:line_highlight')
@@ -193,8 +191,8 @@ function! s:start(path) abort
   sign unplace 99999
 
   if !maparg('[c', 'n')
-    nnoremap <buffer><silent> ]c :<c-u>execute v:count .'SignifyJumpToNextHunk'<cr>
-    nnoremap <buffer><silent> [c :<c-u>execute v:count .'SignifyJumpToPrevHunk'<cr>
+    nnoremap <buffer><silent> ]c :<c-u>execute v:count1 .'SignifyJumpToNextHunk'<cr>
+    nnoremap <buffer><silent> [c :<c-u>execute v:count1 .'SignifyJumpToPrevHunk'<cr>
   endif
 
   let s:sy[a:path].id_top = (s:id_top - 1)
@@ -231,26 +229,32 @@ function! s:sign_get_others(path) abort
 endfunction
 
 " Function: s:sign_set {{{1
-function! s:sign_set(lnum, type, path)
-  " Preserve non-signify signs
-  if !s:sign_overwrite && has_key(s:other_signs_line_numbers, a:lnum)
-    return
-  endif
+function! s:sign_set(signs)
+  let hunk = { 'ids': [], 'start': a:signs[0].lnum, 'end': a:signs[-1].lnum }
+  for sign in a:signs
+    " Preserve non-signify signs
+    if !s:sign_overwrite && has_key(s:other_signs_line_numbers, sign.lnum)
+      next
+    endif
 
-  call add(s:sy[a:path].ids, s:id_top)
-  execute 'sign place '. s:id_top .' line='. a:lnum .' name='. a:type .' file='. a:path
+    call add(hunk.ids, s:id_top)
+    execute 'sign place '. s:id_top .' line='. sign.lnum .' name='. sign.type .' file='. sign.path
 
-  let s:id_top += 1
+    let s:id_top += 1
+  endfor
+  call add(s:sy[sign.path].hunks, hunk)
 endfunction
 
 " Function: s:sign_remove_all {{{1
 function! s:sign_remove_all(path) abort
-  for id in s:sy[a:path].ids
-    execute 'sign unplace '. id
+  for hunk in s:sy[a:path].hunks
+    for id in hunk.ids
+      execute 'sign unplace '. id
+    endfor
   endfor
 
   let s:other_signs_line_numbers = {}
-  let s:sy[a:path].ids = []
+  let s:sy[a:path].hunks = []
 endfunction
 
 " Function: s:repo_detect {{{1
@@ -337,6 +341,8 @@ function! s:repo_process_diff(path, diff) abort
 
     let [ old_line, old_count, new_line, new_count ] = [ str2nr(tokens[1]), empty(tokens[2]) ? 1 : str2nr(tokens[2]), str2nr(tokens[3]), empty(tokens[4]) ? 1 : str2nr(tokens[4]) ]
 
+    let signs = []
+
     " 2 lines added:
 
     " @@ -5,0 +6,2 @@ this is line 5
@@ -346,7 +352,7 @@ function! s:repo_process_diff(path, diff) abort
     if (old_count == 0) && (new_count >= 1)
       let offset = 0
       while offset < new_count
-        call s:sign_set(new_line + offset, 'SignifyAdd', a:path)
+        call add(signs, { 'type': 'SignifyAdd', 'lnum': new_line + offset, 'path': a:path })
         let offset += 1
       endwhile
 
@@ -358,9 +364,9 @@ function! s:repo_process_diff(path, diff) abort
 
     elseif (old_count >= 1) && (new_count == 0)
       if new_line == 0
-        call s:sign_set(1, 'SignifyDeleteFirstLine', a:path)
+        call add(signs, { 'type': 'SignifyDeleteFirstLine', 'lnum': 1, 'path': a:path })
       else
-        call s:sign_set(new_line, (old_count > 9) ? 'SignifyDeleteMore' : 'SignifyDelete'. old_count, a:path)
+        call add(signs, { 'type': (old_count > 9) ? 'SignifyDeleteMore' : 'SignifyDelete' . old_count, 'lnum': new_line, 'path': a:path })
       endif
 
     " 2 lines changed:
@@ -374,7 +380,7 @@ function! s:repo_process_diff(path, diff) abort
     elseif old_count == new_count
       let offset = 0
       while offset < new_count
-        call s:sign_set(new_line + offset, 'SignifyChange', a:path)
+        call add(signs, { 'type': 'SignifyChange', 'lnum': new_line + offset, 'path': a:path })
         let offset += 1
       endwhile
     else
@@ -392,10 +398,10 @@ function! s:repo_process_diff(path, diff) abort
       if old_count > new_count
         let offset = 0
         while offset < (new_count - 1)
-          call s:sign_set(new_line + offset, 'SignifyChange', a:path)
+          call add(signs, { 'type': 'SignifyChange', 'lnum': new_line + offset, 'path': a:path })
           let offset += 1
         endwhile
-        call s:sign_set(new_line + offset, 'SignifyChangeDelete', a:path)
+        call add(signs, { 'type': 'SignifyChangeDelete', 'lnum': new_line + offset, 'path': a:path })
 
       " lines changed and added:
 
@@ -408,15 +414,16 @@ function! s:repo_process_diff(path, diff) abort
       else
         let offset = 0
         while offset < old_count
-          call s:sign_set(new_line + offset, 'SignifyChange', a:path)
+          call add(signs, { 'type': 'SignifyChange', 'lnum': new_line + offset, 'path': a:path })
           let offset += 1
         endwhile
         while offset < new_count
-          call s:sign_set(new_line + offset, 'SignifyAdd', a:path)
+          call add(signs, { 'type': 'SignifyAdd', 'lnum': new_line + offset, 'path': a:path })
           let offset += 1
         endwhile
       endif
     endif
+    call s:sign_set(signs)
   endfor
 endfunction
 
@@ -479,48 +486,34 @@ endfunction
 
 " Function: s:jump_to_next_hunk {{{1
 function! s:jump_to_next_hunk(count)
-  if !has_key(s:sy, s:path) || s:sy[s:path].id_jump == -1
+  if !has_key(s:sy, s:path)
     echomsg 'signify: I cannot detect any changes!'
     return
   endif
 
-  if s:sy[s:path].last_jump_was_next == 0
-    let s:sy[s:path].id_jump += 2
+  let lnum = line('.')
+  let hunks = filter(copy(s:sy[s:path].hunks), 'v:val.start > lnum')
+  let hunk = get(hunks, a:count - 1, {})
+
+  if !empty(hunk)
+    execute 'sign jump '. hunk.ids[0] .' file='. s:path
   endif
-
-  let s:sy[s:path].id_jump += a:count ? (a:count - 1) : 0
-
-  if s:sy[s:path].id_jump > s:sy[s:path].id_top
-    let s:sy[s:path].id_jump = s:sy[s:path].ids[0]
-  endif
-
-  execute 'sign jump '. s:sy[s:path].id_jump .' file='. s:path
-
-  let s:sy[s:path].id_jump += 1
-  let s:sy[s:path].last_jump_was_next = 1
 endfunction
 
 " Function: s:jump_to_prev_hunk {{{1
 function! s:jump_to_prev_hunk(count)
-  if !has_key(s:sy, s:path) || s:sy[s:path].id_jump == -1
+  if !has_key(s:sy, s:path)
     echomsg 'signify: I cannot detect any changes!'
     return
   endif
 
-  if s:sy[s:path].last_jump_was_next == 1
-    let s:sy[s:path].id_jump -= 2
+  let lnum = line('.')
+  let hunks = filter(copy(s:sy[s:path].hunks), 'v:val.start < lnum')
+  let hunk = get(hunks, 0 - a:count, {})
+
+  if !empty(hunk)
+    execute 'sign jump '. hunk.ids[0] .' file='. s:path
   endif
-
-  let s:sy[s:path].id_jump -= a:count ? (a:count - 1) : 0
-
-  if s:sy[s:path].id_jump < s:sy[s:path].ids[0]
-    let s:sy[s:path].id_jump = s:sy[s:path].id_top
-  endif
-
-  execute 'sign jump '. s:sy[s:path].id_jump .' file='. s:path
-
-  let s:sy[s:path].id_jump -= 1
-  let s:sy[s:path].last_jump_was_next = 0
 endfunction
 
 " Function: s:escape {{{1
