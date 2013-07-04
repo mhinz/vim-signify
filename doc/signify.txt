@@ -112,6 +112,12 @@ tested for.
 
 ============-
 
+    let g:signify_disable_by_default = 0
+
+Don't run Sy by default. You can toggle it anytime via :SignifyToggle.
+
+============-
+
     let g:signify_mapping_next_hunk = '<leader>gj'
     let g:signify_mapping_prev_hunk = '<leader>gk'
 

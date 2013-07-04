@@ -159,6 +159,10 @@ function! s:start(path) abort
     if empty(diff)
       return
     endif
+    if get(g:, 'signify_disable_by_default')
+      let s:sy[a:path] = { 'active': 0, 'type': type, 'hunks': [], 'id_top': s:id_top }
+      return
+    endif
     let s:sy[a:path] = { 'active': 1, 'type': type, 'hunks': [], 'id_top': s:id_top }
   " Inactive buffer.. bail out.
   elseif !s:sy[a:path].active
