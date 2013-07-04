@@ -115,7 +115,7 @@ tested for.
     let g:signify_mapping_next_hunk = '<leader>gj'
     let g:signify_mapping_prev_hunk = '<leader>gk'
 
-Mapping for jumping to the next or previous hunk.
+Mapping for jumping to the start of the next or previous hunk.
 
 ============-
 

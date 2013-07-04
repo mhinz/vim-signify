@@ -111,8 +111,9 @@ Currently the following VCS are supported:
 
 #### quick jumping between changed lines
 
-There are mappings for jumping forth and back between changed lines (so-called
-hunks). The following example shows the default mappings and how to change them:
+There are mappings for jumping forth and back between blocks of changes
+(so-called hunks). The following example shows the default mappings and how to
+change them:
 
 ```vim
 let g:signify_mapping_next_hunk = '<leader>gj'
