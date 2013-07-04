@@ -216,7 +216,7 @@ Default mapping:  <leader>gh
 
     :SignifyJumpToNextHunk
 
-Jump to the next hunk. There are two mappings available:
+Jump to the next start of a hunk. There are two mappings available:
 
 Hardcoded mapping:     ]c
 Configurable mapping:  <leader>gj
@@ -225,7 +225,7 @@ Configurable mapping:  <leader>gj
 
     :SignifyJumpToPrevHunk
 
-Jump to the previous hunk. There are two mappings available:
+Jump to the previous start of a hunk. There are two mappings available:
 
 Hardcoded mapping:     [c
 Configurable mapping:  <leader>gk
