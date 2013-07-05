@@ -544,9 +544,9 @@ function! SignifyDebugListActiveBuffers() abort
   endif
 
   for [path, stats] in items(s:sy)
-    echomsg "\n". path ."\n". repeat('=', strlen(path))
+    echo "\n". path ."\n". repeat('=', strlen(path))
     for stat in sort(keys(stats))
-      echomsg printf("%20s  =  %s\n", stat, string(stats[stat]))
+      echo printf("%20s  =  %s\n", stat, string(stats[stat]))
     endfor
   endfor
 endfunction
