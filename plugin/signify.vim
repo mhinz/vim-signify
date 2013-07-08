@@ -51,9 +51,16 @@ sign define SignifyPlaceholder text=. texthl=SignifySignChange linehl=NONE
 augroup signify
   autocmd!
 
+  autocmd VimEnter             * call s:highlight_setup()
   autocmd BufRead,BufEnter     * let s:path = resolve(expand('<afile>:p'))
   autocmd BufRead,BufWritePost * call s:start(s:path)
-  autocmd Colorscheme,BufEnter * call s:highlight_setup()
+
+  autocmd BufDelete *
+        \ let path = resolve(expand('<afile>:p')) |
+        \ call s:stop(path) |
+        \ if has_key(s:sy, path) |
+        \   call remove(s:sy, path) |
+        \ endif
 
   if get(g:, 'signify_update_on_bufenter')
     autocmd BufEnter * nested
@@ -79,13 +86,6 @@ augroup signify
   if !has('gui_win32')
     autocmd FocusGained * call s:start(s:path)
   endif
-
-  autocmd BufDelete *
-        \ let path = resolve(expand('<afile>:p')) |
-        \ call s:stop(path) |
-        \ if has_key(s:sy, path) |
-        \   call remove(s:sy, path) |
-        \ endif
 augroup END
 
 " Init: commands {{{1
