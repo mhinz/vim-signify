@@ -66,24 +66,21 @@ Sign explanation
 
 `+`
 
-A new line was added. The sign is shown on the same line as the new line.
+New line.
 
 `_1`
 
-A line was deleted. The sign is shown on the line above the deleted line. The
-second character indicates the number of deleted lines: 1-9, and # for
-everything above.
+Amount of deleted lines. If the number is larger than 9, a `>` will be shown
+instead.
 
 `!`
 
-A line was changed. Something was changed, but the amount of lines stayed the
-same. The sign is shown on the same line.
+Changed line.
 
-`!_`
+`!1`
 
-A line was changed and one or more of the lines below were deleted. A
-combination of **!** and **_**. The sign is shown on the same line.
-
+A line was changed and an amount of lines below were deleted. A combination of
+`!` and `_`. If the number is larger than 9, a `>` will be shown instead.
 
 `‾`
 
