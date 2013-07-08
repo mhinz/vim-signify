@@ -136,6 +136,7 @@ function! s:toggle_signify() abort
   if has_key(s:sy, s:path)
     if s:sy[s:path].active
       call s:stop(s:path)
+      let s:sy[s:path].active = 0
     else
       let s:sy[s:path].active = 1
       call s:start(s:path)
@@ -216,8 +217,6 @@ function! s:stop(path) abort
   augroup signify
     autocmd! * <buffer>
   augroup END
-
-  let s:sy[s:path].active = 0
 endfunction
 
 " Function: s:sign_get_others {{{1
