@@ -45,14 +45,6 @@ else
   endif
 endif
 
-highlight link SignifyLineAdd    DiffAdd
-highlight link SignifyLineChange DiffChange
-highlight link SignifyLineDelete DiffDelete
-
-highlight link SignifySignAdd    DiffAdd
-highlight link SignifySignChange DiffChange
-highlight link SignifySignDelete DiffDelete
-
 sign define SignifyPlaceholder text=. texthl=SignifySignChange linehl=NONE
 
 " Init: autocmds {{{1
@@ -61,6 +53,7 @@ augroup signify
 
   autocmd BufRead,BufEnter     * let s:path = resolve(expand('<afile>:p'))
   autocmd BufRead,BufWritePost * call s:start(s:path)
+  autocmd Colorscheme,BufEnter * call s:highlight_setup()
 
   if get(g:, 'signify_update_on_bufenter')
     autocmd BufEnter * nested
@@ -96,8 +89,8 @@ augroup signify
 augroup END
 
 " Init: commands {{{1
-com! -nargs=0 -bar        SignifyToggle          call s:toggle_signify()
-com! -nargs=0 -bar        SignifyToggleHighlight call s:line_highlighting_toggle()
+com! -nargs=0 -bar        SignifyToggle          call s:toggle()
+com! -nargs=0 -bar        SignifyToggleHighlight call s:highlight_line_toggle()
 com! -nargs=0 -bar -count SignifyJumpToNextHunk  call s:jump_to_next_hunk(<count>)
 com! -nargs=0 -bar -count SignifyJumpToPrevHunk  call s:jump_to_prev_hunk(<count>)
 
@@ -125,26 +118,6 @@ if exists('g:signify_mapping_toggle')
 else
   nnoremap <silent> <leader>gt :SignifyToggle<cr>
 endif
-
-" Function: s:toggle_signify {{{1
-function! s:toggle_signify() abort
-  if empty(s:path)
-    echomsg 'signify: I cannot sy empty buffers!'
-    return
-  endif
-
-  if has_key(s:sy, s:path)
-    if s:sy[s:path].active
-      call s:stop(s:path)
-      let s:sy[s:path].active = 0
-    else
-      let s:sy[s:path].active = 1
-      call s:start(s:path)
-    endif
-  else
-    call s:start(s:path)
-  endif
-endfunction
 
 " Function: s:start {{{1
 function! s:start(path) abort
@@ -180,9 +153,9 @@ function! s:start(path) abort
 
   if !exists('s:line_highlight')
     if get(g:, 'signify_line_highlight')
-      call s:line_highlighting_enable()
+      call s:highlight_line_enable()
     else
-      call s:line_highlighting_disable()
+      call s:highlight_line_disable()
     endif
   endif
 
@@ -217,6 +190,26 @@ function! s:stop(path) abort
   augroup signify
     autocmd! * <buffer>
   augroup END
+endfunction
+
+" Function: s:toggle {{{1
+function! s:toggle() abort
+  if empty(s:path)
+    echomsg 'signify: I cannot sy empty buffers!'
+    return
+  endif
+
+  if has_key(s:sy, s:path)
+    if s:sy[s:path].active
+      call s:stop(s:path)
+      let s:sy[s:path].active = 0
+    else
+      let s:sy[s:path].active = 1
+      call s:start(s:path)
+    endif
+  else
+    call s:start(s:path)
+  endif
 endfunction
 
 " Function: s:sign_get_others {{{1
@@ -430,9 +423,18 @@ function! s:repo_process_diff(path, diff) abort
   endfor
 endfunction
 
+" Function: s:highlight_setup {{{1
+function! s:highlight_setup() abort
+  highlight link SignifyLineAdd    DiffAdd
+  highlight link SignifyLineChange DiffChange
+  highlight link SignifyLineDelete DiffDelete
+  highlight link SignifySignAdd    DiffAdd
+  highlight link SignifySignChange DiffChange
+  highlight link SignifySignDelete DiffDelete
+endfunction
 
-" Function: s:line_highlighting_enable {{{1
-function! s:line_highlighting_enable() abort
+" Function: s:highlight_line_enable {{{1
+function! s:highlight_line_enable() abort
   execute 'sign define SignifyAdd text='. s:sign_add ' texthl=SignifySignAdd linehl=SignifyLineAdd'
   execute 'sign define SignifyChange text='. s:sign_change ' texthl=SignifySignChange linehl=SignifyLineChange'
   execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifySignChange linehl=SignifyLineChange'
@@ -451,8 +453,8 @@ function! s:line_highlighting_enable() abort
   let s:line_highlight = 1
 endfunction
 
-" Function: s:line_highlighting_disable {{{1
-function! s:line_highlighting_disable() abort
+" Function: s:highlight_line_disable {{{1
+function! s:highlight_line_disable() abort
   execute 'sign define SignifyAdd text='. s:sign_add ' texthl=SignifySignAdd linehl=none'
   execute 'sign define SignifyChange text='. s:sign_change ' texthl=SignifySignChange linehl=none'
   execute 'sign define SignifyChangeDelete text='. s:sign_change_delete .' texthl=SignifySignChange linehl=none'
@@ -471,17 +473,17 @@ function! s:line_highlighting_disable() abort
   let s:line_highlight = 0
 endfunction
 
-" Function: s:line_highlighting_toggle {{{1
-function! s:line_highlighting_toggle() abort
+" Function: s:highlight_line_toggle {{{1
+function! s:highlight_line_toggle() abort
   if !has_key(s:sy, s:path)
     echomsg 'signify: I cannot detect any changes!'
     return
   endif
 
   if s:line_highlight
-    call s:line_highlighting_disable()
+    call s:highlight_line_disable()
   else
-    call s:line_highlighting_enable()
+    call s:highlight_line_enable()
   endif
 
   call s:start(s:path)
