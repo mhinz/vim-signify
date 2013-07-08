@@ -1,4 +1,4 @@
-*signify.txt*                                      Seeing changes like a boss.
+*signify.txt*  Use the sign column to show all kinds of things.
 *signify*
 
                                               ___
