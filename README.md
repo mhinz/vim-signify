@@ -1,7 +1,7 @@
 vim-signify
 -----------
 
-Or just: __sy__
+Or just: __Sy__.
 
 Sy shows all added, deleted and modified lines since the last commit via Vim its
 sign column. It __supports several version control systems__.
@@ -59,25 +59,26 @@ Sign explanation
 
 `+`
 
-New line.
+This indicates a new line.
 
 `_1`
 
-Number of deleted lines. If the number is larger than 9, a `>` will be shown
-instead.
+This indicates the number of deleted lines. If the number is larger than 9, a
+`>` will be shown instead.
 
 `!`
 
-Changed line.
+This indicates a changed line.
 
 `!1`
 
-A line was changed and an number of lines below were deleted. A combination of
-`!` and `_`. If the number is larger than 9, a `>` will be shown instead.
+This indicates a changed line and a number of lines below that were deleted.  It
+is a combination of `!` and `_`. If the number is larger than 9, a `>` will be
+shown instead.
 
 `‾`
 
-This is used instead of _ in the special case of the first line being removed.
+This is used instead of `_` in the special case of the first line being removed.
 
 Longer introduction
 -------------------
