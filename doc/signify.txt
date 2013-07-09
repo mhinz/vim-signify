@@ -64,7 +64,7 @@ New line.
 
     _1
 
-Amount of deleted lines. If the number is larger than 9, a > will be shown
+Number of deleted lines. If the number is larger than 9, a > will be shown
 instead.
 
     !
@@ -73,7 +73,7 @@ Changed line.
 
     !1
 
-A line was changed and an amount of lines below were deleted. A combination of
+A line was changed and an number of lines below were deleted. A combination of
 ! and _. If the number is larger than 9, a > will be shown instead.
 
     ‾
