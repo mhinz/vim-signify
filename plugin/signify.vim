@@ -126,7 +126,7 @@ function! s:start(path) abort
     return
   endif
 
-  " New buffer.. add to list.
+  " new buffer.. add to list
   if !has_key(s:sy, a:path)
     let [ diff, type ] = s:repo_detect(a:path)
     if empty(diff)
@@ -137,10 +137,10 @@ function! s:start(path) abort
       return
     endif
     let s:sy[a:path] = { 'active': 1, 'type': type, 'hunks': [], 'id_top': s:id_top }
-  " Inactive buffer.. bail out.
+  " inactive buffer.. bail out
   elseif !s:sy[a:path].active
     return
-  " Update signs.
+  " update signs
   else
     let diff = s:repo_get_diff_{s:sy[a:path].type}(a:path)
     if empty(diff)

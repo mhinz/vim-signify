@@ -11,7 +11,7 @@ It's __fast__, __highly configurable__ and __well documented__.
 Features:
 
 - supports git, mercurial, darcs, bazaar, subversion, cvs, rcs, fossil
-- quick jumping between changed lines
+- quick jumping between blocks of changed lines
 - apart from signs there is also optional line highlighting
 - fully configurable through global variables (options and mappings)
 - optional preserving of signs from other plugins
