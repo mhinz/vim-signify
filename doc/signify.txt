@@ -55,6 +55,7 @@ version control system:
     - cvs
     - rcs
     - fossil
+    - accurev
 
 Sign explanation:
 
@@ -92,7 +93,7 @@ default values, as long as no "Default:" section is given.
 
     let g:signify_vcs_list = [ 'git', 'hg' ]
 
-Default: ['git', 'hg', 'svn', 'darcs', 'bzr', 'fossil', 'cvs', 'rcs']
+Default: ['git', 'hg', 'svn', 'darcs', 'bzr', 'fossil', 'cvs', 'rcs', 'accurev']
 
 This variable determines the VCS to check for and in what order. If you only
 use git and mercurial, you can shorten the list to the shown example. If you

@@ -99,6 +99,7 @@ Currently the following VCS are supported:
 - cvs
 - rcs
 - fossil
+- accurev
 
 #### quick jumping between changed lines
 

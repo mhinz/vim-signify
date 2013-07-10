@@ -14,7 +14,7 @@ let s:other_signs_line_numbers = {}
 
 " overwrite non-signify signs by default
 let s:sign_overwrite = get(g:, 'signify_sign_overwrite', 1)
-let s:vcs_list       = get(g:, 'signify_vcs_list', [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'fossil', 'cvs', 'rcs' ])
+let s:vcs_list       = get(g:, 'signify_vcs_list', [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'fossil', 'cvs', 'rcs', 'accurev' ])
 
 let s:id_start = 0x100
 let s:id_top   = s:id_start
@@ -325,6 +325,14 @@ function! s:repo_get_diff_rcs(path) abort
   if executable('rcs')
     let diff = system('rcsdiff -U0 '. s:escape(a:path) .' 2>/dev/null')
     return v:shell_error ? '' : diff
+  endif
+endfunction
+
+" Function: s:repo_get_diff_accurev {{{1
+function! s:repo_get_diff_accurev(path) abort
+  if executable('accurev')
+    let diff = system('cd '. s:escape(fnamemodify(a:path, ':h')) .' && accurev diff '. s:escape(fnamemodify(a:path, ':t')) . ' -- -U0')
+    return (v:shell_error != 1) ? '' : diff
   endif
 endfunction
 
