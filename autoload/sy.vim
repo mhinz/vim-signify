@@ -11,7 +11,8 @@ sign define SignifyPlaceholder text=. texthl=SignifySignChange linehl=NONE
 
 " Function: #start {{{1
 function! sy#start(path) abort
-  if !filereadable(a:path)
+  if &diff
+        \ || !filereadable(a:path)
         \ || (exists('g:signify_skip_filetype') && has_key(g:signify_skip_filetype, &ft))
         \ || (exists('g:signify_skip_filename') && has_key(g:signify_skip_filename, a:path))
     return
