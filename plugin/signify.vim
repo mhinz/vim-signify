@@ -272,6 +272,37 @@ function! s:repo_get_diff_git(path) abort
   endif
 endfunction
 
+" Function: s:repo_get_stat_git {{{1
+function! s:repo_get_stat_git() abort
+  let s:stats = []
+  let root  = finddir('.git', fnamemodify(s:path, ':h') .';')
+  if empty(root)
+    echohl ErrorMsg | echomsg 'Cannot find the git root directory: '. s:path | echohl None
+    return
+  endif
+  let root   = fnamemodify(root, ':h')
+  let output = system('cd '. s:escape(root) .' && git diff --numstat')
+  if v:shell_error
+    echohl ErrorMsg | echomsg "'git diff --numstat' failed" | echohl None
+    return
+  endif
+  for stat in split(output, '\n')
+    let tokens = matchlist(stat, '\v([0-9-]+)\t([0-9-]+)\t(.*)')
+    if empty(tokens)
+      echohl ErrorMsg | echomsg 'Cannot parse this line: '. stat | echohl None
+    elseif tokens[1] == '-'
+      continue
+    else
+      let path = root . s:separator() . tokens[3]
+      if !bufexists(path)
+        execute 'argadd '. path
+      endif
+      call add(s:stats, { 'bufnr': bufnr(path), 'text': tokens[1] .' additions, '. tokens[2] .' deletions', 'lnum': 1, 'col': 1 })
+    endif
+  endfor
+  "call setqflist(stats)
+endfunction
+
 " Function: s:repo_get_diff_hg {{{1
 function! s:repo_get_diff_hg(path) abort
   if executable('hg')
@@ -554,7 +585,7 @@ function! s:jump_to_prev_hunk(count)
 endfunction
 
 " Function: s:escape {{{1
-function s:escape(path) abort
+function! s:escape(path) abort
   if exists('+shellslash')
     let old_ssl = &shellslash
     set noshellslash
@@ -567,6 +598,11 @@ function s:escape(path) abort
   endif
 
   return path
+endfunction
+
+" Function: s:separator {{{1
+function! s:separator() abort
+  return !exists('+shellslash') || &shellslash ? '/' : '\'
 endfunction
 
 " Function: SignifyDebugListActiveBuffers {{{1
