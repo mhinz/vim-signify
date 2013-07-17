@@ -3,7 +3,7 @@ if exists('b:autoloaded_sy')
 endif
 let b:autoloaded_sy = 1
 
-" Init: values
+" Init: values {{{1
 let g:signify_sign_overwrite = get(g:, 'signify_sign_overwrite', 1)
 let g:id_top = 0x100
 
@@ -101,3 +101,4 @@ function! sy#toggle() abort
   endif
 endfunction
 
+" vim: et sw=2 sts=2

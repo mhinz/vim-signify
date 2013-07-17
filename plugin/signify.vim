@@ -84,3 +84,4 @@ else
   nnoremap <silent> <leader>gt :SignifyToggle<cr>
 endif
 
+" vim: et sw=2 sts=2
