@@ -3,6 +3,7 @@
 !.gitignore
 !CONTRIBUTING.md
 !README.md
+!autoload/sy/repo.vim
 !autoload/sy/utils.vim
 !doc/signify.txt
 !plugin/signify.vim
