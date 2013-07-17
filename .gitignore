@@ -3,6 +3,7 @@
 !.gitignore
 !CONTRIBUTING.md
 !README.md
+!autoload/sy/utils.vim
 !doc/signify.txt
 !plugin/signify.vim
 !showcolors.bash
