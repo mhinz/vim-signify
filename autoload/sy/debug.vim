@@ -3,7 +3,7 @@ if exists('b:autoloaded_sy_debug')
 endif
 let b:autoloaded_sy_debug = 1
 
-" Function: SignifyDebugListActiveBuffers {{{1
+" Function: #list_active_buffers {{{1
 function! sy#debug#list_active_buffers() abort
   if empty(g:sy)
     echomsg 'No active buffers!'
