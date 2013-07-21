@@ -57,11 +57,6 @@ function! sy#start(path) abort
   call sy#repo#process_diff(a:path, diff)
   sign unplace 99999
 
-  if !maparg('[c', 'n')
-    nnoremap <buffer><silent> ]c :<c-u>execute v:count1 .'SignifyJumpToNextHunk'<cr>
-    nnoremap <buffer><silent> [c :<c-u>execute v:count1 .'SignifyJumpToPrevHunk'<cr>
-  endif
-
   let g:sy[a:path].id_top = (g:id_top - 1)
 endfunction
 

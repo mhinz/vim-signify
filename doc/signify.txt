@@ -123,6 +123,14 @@ Don't run Sy by default. You can toggle it anytime via :SignifyToggle.
 
 Mapping for jumping to the start of the next or previous hunk.
 
+Alternatively, you can also map it yourself:
+
+    nmap <leader>gj <plug>(signify-next-jump)
+    nmap <leader>gk <plug>(signify-prev-jump)
+
+There is no difference between both variants.
+
+
 ============-
 
     let g:signify_mapping_toggle_highlight = '<leader>gh'
@@ -216,24 +224,6 @@ Default mapping:  <leader>gt
 
 Toggle line highlighting for lines containing changes.
 Default mapping:  <leader>gh
-
-============-
-
-    :SignifyJumpToNextHunk
-
-Jump to the next start of a hunk. There are two mappings available:
-
-Hardcoded mapping:     ]c
-Configurable mapping:  <leader>gj
-
-============-
-
-    :SignifyJumpToPrevHunk
-
-Jump to the previous start of a hunk. There are two mappings available:
-
-Hardcoded mapping:     [c
-Configurable mapping:  <leader>gk
 
 
 ==============================================================================

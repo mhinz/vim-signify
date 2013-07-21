@@ -53,40 +53,46 @@ augroup signify
 augroup END
 
 " Init: commands {{{1
-com! -nargs=0 -bar          SignifyToggle          call sy#toggle()
-com! -nargs=0 -bar          SignifyToggleHighlight call sy#highlight#line_toggle()
-com! -nargs=0 -bar -count=1 SignifyJumpToNextHunk  call sy#jump#next_hunk(<count>)
-com! -nargs=0 -bar -count=1 SignifyJumpToPrevHunk  call sy#jump#prev_hunk(<count>)
-com! -nargs=0 -bar          SyDebug                call sy#debug#list_active_buffers()
+com! -nargs=0 -bar  SignifyToggle          call sy#toggle()
+com! -nargs=0 -bar  SignifyToggleHighlight call sy#highlight#line_toggle()
+com! -nargs=0 -bar  SyDebug                call sy#debug#list_active_buffers()
 
 " Init: mappings {{{1
-nnoremap <silent> <plug>(signify-next-hunk)        :<C-u>call sy#jump#next_hunk(v:count1)<cr>
-nnoremap <silent> <plug>(signify-prev-hunk)        :<C-u>call sy#jump#prev_hunk(v:count1)<cr>
-nnoremap <silent> <plug>(signify-toggle-highlight) :<C-u>call sy#highlight#line_toggle()<cr>
-nnoremap <silent> <plug>(signify-toggle)           :<C-u>call sy#toggle()<cr>
+nnoremap <silent> <expr> <plug>(signify-next-hunk) &diff ? ']c' : ":\<c-u>call sy#jump#next_hunk(v:count1)\<cr>"
+nnoremap <silent> <expr> <plug>(signify-prev-hunk) &diff ? '[c' : ":\<c-u>call sy#jump#prev_hunk(v:count1)\<cr>"
+nnoremap <silent> <plug>(signify-toggle-highlight) :<c-u>call sy#highlight#line_toggle()<cr>
+nnoremap <silent> <plug>(signify-toggle)           :<c-u>call sy#toggle()<cr>
 
 if exists('g:signify_mapping_next_hunk')
-  execute 'nnoremap '. g:signify_mapping_next_hunk .' <plug>(signify-next-hunk)'
-elseif !hasmapto('<plug>(signify-next-hunk)') && empty(maparg('<leader>gj', 'n'))
-  nnoremap <leader>gj <plug>(signify-next-hunk)
+  execute 'nmap '. g:signify_mapping_next_hunk .' <plug>(signify-next-hunk)'
+elseif !hasmapto('<plug>(signify-next-hunk)') && !maparg('<leader>gj', 'n')
+  nmap <leader>gj <plug>(signify-next-hunk)
 endif
 
 if exists('g:signify_mapping_prev_hunk')
-  execute 'nnoremap '. g:signify_mapping_prev_hunk .' <plug>(signify-prev-hunk)'
-elseif !hasmapto('<plug>(signify-prev-hunk)') && empty(maparg('<leader>gk', 'n'))
-  nnoremap <leader>gk <plug>(signify-prev-hunk)
+  execute 'nmap '. g:signify_mapping_prev_hunk .' <plug>(signify-prev-hunk)'
+elseif !hasmapto('<plug>(signify-prev-hunk)') && !maparg('<leader>gk', 'n')
+  nmap <leader>gk <plug>(signify-prev-hunk)
 endif
 
 if exists('g:signify_mapping_toggle_highlight')
-  execute 'nnoremap '. g:signify_mapping_toggle_highlight .' <plug>(signify-toggle-highlight)'
-elseif !hasmapto('<plug>(signify-toggle-highlight)') && empty(maparg('<leader>gh', 'n'))
-  nnoremap <leader>gh <plug>(signify-toggle-highlight)
+  execute 'nmap '. g:signify_mapping_toggle_highlight .' <plug>(signify-toggle-highlight)'
+elseif !hasmapto('<plug>(signify-toggle-highlight)') && !maparg('<leader>gh', 'n')
+  nmap <leader>gh <plug>(signify-toggle-highlight)
 endif
 
 if exists('g:signify_mapping_toggle')
-  execute 'nnoremap '. g:signify_mapping_toggle .' <plug>(signify-toggle)'
-elseif !hasmapto('<plug>(signify-toggle)') && empty(maparg('<leader>gt', 'n'))
-  nnoremap <leader>gt <plug>(signify-toggle)
+  execute 'nmap '. g:signify_mapping_toggle .' <plug>(signify-toggle)'
+elseif !hasmapto('<plug>(signify-toggle)') && !maparg('<leader>gt', 'n')
+  nmap <leader>gt <plug>(signify-toggle)
+endif
+
+if !maparg(']c', 'n')
+  nmap ]c <plug>(signify-next-hunk)
+endif
+
+if !maparg('[c', 'n')
+  nmap [c <plug>(signify-prev-hunk)
 endif
 
 " vim: et sw=2 sts=2
