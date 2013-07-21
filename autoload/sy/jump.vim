@@ -12,7 +12,7 @@ function! sy#jump#next_hunk(count)
 
   let lnum = line('.')
   let hunks = filter(copy(g:sy[g:sy_path].hunks), 'v:val.start > lnum')
-  let hunk = get(hunks, a:count - 1, {})
+  let hunk = get(hunks, a:count - 1, get(hunks, -1, {}))
 
   if !empty(hunk)
     execute 'sign jump '. hunk.ids[0] .' file='. g:sy_path
@@ -28,7 +28,7 @@ function! sy#jump#prev_hunk(count)
 
   let lnum = line('.')
   let hunks = filter(copy(g:sy[g:sy_path].hunks), 'v:val.start < lnum')
-  let hunk = get(hunks, 0 - a:count, {})
+  let hunk = get(hunks, 0 - a:count, get(hunks, 0, {}))
 
   if !empty(hunk)
     execute 'sign jump '. hunk.ids[0] .' file='. g:sy_path
