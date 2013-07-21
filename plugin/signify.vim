@@ -60,28 +60,33 @@ com! -nargs=0 -bar -count SignifyJumpToPrevHunk  call sy#jump#prev_hunk(<count>)
 com! -nargs=0 -bar        SyDebug                call sy#debug#list_active_buffers()
 
 " Init: mappings {{{1
+nnoremap <silent> <Plug>(signify-next-hunk)        :<C-u>call sy#jump#next_hunk(v:count1)<cr>
+nnoremap <silent> <Plug>(signify-prev-hunk)        :<C-u>call sy#jump#prev_hunk(v:count1)<cr>
+nnoremap <silent> <Plug>(signify-toggle-highlight) :<C-u>call sy#highlight#line_toggle()<cr>
+nnoremap <silent> <Plug>(signify-toggle)           :<C-u>call sy#toggle()<cr>
+
 if exists('g:signify_mapping_next_hunk')
-  execute 'nnoremap <silent> '. g:signify_mapping_next_hunk .' :<c-u>execute v:count1 ."SignifyJumpToNextHunk"<cr>'
-else
-  nnoremap <silent> <leader>gj :<c-u>execute v:count1 .'SignifyJumpToNextHunk'<cr>
+  execute 'nmap '. g:signify_mapping_next_hunk .' <Plug>(signify-next-hunk)'
+elseif !hasmapto('<Plug>(signify-next-hunk)') && maparg('<leader>gj', 'n') == ''
+  nmap <leader>gj <Plug>(signify-next-hunk)
 endif
 
 if exists('g:signify_mapping_prev_hunk')
-  execute 'nnoremap <silent> '. g:signify_mapping_prev_hunk .' :<c-u>execute v:count1 ."SignifyJumpToPrevHunk"<cr>'
-else
-  nnoremap <silent> <leader>gk :<c-u>execute v:count1 .'SignifyJumpToPrevHunk'<cr>
+  execute 'nmap '. g:signify_mapping_prev_hunk .' <Plug>(signify-prev-hunk)'
+elseif !hasmapto('<Plug>(signify-prev-hunk)') && maparg('<leader>gk', 'n') == ''
+  nmap <leader>gk <Plug>(signify-prev-hunk)
 endif
 
 if exists('g:signify_mapping_toggle_highlight')
-  execute 'nnoremap <silent> '. g:signify_mapping_toggle_highlight .' :SignifyToggleHighlight<cr>'
-else
-  nnoremap <silent> <leader>gh :SignifyToggleHighlight<cr>
+  execute 'nmap '. g:signify_mapping_toggle_highlight .' <Plug>(signify-toggle-highlight)'
+elseif !hasmapto('<Plug>(signify-toggle-highlight)') && maparg('<leader>gh', 'n') == ''
+  nmap <leader>gh <Plug>(signify-toggle-highlight)
 endif
 
 if exists('g:signify_mapping_toggle')
-  execute 'nnoremap <silent> '. g:signify_mapping_toggle .' :SignifyToggle<cr>'
-else
-  nnoremap <silent> <leader>gt :SignifyToggle<cr>
+  execute 'nmap '. g:signify_mapping_toggle .' <Plug>(signify-toggle)'
+elseif !hasmapto('<Plug>(signify-toggle)') && maparg('<leader>gt', 'n') == ''
+  nmap <leader>gt <Plug>(signify-toggle)
 endif
 
 " vim: et sw=2 sts=2
