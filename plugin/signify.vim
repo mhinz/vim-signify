@@ -53,23 +53,23 @@ augroup signify
 augroup END
 
 " Init: commands {{{1
-com! -nargs=0 -bar        SignifyToggle          call sy#toggle()
-com! -nargs=0 -bar        SignifyToggleHighlight call sy#highlight#line_toggle()
-com! -nargs=0 -bar -count SignifyJumpToNextHunk  call sy#jump#next_hunk(<count>)
-com! -nargs=0 -bar -count SignifyJumpToPrevHunk  call sy#jump#prev_hunk(<count>)
-com! -nargs=0 -bar        SyDebug                call sy#debug#list_active_buffers()
+com! -nargs=0 -bar          SignifyToggle          call sy#toggle()
+com! -nargs=0 -bar          SignifyToggleHighlight call sy#highlight#line_toggle()
+com! -nargs=0 -bar -count=1 SignifyJumpToNextHunk  call sy#jump#next_hunk(<count>)
+com! -nargs=0 -bar -count=1 SignifyJumpToPrevHunk  call sy#jump#prev_hunk(<count>)
+com! -nargs=0 -bar          SyDebug                call sy#debug#list_active_buffers()
 
 " Init: mappings {{{1
 if exists('g:signify_mapping_next_hunk')
-  execute 'nnoremap <silent> '. g:signify_mapping_next_hunk .' :<c-u>execute v:count ."SignifyJumpToNextHunk"<cr>'
+  execute 'nnoremap <silent> '. g:signify_mapping_next_hunk .' :<c-u>execute v:count1 ."SignifyJumpToNextHunk"<cr>'
 else
-  nnoremap <silent> <leader>gj :<c-u>execute v:count .'SignifyJumpToNextHunk'<cr>
+  nnoremap <silent> <leader>gj :<c-u>execute v:count1 .'SignifyJumpToNextHunk'<cr>
 endif
 
 if exists('g:signify_mapping_prev_hunk')
-  execute 'nnoremap <silent> '. g:signify_mapping_prev_hunk .' :<c-u>execute v:count ."SignifyJumpToPrevHunk"<cr>'
+  execute 'nnoremap <silent> '. g:signify_mapping_prev_hunk .' :<c-u>execute v:count1 ."SignifyJumpToPrevHunk"<cr>'
 else
-  nnoremap <silent> <leader>gk :<c-u>execute v:count .'SignifyJumpToPrevHunk'<cr>
+  nnoremap <silent> <leader>gk :<c-u>execute v:count1 .'SignifyJumpToPrevHunk'<cr>
 endif
 
 if exists('g:signify_mapping_toggle_highlight')
