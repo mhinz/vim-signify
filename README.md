@@ -33,6 +33,8 @@ feedback! Same for issues or feature requests.
 
 Thank you for flying mhi airlines. Get the Vim on!
 
+You can also follow me on Twitter: [@_mhinz_](https://twitter.com/_mhinz_)
+
 What about vim-gitgutter?
 -------------------------
 
