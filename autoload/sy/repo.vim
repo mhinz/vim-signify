@@ -26,7 +26,7 @@ endif
 
 " Function: #detect {{{1
 function! sy#repo#detect(path) abort
-  for type in get(g:, 'signify_vcs_list', [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'fossil', 'cvs', 'rcs', 'accurev' ])
+  for type in get(g:, 'signify_vcs_list', [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'fossil', 'cvs', 'rcs', 'accurev', 'perforce' ])
     let diff = sy#repo#get_diff_{type}(a:path)
     if !empty(diff)
       return [ diff, type ]
@@ -136,6 +136,14 @@ function! sy#repo#get_diff_accurev(path) abort
   if executable('accurev')
     let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && accurev diff '. sy#util#escape(fnamemodify(a:path, ':t')) . ' -- -U0')
     return (v:shell_error != 1) ? '' : diff
+  endif
+endfunction
+
+" Function: #get_diff_perforce {{{1
+function! sy#repo#get_diff_perforce(path) abort
+  if executable('perforce')
+    let diff = system('env P4DIFF=diff p4 diff -dU0 -- '. sy#util#escape(a:path))
+    return v:shell_error ? '' : diff
   endif
 endfunction
 
