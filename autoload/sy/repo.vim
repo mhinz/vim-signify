@@ -141,7 +141,7 @@ endfunction
 
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce(path) abort
-  if executable('perforce')
+  if executable('p4')
     let diff = system('env P4DIFF=diff p4 diff -dU0 -- '. sy#util#escape(a:path))
     return v:shell_error ? '' : diff
   endif
