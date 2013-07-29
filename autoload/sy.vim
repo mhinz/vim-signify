@@ -7,7 +7,7 @@ let b:autoloaded_sy = 1
 let g:signify_sign_overwrite = get(g:, 'signify_sign_overwrite', 1)
 let g:id_top = 0x100
 
-sign define SignifyPlaceholder text=. texthl=SignifySignChange linehl=NONE
+sign define SignifyPlaceholder text=. texthl=SignifySignChange linehl=
 
 " Function: #start {{{1
 function! sy#start(path) abort
