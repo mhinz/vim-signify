@@ -302,9 +302,6 @@ Israel Chauca Fuentes  (Raimondi)
 ==============================================================================
 8. Licence                                                     *signify-license*
 
-Copyright © Marco Hinz. Distributed under the same terms as Vim itself.
-
-See |license|.
-
+MIT license. Copyright (c) 2013 Marco Hinz.
 
 vim: tw=78

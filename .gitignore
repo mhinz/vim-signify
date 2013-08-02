@@ -2,6 +2,7 @@
 
 !.gitignore
 !CONTRIBUTING.md
+!LICENSE
 !README.md
 !autoload/sy.vim
 !autoload/sy/debug.vim

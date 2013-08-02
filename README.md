@@ -224,5 +224,4 @@ Marco Hinz `<mh.codebro@gmail.com>`
 License
 -------
 
-Copyright © Marco Hinz. Distributed under the same terms as Vim itself. See
-`:help license`.
+MIT license. Copyright (c) 2013 Marco Hinz.
