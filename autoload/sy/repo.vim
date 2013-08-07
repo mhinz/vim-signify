@@ -24,6 +24,8 @@ else
   endif
 endif
 
+let s:diffoptions = ''
+
 " Function: #detect {{{1
 function! sy#repo#detect(path) abort
   for type in get(g:, 'signify_vcs_list', [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'fossil', 'cvs', 'rcs', 'accurev', 'perforce' ])
@@ -39,7 +41,10 @@ endfunction
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git(path) abort
   if executable('git')
-    let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && git diff --no-ext-diff -U0 -- '. sy#util#escape(a:path))
+    if exists('g:signify_diffoptions["git"]')
+      let s:diffoptions = g:signify_diffoptions['git']
+    endif
+    let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && git diff --no-ext-diff -U0 '. s:diffoptions .' -- '. sy#util#escape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -78,7 +83,10 @@ endfunction
 " Function: #get_diff_hg {{{1
 function! sy#repo#get_diff_hg(path) abort
   if executable('hg')
-    let diff = system('hg diff --nodates -U0 -- '. sy#util#escape(a:path))
+    if exists('g:signify_diffoptions["hg"]')
+      let s:diffoptions = g:signify_diffoptions['hg']
+    endif
+    let diff = system('hg diff --nodates -U0 '. s:diffoptions .' -- '. sy#util#escape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -86,7 +94,10 @@ endfunction
 " Function: #get_diff_svn {{{1
 function! sy#repo#get_diff_svn(path) abort
   if executable('svn')
-    let diff = system('svn diff --diff-cmd '. s:difftool .' -x -U0 -- '. sy#util#escape(a:path))
+    if exists('g:signify_diffoptions["svn"]')
+      let s:diffoptions = g:signify_diffoptions['svn']
+    endif
+    let diff = system('svn diff --diff-cmd '. s:difftool .' -x -U0 '. s:diffoptions .' -- '. sy#util#escape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -94,7 +105,10 @@ endfunction
 " Function: #get_diff_bzr {{{1
 function! sy#repo#get_diff_bzr(path) abort
   if executable('bzr')
-    let diff = system('bzr diff --using '. s:difftool .' --diff-options=-U0 -- '. sy#util#escape(a:path))
+    if exists('g:signify_diffoptions["bzr"]')
+      let s:diffoptions = g:signify_diffoptions['bzr']
+    endif
+    let diff = system('bzr diff --using '. s:difftool .' --diff-options=-U0 '. s:diffoptions .' -- '. sy#util#escape(a:path))
     return ((v:shell_error == 0) || (v:shell_error == 1) || (v:shell_error == 2)) ? diff : ''
   endif
 endfunction
@@ -102,7 +116,10 @@ endfunction
 " Function: #get_diff_darcs {{{1
 function! sy#repo#get_diff_darcs(path) abort
   if executable('darcs')
-    let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="'. s:difftool .' -U0 %1 %2" -- '. sy#util#escape(a:path))
+    if exists('g:signify_diffoptions["darcs"]')
+      let s:diffoptions = g:signify_diffoptions['darcs']
+    endif
+    let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="'. s:difftool .' -U0 %1 %2" '. s:diffoptions .' -- '. sy#util#escape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -110,7 +127,10 @@ endfunction
 " Function: #get_diff_fossil {{{1
 function! sy#repo#get_diff_fossil(path) abort
   if executable('fossil')
-    let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && fossil set diff-command "'. s:difftool .' -U 0" && fossil diff --unified -c 0 -- '. sy#util#escape(a:path))
+    if exists('g:signify_diffoptions["fossil"]')
+      let s:diffoptions = g:signify_diffoptions['fossil']
+    endif
+    let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && fossil set diff-command "'. s:difftool .' -U 0" && fossil diff --unified -c 0 '. s:diffoptions .' -- '. sy#util#escape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -118,7 +138,10 @@ endfunction
 " Function: #get_diff_cvs {{{1
 function! sy#repo#get_diff_cvs(path) abort
   if executable('cvs')
-    let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && cvs diff -U0 -- '. sy#util#escape(fnamemodify(a:path, ':t')))
+    if exists('g:signify_diffoptions["cvs"]')
+      let s:diffoptions = g:signify_diffoptions['cvs']
+    endif
+    let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && cvs diff -U0 '. s:diffoptions .' -- '. sy#util#escape(fnamemodify(a:path, ':t')))
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -126,7 +149,10 @@ endfunction
 " Function: #get_diff_rcs {{{1
 function! sy#repo#get_diff_rcs(path) abort
   if executable('rcs')
-    let diff = system('rcsdiff -U0 '. sy#util#escape(a:path) .' 2>/dev/null')
+    if exists('g:signify_diffoptions["rcs"]')
+      let s:diffoptions = g:signify_diffoptions['rcs']
+    endif
+    let diff = system('rcsdiff -U0 '. s:diffoptions .' '. sy#util#escape(a:path) .' 2>/dev/null')
     return v:shell_error ? '' : diff
   endif
 endfunction
@@ -134,7 +160,10 @@ endfunction
 " Function: #get_diff_accurev {{{1
 function! sy#repo#get_diff_accurev(path) abort
   if executable('accurev')
-    let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && accurev diff '. sy#util#escape(fnamemodify(a:path, ':t')) . ' -- -U0')
+    if exists('g:signify_diffoptions["accurev"]')
+      let s:diffoptions = g:signify_diffoptions['accurev']
+    endif
+    let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && accurev diff '. sy#util#escape(fnamemodify(a:path, ':t')) . ' -- -U0 '. s:diffoptions)
     return (v:shell_error != 1) ? '' : diff
   endif
 endfunction
@@ -142,7 +171,10 @@ endfunction
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce(path) abort
   if executable('p4')
-    let diff = system('env P4DIFF=diff p4 diff -dU0 -- '. sy#util#escape(a:path))
+    if exists('g:signify_diffoptions["perforce"]')
+      let s:diffoptions = g:signify_diffoptions['perforce']
+    endif
+    let diff = system('env P4DIFF=diff p4 diff -dU0 '. s:diffoptions .' -- '. sy#util#escape(a:path))
     return v:shell_error ? '' : diff
   endif
 endfunction

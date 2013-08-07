@@ -208,6 +208,14 @@ Otherwise 'diff' will be used.
 
 Default: Does not exist.
 
+============-
+
+    let g:signify_diffoptions = { 'git': '-w', 'hg': '-w' }
+
+Default: No additional options.
+
+This will pass the given additional options to the selected VCS diff command.
+
 
 ==============================================================================
 4. Commands                                                   *signify-commands*
