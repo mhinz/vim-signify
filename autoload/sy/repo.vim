@@ -24,7 +24,7 @@ else
   endif
 endif
 
-s:diffoptions = ''
+let s:diffoptions = ''
 
 " Function: #detect {{{1
 function! sy#repo#detect(path) abort
