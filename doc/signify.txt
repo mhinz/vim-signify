@@ -212,9 +212,9 @@ Default: Does not exist.
 
     let g:signify_diffoptions = { 'git': '-w', 'hg': '-w' }
 
-Default: No additional options.
-
 This will pass the given additional options to the selected VCS diff command.
+
+Default: Does not exist.
 
 
 ==============================================================================
