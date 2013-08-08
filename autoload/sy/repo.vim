@@ -100,7 +100,7 @@ endfunction
 " Function: #get_diff_darcs {{{1
 function! sy#repo#get_diff_darcs(path) abort
   let diffoptions = has_key(s:diffoptions, 'darcs') ? s:diffoptions.darcs : ''
-  let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="'. s:difftool .' -U0 %1 %2" '. diffoptions .' -- '. sy#util#escape(a:path))
+  let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="'. s:difftool .' -U0 %1 %2 '. diffoptions .'" -- '. sy#util#escape(a:path))
   return v:shell_error ? '' : diff
 endfunction
 
