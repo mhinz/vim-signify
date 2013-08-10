@@ -7,21 +7,11 @@ let b:autoloaded_sy_repo = 1
 if !empty(get(g:, 'signify_difftool'))
   let s:difftool = g:signify_difftool
 else
-  if has('win32')
-    if $VIMRUNTIME =~ ' '
-      let s:difftool = (&sh =~ '\<cmd')
-            \ ? ('"'. $VIMRUNTIME .'\diff"')
-            \ : (substitute($VIMRUNTIME, ' ', '" ', '') .'\diff"')
-    else
-      let s:difftool = $VIMRUNTIME .'\diff'
-    endif
-  else
-    if !executable('diff')
-      echomsg 'signify: No diff tool found!'
-      finish
-    endif
-    let s:difftool = 'diff'
+  if !executable('diff')
+    echomsg 'signify: No diff tool found!'
+    finish
   endif
+  let s:difftool = 'diff'
 endif
 
 let s:diffoptions = get(g:, 'signify_diffoptions', {})
