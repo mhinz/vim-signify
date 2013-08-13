@@ -47,7 +47,7 @@ augroup signify
           \ endif
   endif
 
-  if !has('gui_win32')
+  if get(g:, 'signify_update_on_focusgained') && !has('gui_win32')
     autocmd FocusGained * call sy#start(g:sy_path)
   endif
 augroup END

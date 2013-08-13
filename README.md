@@ -204,6 +204,7 @@ let g:signify_skip_filename = { '/home/user/.vimrc': 1 }
 let g:signify_sign_overwrite = 1
 
 let g:signify_update_on_bufenter = 1
+let g:signify_update_on_focusgained = 0
 
 let g:signify_line_highlight = 1
 

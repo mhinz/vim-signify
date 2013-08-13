@@ -171,6 +171,15 @@ NOTE: This also saves the buffer to disk!
 
 ============-
 
+    let g:signify_update_on_focusgained = 0
+
+Update signs when Vim gains focus.
+
+NOTE: This also saves the buffer to disk!
+
+============-
+
+
     let g:signify_line_highlight = 0
 
 Enable line highlighting in addition to using signs by default.
