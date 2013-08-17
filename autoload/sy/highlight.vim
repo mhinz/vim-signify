@@ -11,13 +11,13 @@ let s:sign_change            = get(g:, 'signify_sign_change',            '!')
 
 " Function: #setup {{{1
 function! sy#highlight#setup() abort
-  highlight link SignifyLineAdd    DiffAdd
-  highlight link SignifyLineChange DiffChange
-  highlight link SignifyLineDelete DiffDelete
+  highlight default link SignifyLineAdd    DiffAdd
+  highlight default link SignifyLineChange DiffChange
+  highlight default link SignifyLineDelete DiffDelete
 
-  highlight link SignifySignAdd    DiffAdd
-  highlight link SignifySignChange DiffChange
-  highlight link SignifySignDelete DiffDelete
+  highlight default link SignifySignAdd    DiffAdd
+  highlight default link SignifySignChange DiffChange
+  highlight default link SignifySignDelete DiffDelete
 endfunction
 
 " Function: #line_enable {{{1
