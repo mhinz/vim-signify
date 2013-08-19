@@ -1,3 +1,5 @@
+scriptencoding utf-8
+
 if exists('b:autoloaded_sy_repo')
   finish
 endif
@@ -162,11 +164,11 @@ function! sy#repo#process_diff(path, diff) abort
         let offset += 1
       endwhile
 
-      " 2 lines removed:
+    " 2 lines removed:
 
-      " @@ -6,2 +5,0 @@ this is line 5
-      " -this is line 6
-      " -this is line 7
+    " @@ -6,2 +5,0 @@ this is line 5
+    " -this is line 6
+    " -this is line 7
 
     elseif (old_count >= 1) && (new_count == 0)
       if new_line == 0
@@ -175,13 +177,13 @@ function! sy#repo#process_diff(path, diff) abort
         call add(signs, { 'type': (old_count > 9) ? 'SignifyDeleteMore' : 'SignifyDelete'. old_count, 'lnum': new_line, 'path': a:path })
       endif
 
-      " 2 lines changed:
+    " 2 lines changed:
 
-      " @@ -5,2 +5,2 @@ this is line 4
-      " -this is line 5
-      " -this is line 6
-      " +this os line 5
-      " +this os line 6
+    " @@ -5,2 +5,2 @@ this is line 4
+    " -this is line 5
+    " -this is line 6
+    " +this os line 5
+    " +this os line 6
 
     elseif old_count == new_count
       let offset = 0
@@ -210,13 +212,13 @@ function! sy#repo#process_diff(path, diff) abort
         let deleted = old_count - new_count
         call add(signs, { 'type': (deleted > 9) ? 'SignifyChangeDeleteMore' : 'SignifyChangeDelete'. deleted, 'lnum': new_line, 'path': a:path })
 
-        " lines changed and added:
+      " lines changed and added:
 
-        " @@ -5 +5,3 @@ this is line 4
-        " -this is line 5
-        " +this os line 5
-        " +this is line 42
-        " +this is line 666
+      " @@ -5 +5,3 @@ this is line 4
+      " -this is line 5
+      " +this os line 5
+      " +this is line 42
+      " +this is line 666
 
       else
         let offset = 0
@@ -230,6 +232,7 @@ function! sy#repo#process_diff(path, diff) abort
         endwhile
       endif
     endif
+
     call sy#sign#set(signs)
   endfor
 endfunction

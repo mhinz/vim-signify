@@ -1,3 +1,5 @@
+scriptencoding utf-8
+
 if exists('b:autoloaded_sy_debug')
   finish
 endif
