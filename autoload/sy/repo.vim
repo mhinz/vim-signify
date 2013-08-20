@@ -244,4 +244,13 @@ function! sy#repo#process_diff(path, diff) abort
   let g:sy[g:sy_path].stats = [added, modified, deleted]
 endfunction
 
+" Function: #get_stats {{{1
+function! sy#repo#get_stats() abort
+  if !exists('g:sy_path') || !has_key(g:sy, g:sy_path)
+    return [-1, -1, -1]
+  endif
+
+  return g:sy[g:sy_path].stats
+endfunction
+
 " vim: et sw=2 sts=2
