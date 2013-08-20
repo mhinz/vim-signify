@@ -23,19 +23,19 @@ function! sy#start(path) abort
   " new buffer.. add to list of registered files
   if !has_key(g:sy, a:path)
     if get(g:, 'signify_disable_by_default')
-      let g:sy[a:path] = { 'active': 0, 'type': 'unknown', 'hunks': [], 'id_top': g:id_top }
+      let g:sy[a:path] = { 'active': 0, 'type': 'unknown', 'hunks': [], 'id_top': g:id_top, 'hunk_summary': [0, 0, 0] }
       return
     endif
 
     let [ diff, type ] = sy#repo#detect(a:path)
     if empty(diff)
       " register file as active with either no changes or no found VCS
-      let g:sy[a:path] = { 'active': 1, 'type': 'unknown', 'hunks': [], 'id_top': g:id_top }
+      let g:sy[a:path] = { 'active': 1, 'type': 'unknown', 'hunks': [], 'id_top': g:id_top, 'hunk_summary': [0, 0, 0] }
       return
     endif
 
     " register file as active and containing changes
-    let g:sy[a:path] = { 'active': 1, 'type': type, 'hunks': [], 'id_top': g:id_top }
+    let g:sy[a:path] = { 'active': 1, 'type': type, 'hunks': [], 'id_top': g:id_top, 'hunk_summary': [0, 0, 0] }
 
   " inactive buffer.. bail out
   elseif !g:sy[a:path].active
