@@ -133,6 +133,10 @@ endfunction
 
 " Function: #process_diff {{{1
 function! sy#repo#process_diff(path, diff) abort
+  let added = 0
+  let modified = 0
+  let removed = 0
+
   " Determine where we have to put our signs.
   for line in filter(split(a:diff, '\n'), 'v:val =~ "^@@ "')
     let tokens = matchlist(line, '^@@ -\v(\d+),?(\d*) \+(\d+),?(\d*)')
@@ -148,6 +152,8 @@ function! sy#repo#process_diff(path, diff) abort
     " +this is line 5
 
     if (old_count == 0) && (new_count >= 1)
+      let added += new_count
+
       let offset = 0
       while offset < new_count
         call add(signs, { 'type': 'SignifyAdd', 'lnum': new_line + offset, 'path': a:path })
@@ -161,6 +167,8 @@ function! sy#repo#process_diff(path, diff) abort
     " -this is line 7
 
     elseif (old_count >= 1) && (new_count == 0)
+      let removed += old_count
+
       if new_line == 0
         call add(signs, { 'type': 'SignifyDeleteFirstLine', 'lnum': 1, 'path': a:path })
       else
@@ -176,6 +184,8 @@ function! sy#repo#process_diff(path, diff) abort
     " +this os line 6
 
     elseif old_count == new_count
+      let modified += old_count
+
       let offset = 0
       while offset < new_count
         call add(signs, { 'type': 'SignifyChange', 'lnum': new_line + offset, 'path': a:path })
@@ -194,6 +204,9 @@ function! sy#repo#process_diff(path, diff) abort
       " +this os line 6
 
       if old_count > new_count
+        let modified += new_count
+        let removed += old_count - new_count
+
         let offset = 0
         while offset < (new_count - 1)
           call add(signs, { 'type': 'SignifyChange', 'lnum': new_line + offset, 'path': a:path })
@@ -211,6 +224,9 @@ function! sy#repo#process_diff(path, diff) abort
       " +this is line 666
 
       else
+        let modified += old_count
+        let added += new_count - old_count
+
         let offset = 0
         while offset < old_count
           call add(signs, { 'type': 'SignifyChange', 'lnum': new_line + offset, 'path': a:path })
@@ -225,6 +241,8 @@ function! sy#repo#process_diff(path, diff) abort
 
     call sy#sign#set(signs)
   endfor
+
+  let g:sy[g:sy_path].hunk_summary = [added, modified, removed]
 endfunction
 
 " vim: et sw=2 sts=2
