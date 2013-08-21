@@ -93,7 +93,7 @@ function! sy#highlight#line_toggle() abort
     return
   endif
 
-  if g:signify_line_highlight
+  if get(g:, 'signify_line_highlight')
     call sy#highlight#line_disable()
   else
     call sy#highlight#line_enable()
