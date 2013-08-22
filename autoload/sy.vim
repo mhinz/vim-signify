@@ -23,7 +23,7 @@ function! sy#start(path) abort
   " new buffer.. add to list of registered files
   if !has_key(g:sy, a:path)
     if get(g:, 'signify_disable_by_default')
-      let g:sy[a:path] = { 'active': 0, 'type': 'unknown', 'hunks': [], 'id_top': g:id_top, 'stats': [0, 0, 0] }
+      let g:sy[a:path] = { 'active': 0, 'type': 'unknown', 'hunks': [], 'id_top': g:id_top, 'stats': [-1, -1, -1] }
       return
     endif
 
