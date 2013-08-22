@@ -106,6 +106,7 @@ function! sy#toggle() abort
     if g:sy[g:sy_path].active
       call sy#stop(g:sy_path)
       let g:sy[g:sy_path].active = 0
+      let g:sy[g:sy_path].stats = [-1, -1, -1]
     else
       let g:sy[g:sy_path].active = 1
       call sy#start(g:sy_path)
