@@ -47,6 +47,7 @@ function! sy#sign#remove_all(path) abort
 
   let s:other_signs_line_numbers = {}
   let g:sy[a:path].hunks = []
+  let g:sy[a:path].stats = [0, 0, 0]
 endfunction
 
 
