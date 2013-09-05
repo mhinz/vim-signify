@@ -225,6 +225,14 @@ This will pass the given additional options to the selected VCS diff command.
 
 Default: Does not exist.
 
+============-
+
+    let g:signify_leader_mappings = 0
+
+This will disable all the leader mappings at once.
+
+Default: Does not exist.
+
 
 ==============================================================================
 4. Commands                                                   *signify-commands*
