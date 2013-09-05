@@ -60,28 +60,31 @@ nnoremap <silent> <expr> <plug>(signify-prev-hunk) &diff ? '[c' : ":\<c-u>call s
 nnoremap <silent> <plug>(signify-toggle-highlight) :<c-u>call sy#highlight#line_toggle()<cr>
 nnoremap <silent> <plug>(signify-toggle)           :<c-u>call sy#toggle()<cr>
 
-if exists('g:signify_mapping_next_hunk')
-  execute 'nmap '. g:signify_mapping_next_hunk .' <plug>(signify-next-hunk)'
-elseif !hasmapto('<plug>(signify-next-hunk)') && !maparg('<leader>gj', 'n')
-  nmap <leader>gj <plug>(signify-next-hunk)
-endif
+if get(g:, 'signify_leader_mappings', 1) == 1
 
-if exists('g:signify_mapping_prev_hunk')
-  execute 'nmap '. g:signify_mapping_prev_hunk .' <plug>(signify-prev-hunk)'
-elseif !hasmapto('<plug>(signify-prev-hunk)') && !maparg('<leader>gk', 'n')
-  nmap <leader>gk <plug>(signify-prev-hunk)
-endif
+    if exists('g:signify_mapping_next_hunk')
+    execute 'nmap '. g:signify_mapping_next_hunk .' <plug>(signify-next-hunk)'
+    elseif !hasmapto('<plug>(signify-next-hunk)') && !maparg('<leader>gj', 'n')
+    nmap <leader>gj <plug>(signify-next-hunk)
+    endif
 
-if exists('g:signify_mapping_toggle_highlight')
-  execute 'nmap '. g:signify_mapping_toggle_highlight .' <plug>(signify-toggle-highlight)'
-elseif !hasmapto('<plug>(signify-toggle-highlight)') && !maparg('<leader>gh', 'n')
-  nmap <leader>gh <plug>(signify-toggle-highlight)
-endif
+    if exists('g:signify_mapping_prev_hunk')
+    execute 'nmap '. g:signify_mapping_prev_hunk .' <plug>(signify-prev-hunk)'
+    elseif !hasmapto('<plug>(signify-prev-hunk)') && !maparg('<leader>gk', 'n')
+    nmap <leader>gk <plug>(signify-prev-hunk)
+    endif
 
-if exists('g:signify_mapping_toggle')
-  execute 'nmap '. g:signify_mapping_toggle .' <plug>(signify-toggle)'
-elseif !hasmapto('<plug>(signify-toggle)') && !maparg('<leader>gt', 'n')
-  nmap <leader>gt <plug>(signify-toggle)
+    if exists('g:signify_mapping_toggle_highlight')
+    execute 'nmap '. g:signify_mapping_toggle_highlight .' <plug>(signify-toggle-highlight)'
+    elseif !hasmapto('<plug>(signify-toggle-highlight)') && !maparg('<leader>gh', 'n')
+    nmap <leader>gh <plug>(signify-toggle-highlight)
+    endif
+
+    if exists('g:signify_mapping_toggle')
+    execute 'nmap '. g:signify_mapping_toggle .' <plug>(signify-toggle)'
+    elseif !hasmapto('<plug>(signify-toggle)') && !maparg('<leader>gt', 'n')
+    nmap <leader>gt <plug>(signify-toggle)
+    endif
 endif
 
 if !maparg(']c', 'n')
