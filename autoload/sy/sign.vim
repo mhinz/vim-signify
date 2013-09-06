@@ -5,11 +5,10 @@ if exists('b:autoloaded_sy_sign')
 endif
 let b:autoloaded_sy_sign = 1
 
-" Init: values {{{1
-let s:other_signs_line_numbers = {}
-
 " Function: #get_others {{{1
 function! sy#sign#get_others(path) abort
+  let s:other_signs_line_numbers = {}
+
   redir => signlist
     silent! execute 'sign place file='. a:path
   redir END
@@ -51,7 +50,6 @@ function! sy#sign#remove_all(path) abort
     endfor
   endif
 
-  let s:other_signs_line_numbers = {}
   let g:sy[a:path].hunks = []
   let g:sy[a:path].stats = [0, 0, 0]
 endfunction
