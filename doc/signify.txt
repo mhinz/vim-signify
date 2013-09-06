@@ -159,7 +159,9 @@ Default: Both are empty.
 
     let g:signify_sign_overwrite = 1
 
-Overwrite signs set by other plugins by default.
+Overwrite signs set by other plugins by default. Setting this to zero comes
+with a very small performance penalty since other signs have to be managed
+every time Sy sets/removes its own.
 
 ============-
 
