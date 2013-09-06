@@ -66,12 +66,13 @@ function! sy#start(path) abort
       call sy#highlight#line_disable()
   endif
 
+  execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
+  call sy#sign#remove_all(a:path)
+
   if !g:signify_sign_overwrite
     call sy#sign#get_others(a:path)
   endif
 
-  execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
-  call sy#sign#remove_all(a:path)
   call sy#repo#process_diff(a:path, diff)
   sign unplace 99999
 
