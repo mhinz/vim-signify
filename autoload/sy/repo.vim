@@ -6,6 +6,8 @@ endif
 let b:autoloaded_sy_repo = 1
 
 " Init: values {{{1
+let s:diffoptions = get(g:, 'signify_diffoptions', {})
+
 if !empty(get(g:, 'signify_difftool'))
   let s:difftool = g:signify_difftool
 else
@@ -16,11 +18,24 @@ else
   let s:difftool = 'diff'
 endif
 
-let s:diffoptions = get(g:, 'signify_diffoptions', {})
+let s:vcs_dict = {
+      \ 'git':      'git',
+      \ 'hg':       'hg',
+      \ 'svn':      'svn',
+      \ 'darcs':    'darcs',
+      \ 'bzr':      'bzr',
+      \ 'fossil':   'fossil',
+      \ 'cvs':      'cvs',
+      \ 'rcs':      'rcsdiff',
+      \ 'accurev':  'accurev',
+      \ 'perforce': 'p4'
+      \ }
+
+let s:vcs_list = values(filter(s:vcs_dict, 'executable(v:key)'))
 
 " Function: #detect {{{1
 function! sy#repo#detect(path) abort
-  for type in get(g:, 'signify_vcs_list', [ 'git', 'hg', 'svn', 'darcs', 'bzr', 'fossil', 'cvs', 'rcs', 'accurev', 'perforce' ])
+  for type in s:vcs_list
     let diff = sy#repo#get_diff_{type}(a:path)
     if !empty(diff)
       return [ diff, type ]
