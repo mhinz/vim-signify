@@ -6,8 +6,6 @@ endif
 let b:autoloaded_sy_repo = 1
 
 " Init: values {{{1
-let s:diffoptions = get(g:, 'signify_diffoptions', {})
-
 if !empty(get(g:, 'signify_difftool'))
   let s:difftool = g:signify_difftool
 else
@@ -31,7 +29,8 @@ let s:vcs_dict = {
       \ 'perforce': 'p4'
       \ }
 
-let s:vcs_list = values(filter(s:vcs_dict, 'executable(v:key)'))
+let s:vcs_list    = get(g:, 'signify_vcs_list', values(filter(s:vcs_dict, 'executable(v:key)')))
+let s:diffoptions = get(g:, 'signify_diffoptions', {})
 
 " Function: #detect {{{1
 function! sy#repo#detect(path) abort
