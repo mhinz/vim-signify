@@ -101,8 +101,9 @@ use git and mercurial, you can shorten the list to the shown example. If you
 use mostly mercurial and only sometimes git, put 'hg' in the front of the
 list. It's basically a priority list.
 
-This can improve buffer loading time since by default all supported VCS will
-be checked for, so you are advised to change this variable to your needs.
+This can improve buffer loading time since by default all supported and
+installed VCS will be checked for, so you are advised to change this variable
+to your needs.
 
 NOTE: This only happens once the first time signs get updated. Afterwards, the
 VCS will be remembered anyway.
