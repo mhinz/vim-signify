@@ -6,6 +6,8 @@ endif
 let b:autoloaded_sy_repo = 1
 
 " Init: values {{{1
+let s:diffoptions = get(g:, 'signify_diffoptions', {})
+
 if !empty(get(g:, 'signify_difftool'))
   let s:difftool = g:signify_difftool
 else
@@ -16,21 +18,20 @@ else
   let s:difftool = 'diff'
 endif
 
-let s:diffoptions = get(g:, 'signify_diffoptions', {})
+let s:vcs_dict = {
+      \ 'git':      'git',
+      \ 'hg':       'hg',
+      \ 'svn':      'svn',
+      \ 'darcs':    'darcs',
+      \ 'bzr':      'bzr',
+      \ 'fossil':   'fossil',
+      \ 'cvs':      'cvs',
+      \ 'rcs':      'rcsdiff',
+      \ 'accurev':  'accurev',
+      \ 'perforce': 'p4'
+      \ }
 
-let s:vcs_list = get(g:, 'signify_vcs_list', [])
-if empty(s:vcs_list)
-  if executable('git')     | call add(s:vcs_list, 'git')      | endif
-  if executable('hg')      | call add(s:vcs_list, 'hg')       | endif
-  if executable('svn')     | call add(s:vcs_list, 'svn')      | endif
-  if executable('darcs')   | call add(s:vcs_list, 'darcs')    | endif
-  if executable('bzr')     | call add(s:vcs_list, 'bzr')      | endif
-  if executable('fossil')  | call add(s:vcs_list, 'fossil')   | endif
-  if executable('cvs')     | call add(s:vcs_list, 'cvs')      | endif
-  if executable('rcsdiff') | call add(s:vcs_list, 'rcs')      | endif
-  if executable('accurev') | call add(s:vcs_list, 'accurev')  | endif
-  if executable('p4')      | call add(s:vcs_list, 'perforce') | endif
-endif
+let s:vcs_list = values(filter(s:vcs_dict, 'executable(v:key)'))
 
 " Function: #detect {{{1
 function! sy#repo#detect(path) abort
