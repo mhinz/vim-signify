@@ -34,6 +34,19 @@ let s:diffoptions = get(g:, 'signify_diffoptions', {})
 
 " Function: #detect {{{1
 function! sy#repo#detect(path) abort
+  let dir = fnamemodify(a:path, ':h')
+
+  " Simple cache. If there is a registered VCS-controlled file in this
+  " directory already, assume that this file is probably controlled by
+  " the same VCS. Thus we shuffle that VCS to the top of our vcs_list.
+  if has_key(g:sy_cache, dir)
+    let idx = index(s:vcs_list, g:sy_cache[dir])
+    if idx != -1
+      call remove(s:vcs_list, idx)
+      call insert(s:vcs_list, g:sy_cache[dir], 0)
+    endif
+  endif
+
   for type in s:vcs_list
     let diff = sy#repo#get_diff_{type}(a:path)
     if !empty(diff)

@@ -8,6 +8,7 @@ let b:autoloaded_sy = 1
 " Init: values {{{1
 let g:signify_sign_overwrite = get(g:, 'signify_sign_overwrite', 1)
 let g:id_top = 0x100
+let g:sy_cache = {}
 
 sign define SignifyPlaceholder text=. texthl=SignifySignChange linehl=
 
@@ -36,6 +37,11 @@ function! sy#start(path) abort
 
     " register file as active and containing changes
     let g:sy[a:path] = { 'active': 1, 'type': type, 'hunks': [], 'id_top': g:id_top, 'stats': [0, 0, 0] }
+
+    let dir = fnamemodify(a:path, ':h')
+    if !has_key(g:sy_cache, dir)
+      let g:sy_cache[dir] = type
+    endif
 
   " inactive buffer.. bail out
   elseif !g:sy[a:path].active
