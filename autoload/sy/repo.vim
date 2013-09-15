@@ -31,7 +31,7 @@ let s:vcs_dict = {
 
 let s:diffoptions = get(g:, 'signify_diffoptions', {})
 
-let s:vcs_list = get(g:, 'signify_vcs_list')
+let s:vcs_list = get(g:, 'signify_vcs_list', [])
 if empty(s:vcs_list)
   let s:vcs_list = keys(filter(s:vcs_dict, 'executable(v:val)'))
 endif
