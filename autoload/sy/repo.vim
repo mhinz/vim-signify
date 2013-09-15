@@ -134,7 +134,7 @@ endfunction
 function! sy#repo#get_diff_cvs(path) abort
   let diffoptions = has_key(s:diffoptions, 'cvs') ? s:diffoptions.cvs : ''
   let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && cvs diff -U0 '. diffoptions .' -- '. sy#util#escape(fnamemodify(a:path, ':t')))
-  return (v:shell_error != 1) ? '' : diff
+  return ((v:shell_error == 1) && (diff =~ '+++')) ? diff : ''
 endfunction
 
 " Function: #get_diff_rcs {{{1
