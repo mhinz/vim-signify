@@ -29,7 +29,11 @@ let s:vcs_dict = {
       \ 'perforce': 'p4'
       \ }
 
-let s:vcs_list    = get(g:, 'signify_vcs_list', keys(filter(s:vcs_dict, 'executable(v:val)')))
+if !empty(get(g:, 'signify_vcs_list'))
+  let s:vcs_list  = g:signify_vcs_list
+else
+  let s:vcs_list  = keys(filter(s:vcs_dict, 'executable(v:val)'))
+endif
 let s:diffoptions = get(g:, 'signify_diffoptions', {})
 
 " Function: #detect {{{1
