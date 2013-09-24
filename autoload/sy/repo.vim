@@ -64,7 +64,7 @@ endfunction
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git(path) abort
   let diffoptions = has_key(s:diffoptions, 'git') ? s:diffoptions.git : ''
-  let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && git diff --no-ext-diff -U0 '. diffoptions .' -- '. sy#util#escape(a:path))
+  let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && git diff --no-color --no-ext-diff -U0 '. diffoptions .' -- '. sy#util#escape(a:path))
   return v:shell_error ? '' : diff
 endfunction
 
