@@ -41,7 +41,7 @@ endfunction
 " Function: #remove_all {{{1
 function! sy#sign#remove_all(path) abort
   if g:signify_sign_overwrite
-    sign unplace *
+    execute 'sign unplace * file='. a:path
   else
     for hunk in g:sy[a:path].hunks
       for id in hunk.ids
