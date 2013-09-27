@@ -243,7 +243,6 @@ function! sy#repo#process_diff(path, diff) abort
           call add(signs, { 'type': 'SignifyChange', 'lnum': new_line + offset, 'path': a:path })
           let offset += 1
         endwhile
-        let deleted += (old_count - new_count)
         call add(signs, { 'type': (deleted > 9) ? 'SignifyChangeDeleteMore' : 'SignifyChangeDelete'. deleted, 'lnum': new_line, 'path': a:path })
 
       " lines changed and added:
