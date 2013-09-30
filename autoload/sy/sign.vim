@@ -1,3 +1,5 @@
+" vim: et sw=2 sts=2
+
 scriptencoding utf-8
 
 if exists('b:autoloaded_sy_sign')
@@ -53,5 +55,3 @@ function! sy#sign#remove_all(path) abort
   let g:sy[a:path].hunks = []
   let g:sy[a:path].stats = [0, 0, 0]
 endfunction
-
-" vim: et sw=2 sts=2

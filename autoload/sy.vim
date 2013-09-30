@@ -1,3 +1,5 @@
+" vim: et sw=2 sts=2
+
 scriptencoding utf-8
 
 if exists('b:autoloaded_sy')
@@ -129,5 +131,3 @@ function! sy#toggle() abort
     call sy#start(g:sy_path)
   endif
 endfunction
-
-" vim: et sw=2 sts=2

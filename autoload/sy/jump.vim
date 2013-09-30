@@ -1,3 +1,5 @@
+" vim: et sw=2 sts=2
+
 scriptencoding utf-8
 
 if exists('b:autoloaded_sy_jump')
@@ -36,5 +38,3 @@ function! sy#jump#prev_hunk(count)
     execute 'sign jump '. hunk.ids[0] .' file='. g:sy_path
   endif
 endfunction
-
-" vim: et sw=2 sts=2

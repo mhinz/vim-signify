@@ -1,3 +1,5 @@
+" vim: et sw=2 sts=2
+
 scriptencoding utf-8
 
 if exists('b:autoloaded_sy_debug')
@@ -19,5 +21,3 @@ function! sy#debug#list_active_buffers() abort
     endfor
   endfor
 endfunction
-
-" vim: et sw=2 sts=2

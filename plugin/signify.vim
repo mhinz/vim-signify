@@ -1,3 +1,5 @@
+" vim: et sw=2 sts=2
+
 scriptencoding utf-8
 
 if exists('g:loaded_signify') || !has('signs') || &cp
@@ -91,5 +93,3 @@ endif
 if empty(maparg('[c', 'n'))
   nmap [c <plug>(signify-prev-hunk)
 endif
-
-" vim: et sw=2 sts=2

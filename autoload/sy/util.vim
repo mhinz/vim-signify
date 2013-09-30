@@ -1,3 +1,5 @@
+" vim: et sw=2 sts=2
+
 scriptencoding utf-8
 
 if exists('b:autoloaded_sy_util')
@@ -25,5 +27,3 @@ endfunction
 function! sy#util#separator() abort
   return !exists('+shellslash') || &shellslash ? '/' : '\'
 endfunction
-
-" vim: et sw=2 sts=2
