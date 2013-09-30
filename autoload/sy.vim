@@ -2,11 +2,6 @@
 
 scriptencoding utf-8
 
-if exists('b:autoloaded_sy')
-    finish
-endif
-let b:autoloaded_sy = 1
-
 " Init: values {{{1
 let g:signify_sign_overwrite = get(g:, 'signify_sign_overwrite', 1)
 if g:signify_sign_overwrite && (v:version < 703 || (v:version == 703 && !has('patch596')))

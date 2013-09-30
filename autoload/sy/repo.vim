@@ -2,11 +2,6 @@
 
 scriptencoding utf-8
 
-if exists('b:autoloaded_sy_repo')
-  finish
-endif
-let b:autoloaded_sy_repo = 1
-
 " Init: values {{{1
 if !empty(get(g:, 'signify_difftool'))
   let s:difftool = g:signify_difftool

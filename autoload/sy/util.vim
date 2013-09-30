@@ -2,11 +2,6 @@
 
 scriptencoding utf-8
 
-if exists('b:autoloaded_sy_util')
-  finish
-endif
-let b:autoloaded_sy_util = 1
-
 " Function: #escape {{{1
 function! sy#util#escape(path) abort
   if exists('+shellslash')

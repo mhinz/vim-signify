@@ -2,11 +2,6 @@
 
 scriptencoding utf-8
 
-if exists('b:autoloaded_sy_sign')
-  finish
-endif
-let b:autoloaded_sy_sign = 1
-
 " Function: #get_others {{{1
 function! sy#sign#get_others(path) abort
   let s:other_signs_line_numbers = {}

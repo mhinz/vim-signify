@@ -2,11 +2,6 @@
 
 scriptencoding utf-8
 
-if exists('b:autoloaded_sy_jump')
-  finish
-endif
-let b:autoloaded_sy_jump = 1
-
 " Function: #next_hunk {{{1
 function! sy#jump#next_hunk(count)
   if !has_key(g:sy, g:sy_path)

@@ -2,11 +2,6 @@
 
 scriptencoding utf-8
 
-if exists('b:autoloaded_sy_highlight')
-  finish
-endif
-let b:autoloaded_sy_highlight = 1
-
 " Init: values {{{1
 let s:sign_add               = get(g:, 'signify_sign_add',               '+')
 let s:sign_delete            = get(g:, 'signify_sign_delete',            '_')
