@@ -165,9 +165,18 @@ If you have no preferred installation method, I suggest using tpope's pathogen:
 1. git clone https://github.com/tpope/vim-pathogen ~/.vim/bundle/vim-pathogen
 1. mkdir -p ~/.vim/autoload && cd ~/.vim/autoload
 1. ln -s ../bundle/vim-pathogen/autoload/pathogen.vim
+1. Add this to your .vimrc
+```vim
+execute pathogen#infect()
+```
 
 Afterwards installing Sy is as easy as pie:
 
+2. vim with http://ftp.vim.org/pub/vim/patches/7.3/7.3.596 patch
+```vim 
+:h sign-unplace 
+"look for ":sign unplace * file={fname}") 
+```
 2. git clone https://github.com/mhinz/vim-signify ~/.vim/bundle/vim-signify
 2. start Vim
 2. :Helptags
