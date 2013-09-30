@@ -165,6 +165,7 @@ If you have no preferred installation method, I suggest using tpope's pathogen:
 1. git clone https://github.com/tpope/vim-pathogen ~/.vim/bundle/vim-pathogen
 1. mkdir -p ~/.vim/autoload && cd ~/.vim/autoload
 1. ln -s ../bundle/vim-pathogen/autoload/pathogen.vim
+1. Add this to the top of your vimrc: `execute pathogen#infect()`
 
 Afterwards installing Sy is as easy as pie:
 
