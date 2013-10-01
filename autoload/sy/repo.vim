@@ -262,7 +262,7 @@ function! sy#repo#process_diff(path, diff) abort
         endwhile
 
         call add(signs, {
-              \ 'type': (removed > 9) ? 'SignifyChangeDeleteMore' : 'SignifyChangeDelete'. deleted,
+              \ 'type': (removed > 9) ? 'SignifyChangeDeleteMore' : 'SignifyChangeDelete'. removed,
               \ 'lnum': new_line,
               \ 'path': a:path })
 
