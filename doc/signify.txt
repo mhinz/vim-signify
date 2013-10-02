@@ -49,7 +49,7 @@ The usage is pretty straight-forward. By default you should only notice a
 difference, if you're working in a directory that is managed by a supported
 version control system and the current file was changed since the last commit.
 
-Supported VCS:
+Supported VCS:~
 >
     git
     mercurial
@@ -61,7 +61,7 @@ Supported VCS:
     fossil
     accurev
 <
-Sign explanation:
+Sign explanation:~
 
     `+`     This line was added.
 
@@ -82,7 +82,7 @@ OPTIONS                                                *signify-section-options*
 Put these variables into your vimrc. The provided examples also indicate the
 default values, as long as no "Default:" section is given.
 
-All available options:
+All available options:~
 
     |signify-option-vcs_list|
     |signify-option-disable_by_default|
