@@ -1,6 +1,5 @@
-*signify.txt*  Use the sign column to show all kinds of things.
+*signify.txt* Indicate changed lines within a file using a VCS.
 *signify*
-
                                               ___
                     __                  __  /'___\
                ____/\_\     __     ___ /\_\/\ \__/  __  __
@@ -11,249 +10,280 @@
                             /\____/                     /\___/
                             \_/__/                      \/__/
 
+  by Marco Hinz~
 
+  Twitter: https://twitter.com/_mhinz_
+  Github:  http://github.com/mhinz
+  IRC:     mhi^ (Freenode)
+>
+  If you use any of my plugins, please star them on github. It's a great way
+  of getting feedback and gives me the kick to put more time into their
+  development.
 
-                              Reference Manual
+  If you encounter any bugs or have feature requests, just open an issue
+  report on Github.
 
+  Thank you for flying mhi^ airlines. Get the Vim on!
+<
+==============================================================================
+TOC                                                   *signify-section-contents*
+
+  INTRO .......................... |signify-section-intro|
+  USAGE .......................... |signify-section-usage|
+  OPTIONS ........................ |signify-section-options|
+  COMMANDS ....................... |signify-section-commands|
+  MAPPINGS ....................... |signify-section-mappings|
+  COLORS ......................... |signify-section-colors|
 
 ==============================================================================
-CONTENTS                                                      *signify-contents*
+INTRO                                                    *signify-section-intro*
 
-    1.Intro..........................................|signify-intro|
-    2.Usage..........................................|signify-usage|
-    3.Options........................................|signify-options|
-    4.Commands.......................................|signify-commands|
-    4.Mappings.......................................|signify-mappings|
-    5.Colors.........................................|signify-colors|
-    6.Author.........................................|signify-author|
-    7.Credits........................................|signify-credits|
-    8.License........................................|signify-license|
-
+Signify (or just Sy) is a quite unobtrusive plugin. It uses signs to indicate
+added, modified and removed lines based on data of an underlying version
+control system.
 
 ==============================================================================
-1. Intro                                                         *signify-intro*
-
-Signify, or just sy for short, is an quite unobtrusive plugin. If there is
-information about changes (in form of patch hunks) since the last commit, they
-will be shown on the left side in Vim's sign column.
-
-Easy-peasy!
-
-
-==============================================================================
-2. Usage                                                         *signify-usage*
+USAGE                                                    *signify-section-usage*
 
 The usage is pretty straight-forward. By default you should only notice a
 difference, if you're working in a directory that is managed by a supported
-version control system:
+version control system and the current file was changed since the last commit.
 
-    - git
-    - mercurial
-    - darcs
-    - bzr
-    - subversion
-    - cvs
-    - rcs
-    - fossil
-    - accurev
-
+Supported VCS:
+>
+    git
+    mercurial
+    darcs
+    bzr
+    subversion
+    cvs
+    rcs
+    fossil
+    accurev
+<
 Sign explanation:
 
-    +
+    `+`     This line was added.
 
-This indicates a new line.
+    `!`     This line was modified.
 
-    _1
+    `_1`    The number of deleted lines below this sign. If the number is larger
+    `_>`    than 9, `_>` will be shown instead.
 
-This indicates the number of deleted lines. If the number is larger than 9, a
-> will be shown instead.
+    `!1`    This line was modified and a number of lines below were deleted.
+    `!>`    It is a combination of `!` and `_`. If the number is larger than 9, `!>`
+          will be shown instead.
 
-    !
-
-This indicates a changed line.
-
-    !1
-
-This indicates a changed line and a number of lines below that were deleted.
-It is a combination of ! and _. If the number is larger than 9, a > will be
-shown instead.
-
-    ‾
-
-This is used instead of _ in the special case of the first line being removed.
-
+    `‾`     The first line was removed. It's a special case of the `_` sign.
 
 ==============================================================================
-3. Options                                                     *signify-options*
+OPTIONS                                                *signify-section-options*
 
 Put these variables into your vimrc. The provided examples also indicate the
 default values, as long as no "Default:" section is given.
 
-============-
+All available options:
 
+    |signify-option-vcs_list|
+    |signify-option-disable_by_default|
+    |signify-option-mapping_next_hunk|
+    |signify-option-mapping_prev_hunk|
+    |signify-option-mapping_toggle_highlight|
+    |signify-option-mapping_toggle|
+    |signify-option-skip_filetype|
+    |signify-option-skip_filename|
+    |signify-option-sign_overwrite|
+    |signify-option-update_on_bufenter|
+    |signify-option-update_on_focusgained|
+    |signify-option-line_highlight|
+    |signify-option-sign_delete_first_line|
+    |signify-option-sign_delete|
+    |signify-option-sign_change|
+    |signify-option-sign_add|
+    |signify-option-cursorhold_normal|
+    |signify-option-cursorhold_insert|
+    |signify-option-difftool|
+    |signify-option-diffoptions|
+
+------------------------------------------------------------------------------
+                                                       *signify-option-vcs_list*
+>
     let g:signify_vcs_list = [ 'git', 'hg' ]
+<
+Default: empty
 
-Default: ['git', 'hg', 'svn', 'darcs', 'bzr', 'fossil', 'cvs', 'rcs',
-'accurev', 'perforce']
+NOTE: This is the most important variable, so read closely.
 
-This variable determines the VCS to check for and in what order. If you only
-use git and mercurial, you can shorten the list to the shown example. If you
-use mostly mercurial and only sometimes git, put 'hg' in the front of the
-list. It's basically a priority list.
+It determines the VCS to check for and in what order. If you only use git and
+mercurial, you can shorten the list to the shown example. If you use mostly
+mercurial and only sometimes git, put 'hg' in the front of the list. It's
+basically a priority list.
 
 This can improve buffer loading time since by default all supported and
 installed VCS will be checked for, so you are advised to change this variable
 to your needs.
 
-NOTE: This only happens once the first time signs get updated. Afterwards, the
-VCS will be remembered anyway.
+NOTE: This only happens once at the first time the signs get updated.
+Afterwards, the VCS will be remembered anyway.
 
 NOTE: If you don't change this list and Sy is activated, updating signs for a
-non-VCS file can lead to significant delay since all supported VCS will be
-tested for.
+non-VCS file can lead to significant delay since all supported and installed
+VCS will be tested for.
 
-============-
-
+------------------------------------------------------------------------------
+                                             *signify-option-disable_by_default*
+>
     let g:signify_disable_by_default = 0
-
+<
 Don't run Sy by default. You can toggle it anytime via :SignifyToggle.
 
-============-
-
+------------------------------------------------------------------------------
+                                              *signify-option-mapping_next_hunk*
+                                              *signify-option-mapping_prev_hunk*
+>
     let g:signify_mapping_next_hunk = '<leader>gj'
     let g:signify_mapping_prev_hunk = '<leader>gk'
-
+<
 Mapping for jumping to the start of the next or previous hunk.
 
 Alternatively, you can also map it yourself:
-
+>
     nmap <leader>gj <plug>(signify-next-jump)
     nmap <leader>gk <plug>(signify-prev-jump)
-
+<
 There is no difference between both variants.
 
-
-============-
-
+------------------------------------------------------------------------------
+                                       *signify-option-mapping_toggle_highlight*
+>
     let g:signify_mapping_toggle_highlight = '<leader>gh'
-
+<
 Mapping for toggling line highlighting for lines containing changes.
 
-============-
-
+------------------------------------------------------------------------------
+                                                 *signify-option-mapping_toggle*
+>
     let g:signify_mapping_toggle = '<leader>gt'
-
+<
 Mapping for toggling the plugin for the current buffer only.
 
-============-
-
+------------------------------------------------------------------------------
+                                                  *signify-option-skip_filetype*
+                                                  *signify-option-skip_filename*
+>
     let g:signify_skip_filetype = { 'vim': 1, 'c': 1 }
     let g:signify_skip_filename = { '/home/user/.vimrc': 1 }
-
+<
 Don't activate the plugin for these filetypes and/or filenames.
 
 NOTE: Filenames have to be absolute paths.
 
 Default: Both are empty.
 
-============-
-
+------------------------------------------------------------------------------
+                                                 *signify-option-sign_overwrite*
+>
     let g:signify_sign_overwrite = 1
-
+<
 Overwrite signs set by other plugins by default. Setting this to zero comes
 with a very small performance penalty since other signs have to be managed
 every time Sy sets/removes its own.
 
-============-
-
+------------------------------------------------------------------------------
+                                             *signify-option-update_on_bufenter*
+>
     let g:signify_update_on_bufenter = 0
-
+<
 Update signs when entering a buffer that was modified.
 
 NOTE: This also saves the buffer to disk!
 
-============-
-
+------------------------------------------------------------------------------
+                                          *signify-option-update_on_focusgained*
+>
     let g:signify_update_on_focusgained = 0
-
+<
 Update signs when Vim gains focus.
 
 NOTE: This also saves the buffer to disk!
 
-============-
-
-
+------------------------------------------------------------------------------
+                                                 *signify-option-line_highlight*
+>
     let g:signify_line_highlight = 0
-
+<
 Enable line highlighting in addition to using signs by default.
 
-============-
-
+------------------------------------------------------------------------------
+                                         *signify-option-sign_delete_first_line*
+                                         *signify-option-sign_delete*
+                                         *signify-option-sign_change*
+                                         *signify-option-sign_add*
+>
     let g:signify_sign_add               = '+'
     let g:signify_sign_change            = '!'
     let g:signify_sign_delete            = '_'
     let g:signify_sign_delete_first_line = '‾'
-
+<
 The sign to use if a line was added, deleted or changed or a combination of
 these.
 
-============-
-
+------------------------------------------------------------------------------
+                                              *signify-option-cursorhold_normal*
+                                              *signify-option-cursorhold_insert*
+>
     let g:signify_cursorhold_normal = 0
     let g:signify_cursorhold_insert = 0
-
+<
 Additionally trigger sign updates in normal or insert mode after 'updatetime'
 miliseconds without any keypresses. This fires only once between keypresses,
 thus not every 'updatetime' miliseconds.
 
 NOTE: This also saves the buffer to disk!
 
-============-
-
+------------------------------------------------------------------------------
+                                                       *signify-option-difftool*
+>
     let g:signify_difftool = 'gnudiff'
-
+<
 This will avoid the attempt to find the proper diff tool for version control
 systems that rely on an external diff tool that supports the -U0 flag. These
 are: svn, bzr, darcs, fossil.
 
-Otherwise 'diff' will be used.
+Default: "diff"
 
-Default: Does not exist.
-
-============-
-
+------------------------------------------------------------------------------
+                                                    *signify-option-diffoptions*
+>
     let g:signify_diffoptions = { 'git': '-w', 'hg': '-w' }
-
+<
 This will pass the given additional options to the selected VCS diff command.
 
 Default: Does not exist.
 
-
 ==============================================================================
-4. Commands                                                   *signify-commands*
-4. Mappings                                                   *signify-mappings*
-
-
+COMMAND                                               *signify-section-commands*
+MAPPINGS                                              *signify-section-mappings*
+>
     :SignifyToggle
-
+<
 Toggle the plugin for the current buffer only.
 Default mapping:  <leader>gt
 
-============-
-
+------------------------------------------------------------------------------
+>
     :SignifyToggleHighlight
-
+<
 Toggle line highlighting for lines containing changes.
 Default mapping:  <leader>gh
 
-
 ==============================================================================
-5. Colors                                                       *signify-colors*
+COLORS                                                  *signify-section-colors*
 
 This plugin defines highlighting groups for two different places: for lines
 and signs. Per default these don't really exist but are linked to the standard
 highlighting groups: DiffAdd, DiffChange, DiffDelete:
-
+>
     highlight link SignifyLineAdd    DiffAdd
     highlight link SignifyLineChange DiffChange
     highlight link SignifyLineDelete DiffDelete
@@ -261,13 +291,13 @@ highlighting groups: DiffAdd, DiffChange, DiffDelete:
     highlight link SignifySignAdd    DiffAdd
     highlight link SignifySignChange DiffChange
     highlight link SignifySignDelete DiffDelete
-
+<
 Thus if you do not want to change the standard highlighting groups, but want
 different colors for either your signs or lines, you can define one of these 6
 Signify groups yourself in your vimrc.
 
 Personally I use (256 colors terminal):
-
+>
     " highlight lines in Sy and vimdiff etc.)
 
     highlight DiffAdd           cterm=bold ctermbg=none ctermfg=119
@@ -279,49 +309,10 @@ Personally I use (256 colors terminal):
     highlight SignifySignAdd    cterm=bold ctermbg=237  ctermfg=119
     highlight SignifySignDelete cterm=bold ctermbg=237  ctermfg=167
     highlight SignifySignChange cterm=bold ctermbg=237  ctermfg=227
-
+<
 For Unix people there is a small script, showcolors.bash, in the repo that
 shows all 256 colors available to the terminal. That makes picking the right
 numbers much easier.
 
-
 ==============================================================================
-6. About the author                                             *signify-author*
-
-My nick on Freenode IRC is mhi^.
-
-For latest developments: https://github.com/mhinz
-
-If you use any of my plugins, star it on github. This is a great way of
-getting feedback! Same for issues or feature requests.
-
-Thank you for flying mhi airlines. Get the Vim on!
-
-You can also follow me on Twitter: @_mhinz_
-
-
-==============================================================================
-7. Credits                                                     *signify-credits*
-
-People who contributed to sy. Format: Person (Github account)
-
-
-Jeremy Mack            (mutewinter)
-Chong Li               (chongli)
-Robin Munn             (rmunn)
-Martin Hoch            (rtwo)
-fritzophrenic          (Ben Fritz)
-Morgan Fouesneau       (mfouesneau)
-Zhao Cai               (zhaocai)
-Otto Modinos           (otommod)
-Ryan Kois              (kid-icarus)
-Jon Kinney             (j2fly)
-Israel Chauca Fuentes  (Raimondi)
-
-
-==============================================================================
-8. Licence                                                     *signify-license*
-
-MIT license. Copyright (c) 2013 Marco Hinz.
-
 vim: tw=78
