@@ -65,7 +65,6 @@ vim-signify is as easy as pie:
 It works without any configuration, but you might want to look into the
 documentation for further customization:
 
-    $ vim
     :Helptags  " rebuilding tags files
     :h signify
 
