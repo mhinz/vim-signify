@@ -5,18 +5,13 @@ vim-signify
 
 by Marco Hinz
 
-Twitter: https://twitter.com/_mhinz_
-
+Twitter: https://twitter.com/_mhinz_  
 IRC: __mhi^__ (Freenode)
 
-If you use any of my plugins, please star them on github. It's a great way
-of getting feedback and gives me the kick to put more time into their
-development.
-
-If you encounter any bugs or have feature requests, just open an issue
-report on Github.
-
-Thank you for flying mhi^ airlines. Get the Vim on!
+If you use any of my plugins, please star them on github. It's a great way of
+getting feedback and gives me the kick to put more time into their development.
+If you encounter any bugs or have feature requests, just open an issue report on
+Github.
 
 Intro
 -----
