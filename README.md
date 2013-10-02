@@ -58,9 +58,9 @@ Installation & Documentation
 
 If you have no preferred installation method, I suggest using tpope's
 [pathogen](https://github.com/tpope/vim-pathogen). Afterwards installing
-vim-startify is as easy as pie:
+vim-signify is as easy as pie:
 
-    $ git clone https://github.com/mhinz/vim-startify ~/.vim/bundle/vim-startify
+    $ git clone https://github.com/mhinz/vim-signify ~/.vim/bundle/vim-signify
 
 It works without any configuration, but you might want to look into the
 documentation for further customization:
