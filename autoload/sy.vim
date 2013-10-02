@@ -89,7 +89,6 @@ function! sy#start(path) abort
   let g:sy[a:path].id_top = (g:id_top - 1)
 endfunction
 
-" vim: et sw=2 sts=2
 " Function: #stop {{{1
 function! sy#stop(path) abort
   if !has_key(g:sy, a:path)
