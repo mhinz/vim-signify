@@ -6,7 +6,7 @@ scriptencoding utf-8
 let g:signify_sign_overwrite = get(g:, 'signify_sign_overwrite', 1)
 if g:signify_sign_overwrite && (v:version < 703 || (v:version == 703 && !has('patch596')))
   echohl WarningMsg
-  echomsg 'signify: Vim is outdated. Sign overwriting will be disabled.'
+  echomsg 'signify: Sign overwriting was disabled. See :help signify-option-sign_overwrite'
   echohl NONE
   let g:signify_sign_overwrite = 0
 endif
