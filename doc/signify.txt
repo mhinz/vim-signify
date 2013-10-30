@@ -183,7 +183,7 @@ Default: Both are empty.
 ------------------------------------------------------------------------------
                                                  *signify-option-sign_overwrite*
 >
-    let g:signify_sign_overwrite = 1
+    let g:signify_sign_overwrite = 0
 <
 Setting this to 1 means that Sy doesn't have to manage its signs and just
 removes ALL signs before adding its own signs. This typically results
