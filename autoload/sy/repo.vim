@@ -3,30 +3,34 @@
 scriptencoding utf-8
 
 " Init: values {{{1
-if !empty(get(g:, 'signify_difftool'))
-  let s:difftool = g:signify_difftool
-else
-  if !executable('diff')
-    echomsg 'signify: No diff tool found!'
-    finish
-  endif
-  let s:difftool = 'diff'
-endif
-
-let s:vcs_dict = {
-      \ 'git':      'git',
-      \ 'hg':       'hg',
-      \ 'svn':      'svn',
-      \ 'darcs':    'darcs',
-      \ 'bzr':      'bzr',
-      \ 'fossil':   'fossil',
-      \ 'cvs':      'cvs',
-      \ 'rcs':      'rcsdiff',
-      \ 'accurev':  'accurev',
-      \ 'perforce': 'p4'
-      \ }
 
 let s:diffoptions = get(g:, 'signify_diffoptions', {})
+let s:difftool    = get(g:, 'signify_difftool', 'diff')
+
+if executable(s:difftool)
+  let s:vcs_dict = {
+        \ 'git':      'git',
+        \ 'hg':       'hg',
+        \ 'svn':      'svn',
+        \ 'darcs':    'darcs',
+        \ 'bzr':      'bzr',
+        \ 'fossil':   'fossil',
+        \ 'cvs':      'cvs',
+        \ 'rcs':      'rcsdiff',
+        \ 'accurev':  'accurev',
+        \ 'perforce': 'p4'
+        \ }
+else
+  echomsg 'signify: No diff tool found -> no support for svn, darcs, bzr, fossil.'
+  let s:vcs_dict = {
+        \ 'git':      'git',
+        \ 'hg':       'hg',
+        \ 'cvs':      'cvs',
+        \ 'rcs':      'rcsdiff',
+        \ 'accurev':  'accurev',
+        \ 'perforce': 'p4'
+        \ }
+endif
 
 let s:vcs_list = get(g:, 'signify_vcs_list', [])
 if empty(s:vcs_list)
