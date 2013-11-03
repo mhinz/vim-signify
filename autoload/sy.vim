@@ -68,7 +68,7 @@ function! sy#start(path) abort
 
   " update signs
   else
-    let [ _, diff ] = sy#repo#get_diff_{g:sy[a:path].type}(a:path)
+    let diff = sy#repo#get_diff_{g:sy[a:path].type}(a:path)[1]
     if empty(diff)
       call sy#sign#remove_all(a:path)
       return
