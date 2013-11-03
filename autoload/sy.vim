@@ -28,18 +28,19 @@ function! sy#start(path) abort
   " new buffer.. add to list of registered files
   if !has_key(g:sy, a:path)
     if get(g:, 'signify_disable_by_default')
+      " register file as inactive
       let g:sy[a:path] = { 'active': 0, 'type': 'unknown', 'hunks': [], 'id_top': g:id_top, 'stats': [-1, -1, -1] }
       return
     endif
 
     let [ diff, type ] = sy#repo#detect(a:path)
-    if empty(diff)
-      " register file as active with either no changes or no found VCS
+    if type == 'unknown'
+      " register file as active with no found VCS
       let g:sy[a:path] = { 'active': 1, 'type': 'unknown', 'hunks': [], 'id_top': g:id_top, 'stats': [0, 0, 0] }
       return
     endif
 
-    " register file as active and containing changes
+    " register file as active with found VCS
     let g:sy[a:path] = { 'active': 1, 'type': type, 'hunks': [], 'id_top': g:id_top, 'stats': [0, 0, 0] }
 
     let dir = fnamemodify(a:path, ':h')
@@ -47,22 +48,27 @@ function! sy#start(path) abort
       let g:sy_cache[dir] = type
     endif
 
+    if empty(diff)
+      " no changes found
+      return
+    endif
+
   " inactive buffer.. bail out
   elseif !g:sy[a:path].active
     return
 
-  " retry detecting changes or VCS
+  " retry detecting VCS
   elseif g:sy[a:path].type == 'unknown'
     let [ diff, type ] = sy#repo#detect(a:path)
-    if empty(diff)
-      " no changes or VCS found
+    if type == 'unknown'
+      " no VCS found
       return
     endif
     let g:sy[a:path].type = type
 
   " update signs
   else
-    let diff = sy#repo#get_diff_{g:sy[a:path].type}(a:path)
+    let [ _, diff ] = sy#repo#get_diff_{g:sy[a:path].type}(a:path)
     if empty(diff)
       call sy#sign#remove_all(a:path)
       return

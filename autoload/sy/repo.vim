@@ -53,20 +53,21 @@ function! sy#repo#detect(path) abort
   endif
 
   for type in s:vcs_list
-    let diff = sy#repo#get_diff_{type}(a:path)
-    if !empty(diff)
+    let [istype, diff] = sy#repo#get_diff_{type}(a:path)
+    if istype
       return [ diff, type ]
     endif
   endfor
 
-  return [ '', '' ]
+  return [ '', 'unknown' ]
 endfunction
 
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git(path) abort
   let diffoptions = has_key(s:diffoptions, 'git') ? s:diffoptions.git : ''
   let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && git diff --no-color --no-ext-diff -U0 '. diffoptions .' -- '. sy#util#escape(a:path))
-  return v:shell_error ? '' : diff
+
+  return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_stat_git {{{1
@@ -104,63 +105,66 @@ endfunction
 function! sy#repo#get_diff_hg(path) abort
   let diffoptions = has_key(s:diffoptions, 'hg') ? s:diffoptions.hg : ''
   let diff = system('hg diff --nodates -U0 '. diffoptions .' -- '. sy#util#escape(a:path))
-  return v:shell_error ? '' : diff
+
+  return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_svn {{{1
 function! sy#repo#get_diff_svn(path) abort
   let diffoptions = has_key(s:diffoptions, 'svn') ? s:diffoptions.svn : ''
   let diff = system('svn diff --diff-cmd '. s:difftool .' -x -U0 '. diffoptions .' -- '. sy#util#escape(a:path))
-  return v:shell_error ? '' : diff
+
+  return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_bzr {{{1
 function! sy#repo#get_diff_bzr(path) abort
   let diffoptions = has_key(s:diffoptions, 'bzr') ? s:diffoptions.bzr : ''
   let diff = system('bzr diff --using '. s:difftool .' --diff-options=-U0 '. diffoptions .' -- '. sy#util#escape(a:path))
-  return ((v:shell_error == 0) || (v:shell_error == 1) || (v:shell_error == 2)) ? diff : ''
+
+  return (v:shell_error =~ '[012]') ? [1, diff] : [0, '']
 endfunction
 
 " Function: #get_diff_darcs {{{1
 function! sy#repo#get_diff_darcs(path) abort
   let diffoptions = has_key(s:diffoptions, 'darcs') ? s:diffoptions.darcs : ''
   let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="'. s:difftool .' -U0 %1 %2 '. diffoptions .'" -- '. sy#util#escape(a:path))
-  return v:shell_error ? '' : diff
+  return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_fossil {{{1
 function! sy#repo#get_diff_fossil(path) abort
   let diffoptions = has_key(s:diffoptions, 'fossil') ? s:diffoptions.fossil : ''
   let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && fossil set diff-command "'. s:difftool .' -U 0" && fossil diff --unified -c 0 '. diffoptions .' -- '. sy#util#escape(a:path))
-  return v:shell_error ? '' : diff
+  return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_cvs {{{1
 function! sy#repo#get_diff_cvs(path) abort
   let diffoptions = has_key(s:diffoptions, 'cvs') ? s:diffoptions.cvs : ''
   let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && cvs diff -U0 '. diffoptions .' -- '. sy#util#escape(fnamemodify(a:path, ':t')))
-  return ((v:shell_error == 1) && (diff =~ '+++')) ? diff : ''
+  return ((v:shell_error == 1) && (diff =~ '+++')) ? [1, diff] : [0, '']
 endfunction
 
 " Function: #get_diff_rcs {{{1
 function! sy#repo#get_diff_rcs(path) abort
   let diffoptions = has_key(s:diffoptions, 'rcs') ? s:diffoptions.rcs : ''
   let diff = system('rcsdiff -U0 '. diffoptions .' '. sy#util#escape(a:path) .' 2>/dev/null')
-  return v:shell_error ? '' : diff
+  return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_accurev {{{1
 function! sy#repo#get_diff_accurev(path) abort
   let diffoptions = has_key(s:diffoptions, 'accurev') ? s:diffoptions.accurev : ''
   let diff = system('cd '. sy#util#escape(fnamemodify(a:path, ':h')) .' && accurev diff '. sy#util#escape(fnamemodify(a:path, ':t')) . ' -- -U0 '. diffoptions)
-  return (v:shell_error != 1) ? '' : diff
+  return (v:shell_error != 1) ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce(path) abort
   let diffoptions = has_key(s:diffoptions, 'perforce') ? s:diffoptions.perforce : ''
   let diff = system('env P4DIFF=diff p4 diff -dU0 '. diffoptions .' -- '. sy#util#escape(a:path))
-  return v:shell_error ? '' : diff
+  return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #process_diff {{{1
