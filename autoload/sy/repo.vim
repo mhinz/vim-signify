@@ -163,7 +163,7 @@ endfunction
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce(path) abort
   let diffoptions = has_key(s:diffoptions, 'perforce') ? s:diffoptions.perforce : ''
-  let diff = system('env P4DIFF=diff p4 diff -du0 '. diffoptions .' '. sy#util#escape(a:path))
+  let diff = system('env P4DIFF=diff p4 diff -dU0 '. diffoptions .' '. sy#util#escape(a:path))
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
