@@ -6,6 +6,8 @@ scriptencoding utf-8
 function! sy#sign#get_others(path) abort
   let s:other_signs_line_numbers = {}
 
+  let lang = v:lang
+  silent! execute 'lang C'
   redir => signlist
     silent! execute 'sign place file='. a:path
   redir END
@@ -14,6 +16,7 @@ function! sy#sign#get_others(path) abort
     let lnum = matchlist(line, '\v^\s+line\=(\d+)')[1]
     let s:other_signs_line_numbers[lnum] = 1
   endfor
+  silent! execute 'lang ' . lang
 endfunction
 
 " Function: #set {{{1
