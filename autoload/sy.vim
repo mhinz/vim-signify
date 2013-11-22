@@ -103,9 +103,6 @@ function! sy#stop(path) abort
 
   call sy#sign#remove_all(a:path)
 
-  silent! nunmap <buffer> ]c
-  silent! nunmap <buffer> [c
-
   augroup signify
     autocmd! * <buffer>
   augroup END
