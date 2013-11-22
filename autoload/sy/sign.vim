@@ -42,17 +42,16 @@ endfunction
 
 " Function: #remove_all {{{1
 function! sy#sign#remove_all(bnum) abort
-  let sy = getbufvar(a:bnum, 'sy')
   if g:signify_sign_overwrite
-    execute 'sign unplace * buffer='. sy.buffer
+    execute 'sign unplace * buffer='. b:sy.buffer
   else
-    for hunk in sy.hunks
+    for hunk in b:sy.hunks
       for id in hunk.ids
         execute 'sign unplace' id
       endfor
     endfor
   endif
 
-  let sy.hunks = []
-  let sy.stats = [0, 0, 0]
+  let b:sy.hunks = []
+  let b:sy.stats = [0, 0, 0]
 endfunction

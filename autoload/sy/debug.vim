@@ -5,7 +5,7 @@ scriptencoding utf-8
 " Function: #list_active_buffers {{{1
 function! sy#debug#list_active_buffers() abort
   for b in range(0, bufnr('$'))
-    if !buflisted(b) || empty(getbufvar(b, 'sy', {}))
+    if !buflisted(b) || empty(getbufvar(b, 'sy'))
       continue
     endif
 
