@@ -85,7 +85,7 @@ endfunction
 
 " Function: #line_toggle {{{1
 function! sy#highlight#line_toggle() abort
-  if !has_key(g:sy, g:sy_path)
+  if !exists('b:sy')
     echomsg 'signify: I cannot detect any changes!'
     return
   endif
@@ -96,5 +96,5 @@ function! sy#highlight#line_toggle() abort
     call sy#highlight#line_enable()
   endif
 
-  call sy#start(g:sy_path)
+  call sy#start(b:sy.path)
 endfunction
