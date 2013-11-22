@@ -14,8 +14,7 @@ augroup signify
   autocmd VimEnter             * call sy#highlight#setup()
   autocmd BufRead,BufEnter     * let b:sy_path = resolve(expand('<afile>:p'))
   autocmd BufRead,BufWritePost * call sy#start(b:sy_path)
-
-  autocmd BufDelete * call sy#stop(expand('<abuf>'))
+  autocmd BufDelete            * call sy#stop(expand('<abuf>'))
 
   if get(g:, 'signify_update_on_bufenter')
     autocmd BufEnter * nested

@@ -96,7 +96,8 @@ endfunction
 
 " Function: #stop {{{1
 function! sy#stop(bnum) abort
-  if !exists('b:sy')
+  let bvars = getbufvar(a:bnum, '')
+  if empty(bvars) || !has_key(bvars, 'sy')
     return
   endif
 
