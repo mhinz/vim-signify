@@ -26,26 +26,26 @@ function! sy#start(path) abort
   endif
 
   " new buffer.. add to list of registered files
-  if !has_key(g:sy, a:path)
+  if !exists('b:sy') || b:sy.path != a:path
+    let b:sy = { 'path': a:path, 'buffer': bufnr(''), 'active': 0, 'type': 'unknown', 'hunks': [], 'id_top': g:id_top, 'stats': [-1, -1, -1] }
     if get(g:, 'signify_disable_by_default')
-      " register file as inactive
-      let g:sy[a:path] = { 'active': 0, 'type': 'unknown', 'hunks': [], 'id_top': g:id_top, 'stats': [-1, -1, -1] }
       return
     endif
 
-    let [ diff, type ] = sy#repo#detect(a:path)
-    if type == 'unknown'
-      " register file as active with no found VCS
-      let g:sy[a:path] = { 'active': 1, 'type': 'unknown', 'hunks': [], 'id_top': g:id_top, 'stats': [0, 0, 0] }
+    " register buffer as active
+    let b:sy.active = 1
+
+    let [ diff, b:sy.type ] = sy#repo#detect()
+    if b:sy.type == 'unknown'
       return
     endif
 
     " register file as active with found VCS
-    let g:sy[a:path] = { 'active': 1, 'type': type, 'hunks': [], 'id_top': g:id_top, 'stats': [0, 0, 0] }
+    let b:sy.stats = [0, 0, 0]
 
-    let dir = fnamemodify(a:path, ':h')
+    let dir = fnamemodify(b:sy.path, ':h')
     if !has_key(g:sy_cache, dir)
-      let g:sy_cache[dir] = type
+      let g:sy_cache[dir] = b:sy.type
     endif
 
     if empty(diff)
@@ -54,26 +54,25 @@ function! sy#start(path) abort
     endif
 
   " inactive buffer.. bail out
-  elseif !g:sy[a:path].active
+  elseif !b:sy.active
     return
 
   " retry detecting VCS
-  elseif g:sy[a:path].type == 'unknown'
-    let [ diff, type ] = sy#repo#detect(a:path)
-    if type == 'unknown'
+  elseif b:sy.type == 'unknown'
+    let [ diff, b:sy.type ] = sy#repo#detect()
+    if b:sy.type == 'unknown'
       " no VCS found
       return
     endif
-    let g:sy[a:path].type = type
 
   " update signs
   else
-    let diff = sy#repo#get_diff_{g:sy[a:path].type}(a:path)[1]
+    let diff = sy#repo#get_diff_{b:sy.type}()[1]
     if empty(diff)
-      call sy#sign#remove_all(a:path)
+      call sy#sign#remove_all(b:sy.buffer)
       return
     endif
-    let g:sy[a:path].id_top = g:id_top
+    let b:sy.id_top = g:id_top
   endif
 
   if get(g:, 'signify_line_highlight')
@@ -82,52 +81,46 @@ function! sy#start(path) abort
       call sy#highlight#line_disable()
   endif
 
-  execute 'sign place 99999 line=1 name=SignifyPlaceholder file='. a:path
-  call sy#sign#remove_all(a:path)
+  execute 'sign place 99999 line=1 name=SignifyPlaceholder buffer='. b:sy.buffer
+  call sy#sign#remove_all(b:sy.buffer)
 
   if !g:signify_sign_overwrite
-    call sy#sign#get_others(a:path)
+    call sy#sign#get_others()
   endif
 
-  call sy#repo#process_diff(a:path, diff)
+  call sy#repo#process_diff(diff)
   sign unplace 99999
 
-  let g:sy[a:path].id_top = (g:id_top - 1)
+  let b:sy.id_top = (g:id_top - 1)
 endfunction
 
 " Function: #stop {{{1
-function! sy#stop(path) abort
-  if !has_key(g:sy, a:path)
+function! sy#stop(bnum) abort
+  let bvars = getbufvar(a:bnum, '', {})
+  if !has_key(bvars, 'sy')
     return
   endif
 
-  call sy#sign#remove_all(a:path)
-
-  silent! nunmap <buffer> ]c
-  silent! nunmap <buffer> [c
+  call sy#sign#remove_all(a:bnum)
 
   augroup signify
-    autocmd! * <buffer>
+    execute 'autocmd! * <buffer='. a:bnum .'>'
   augroup END
 endfunction
 
 " Function: #toggle {{{1
 function! sy#toggle() abort
-  if empty(g:sy_path)
+  if empty(b:sy.path)
     echomsg 'signify: I cannot sy empty buffers!'
     return
   endif
 
-  if has_key(g:sy, g:sy_path)
-    if g:sy[g:sy_path].active
-      call sy#stop(g:sy_path)
-      let g:sy[g:sy_path].active = 0
-      let g:sy[g:sy_path].stats = [-1, -1, -1]
-    else
-      let g:sy[g:sy_path].active = 1
-      call sy#start(g:sy_path)
-    endif
+  if b:sy.active
+    call sy#stop(b:sy.buffer)
+    let b:sy.active = 0
+    let b:sy.stats = [-1, -1, -1]
   else
-    call sy#start(g:sy_path)
+    let b:sy.active = 1
+    call sy#start(b:sy.path)
   endif
 endfunction

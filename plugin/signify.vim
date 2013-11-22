@@ -7,47 +7,39 @@ if exists('g:loaded_signify') || !has('signs') || &cp
 endif
 let g:loaded_signify = 1
 
-" Init: values {{{1
-let g:sy = {}
-
 " Init: autocmds {{{1
 augroup signify
   autocmd!
 
   autocmd VimEnter             * call sy#highlight#setup()
-  autocmd BufRead,BufEnter     * let g:sy_path = resolve(expand('<afile>:p'))
-  autocmd BufRead,BufWritePost * call sy#start(g:sy_path)
+  autocmd BufRead,BufEnter     * let b:sy_path = resolve(expand('<afile>:p'))
+  autocmd BufRead,BufWritePost * call sy#start(b:sy_path)
 
-  autocmd BufDelete *
-        \ let path = resolve(expand('<afile>:p')) |
-        \ call sy#stop(path) |
-        \ if has_key(g:sy, path) |
-        \   call remove(g:sy, path) |
-        \ endif
+  autocmd BufDelete * call sy#stop(expand('<abuf>'))
 
   if get(g:, 'signify_update_on_bufenter')
     autocmd BufEnter * nested
-          \ if has_key(g:sy, g:sy_path) && g:sy[g:sy_path].active && &modified |
+          \ if exists('b:sy') && b:sy.active && &modified |
           \   write |
           \ endif
   endif
 
   if get(g:, 'signify_cursorhold_normal')
     autocmd CursorHold * nested
-          \ if has_key(g:sy, g:sy_path) && g:sy[g:sy_path].active && &modified |
+          \ if exists('b:sy') && b:sy.active && &modified |
           \   write |
           \ endif
   endif
 
   if get(g:, 'signify_cursorhold_insert')
     autocmd CursorHoldI * nested
-          \ if has_key(g:sy, g:sy_path) && g:sy[g:sy_path].active && &modified |
+          \ if exists('b:sy') && b:sy.active && &modified |
           \   write |
           \ endif
   endif
 
   if get(g:, 'signify_update_on_focusgained') && !has('gui_win32')
-    autocmd FocusGained * call sy#start(g:sy_path)
+    autocmd FocusGained * if exists('b:sy') | call sy#start(b:sy.path) | endif
   endif
 augroup END
 
