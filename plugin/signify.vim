@@ -5,7 +5,9 @@ scriptencoding utf-8
 if exists('g:loaded_signify') || !has('signs') || &cp
   finish
 endif
+
 let g:loaded_signify = 1
+let g:signify_locked = 0
 
 " Init: autocmds {{{1
 augroup signify
@@ -15,6 +17,9 @@ augroup signify
   autocmd BufRead,BufEnter     * let b:sy_path = resolve(expand('<afile>:p'))
   autocmd BufRead,BufWritePost * call sy#start(b:sy_path)
   autocmd BufDelete            * call sy#stop(expand('<abuf>'))
+
+  autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
+  autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
 
   if get(g:, 'signify_update_on_bufenter')
     autocmd BufEnter * nested
