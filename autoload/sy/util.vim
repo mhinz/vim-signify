@@ -6,7 +6,11 @@ scriptencoding utf-8
 function! sy#util#escape(path) abort
   if exists('+shellslash')
     let old_ssl = &shellslash
-    set noshellslash
+    if fnamemodify(&shell, ':t') == 'cmd.exe'
+      set noshellslash
+    else
+      set shellslash
+    endif
   endif
 
   let path = shellescape(a:path)
