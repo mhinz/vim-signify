@@ -63,6 +63,9 @@ documentation for further customization:
     :Helptags  " rebuilding tags files
     :h signify
 
+_NOTE_: The single most important option by far is `g:signify_vcs_list`. Please
+read `:h signify-option-vcs_list`.
+
 License
 -------
 
