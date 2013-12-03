@@ -154,8 +154,8 @@ Mapping for jumping to the start of the next or previous hunk.
 
 Alternatively, you can also map it yourself:
 >
-    nmap <leader>gj <plug>(signify-next-jump)
-    nmap <leader>gk <plug>(signify-prev-jump)
+    nmap <leader>gj <plug>(signify-next-hunk)
+    nmap <leader>gk <plug>(signify-prev-hunk)
 <
 There is no difference between both variants.
 
