@@ -13,7 +13,13 @@ function! sy#sign#get_others() abort
     silent! execute 'sign place buffer='. b:sy.buffer
   redir END
 
-  for line in filter(split(signlist, '\n'), 'v:val =~ "^\\s\\+line"')
+  let lines = filter(split(signlist, '\n'), 'v:val =~ "^\\s\\+line"')
+
+  if lines[0] =~ 99999
+    call remove(lines, 0)
+  endif
+
+  for line in lines
     let lnum = matchlist(line, '\v^\s+line\=(\d+)')[1]
     let s:other_signs_line_numbers[lnum] = 1
   endfor
