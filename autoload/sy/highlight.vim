@@ -4,7 +4,6 @@ scriptencoding utf-8
 
 " Init: values {{{1
 let s:sign_add               = get(g:, 'signify_sign_add',               '+')
-let s:sign_delete            = get(g:, 'signify_sign_delete',            '_')
 let s:sign_delete_first_line = get(g:, 'signify_sign_delete_first_line', '‾')
 let s:sign_change            = get(g:, 'signify_sign_change',            '!')
 
@@ -35,17 +34,6 @@ function! sy#highlight#line_enable() abort
   execute 'sign define SignifyChangeDelete9 text='. s:sign_change .'9 texthl=SignifySignChange linehl=SignifyLineChange'
   execute 'sign define SignifyChangeDeleteMore text='. s:sign_change .'> texthl=SignifySignChange linehl=SignifyLineChange'
 
-  execute 'sign define SignifyDelete1 text='. s:sign_delete .'1 texthl=SignifySignDelete linehl=SignifyLineDelete'
-  execute 'sign define SignifyDelete2 text='. s:sign_delete .'2 texthl=SignifySignDelete linehl=SignifyLineDelete'
-  execute 'sign define SignifyDelete3 text='. s:sign_delete .'3 texthl=SignifySignDelete linehl=SignifyLineDelete'
-  execute 'sign define SignifyDelete4 text='. s:sign_delete .'4 texthl=SignifySignDelete linehl=SignifyLineDelete'
-  execute 'sign define SignifyDelete5 text='. s:sign_delete .'5 texthl=SignifySignDelete linehl=SignifyLineDelete'
-  execute 'sign define SignifyDelete6 text='. s:sign_delete .'6 texthl=SignifySignDelete linehl=SignifyLineDelete'
-  execute 'sign define SignifyDelete7 text='. s:sign_delete .'7 texthl=SignifySignDelete linehl=SignifyLineDelete'
-  execute 'sign define SignifyDelete8 text='. s:sign_delete .'8 texthl=SignifySignDelete linehl=SignifyLineDelete'
-  execute 'sign define SignifyDelete9 text='. s:sign_delete .'9 texthl=SignifySignDelete linehl=SignifyLineDelete'
-  execute 'sign define SignifyDeleteMore text='. s:sign_delete .'> texthl=SignifySignDelete linehl=SignifyLineDelete'
-
   execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line ' texthl=SignifySignDelete linehl=SignifyLineDelete'
 
   let g:signify_line_highlight = 1
@@ -66,17 +54,6 @@ function! sy#highlight#line_disable() abort
   execute 'sign define SignifyChangeDelete8 text='. s:sign_change .'8 texthl=SignifySignChange linehl='
   execute 'sign define SignifyChangeDelete9 text='. s:sign_change .'9 texthl=SignifySignChange linehl='
   execute 'sign define SignifyChangeDeleteMore text='. s:sign_change .'> texthl=SignifySignChange linehl='
-
-  execute 'sign define SignifyDelete1 text='. s:sign_delete .'1 texthl=SignifySignDelete linehl='
-  execute 'sign define SignifyDelete2 text='. s:sign_delete .'2 texthl=SignifySignDelete linehl='
-  execute 'sign define SignifyDelete3 text='. s:sign_delete .'3 texthl=SignifySignDelete linehl='
-  execute 'sign define SignifyDelete4 text='. s:sign_delete .'4 texthl=SignifySignDelete linehl='
-  execute 'sign define SignifyDelete5 text='. s:sign_delete .'5 texthl=SignifySignDelete linehl='
-  execute 'sign define SignifyDelete6 text='. s:sign_delete .'6 texthl=SignifySignDelete linehl='
-  execute 'sign define SignifyDelete7 text='. s:sign_delete .'7 texthl=SignifySignDelete linehl='
-  execute 'sign define SignifyDelete8 text='. s:sign_delete .'8 texthl=SignifySignDelete linehl='
-  execute 'sign define SignifyDelete9 text='. s:sign_delete .'9 texthl=SignifySignDelete linehl='
-  execute 'sign define SignifyDeleteMore text='. s:sign_delete .'> texthl=SignifySignDelete linehl='
 
   execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line ' texthl=SignifySignDelete linehl='
 

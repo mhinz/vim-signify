@@ -220,7 +220,8 @@ function! sy#repo#process_diff(diff) abort
               \ 'lnum': 1 })
       else
         call add(signs, {
-              \ 'type': (old_count > 9) ? 'SignifyDeleteMore' : 'SignifyDelete'. old_count,
+              \ 'type': (old_count > 99) ? 'SignifyDeleteMore' : 'SignifyDelete',
+              \ 'count': old_count,
               \ 'lnum': new_line })
       endif
 
