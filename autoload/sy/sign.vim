@@ -43,7 +43,7 @@ function! sy#sign#set(signs)
 
     call add(hunk.ids, g:id_top)
     if sign.type == 'SignifyDelete'
-      let sygn = (sign.count > 9) ? string(sign.count)[-2:] : (s:sign_delete . sign.count)
+      let sygn = (sign.count < 10) ? (s:sign_delete . sign.count) : string(sign.count)[-2:]
       execute 'sign define SignifyDelete'. sign.count .' text='. sygn .' texthl=SignifySignDelete linehl='. s:delete_highlight[g:signify_line_highlight]
       execute 'sign place' g:id_top 'line='. sign.lnum 'name='. sign.type . sign.count 'buffer='. b:sy.buffer
     else
