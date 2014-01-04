@@ -4,6 +4,7 @@ scriptencoding utf-8
 
 " Init: values {{{1
 
+let s:sign_delete = get(g:, 'signify_sign_delete', '_')
 if !exists('g:signify_diffoptions')
   let g:signify_diffoptions = {}
 endif
@@ -218,11 +219,16 @@ function! sy#repo#process_diff(diff) abort
         call add(signs, {
               \ 'type': 'SignifyDeleteFirstLine',
               \ 'lnum': 1 })
+      elseif old_count <= 99
+        call add(signs, {
+              \ 'type': 'SignifyDelete'.old_count,
+              \ 'text': substitute(s:sign_delete . old_count, '.*\ze..$', '', ''),
+              \ 'lnum': new_line })
       else
         call add(signs, {
-              \ 'type': 'SignifyDelete',
-              \ 'count': old_count,
-              \ 'lnum': new_line })
+              \ 'type': 'SignifyDeleteMore',
+              \ 'lnum': new_line,
+              \ 'text': s:sign_delete . '>' })
       endif
 
     " 2 lines changed:
