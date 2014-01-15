@@ -34,7 +34,7 @@ function! sy#highlight#line_enable() abort
   execute 'sign define SignifyChangeDelete9 text='. s:sign_change .'9 texthl=SignifySignChange linehl=SignifyLineChange'
   execute 'sign define SignifyChangeDeleteMore text='. s:sign_change .'> texthl=SignifySignChange linehl=SignifyLineChange'
 
-  execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line ' texthl=SignifySignDelete linehl=SignifyLineDelete'
+  execute 'sign define SignifyRemoveFirstLine text='. s:sign_delete_first_line ' texthl=SignifySignDelete linehl=SignifyLineDelete'
 
   let g:signify_line_highlight = 1
 endfunction
@@ -55,7 +55,7 @@ function! sy#highlight#line_disable() abort
   execute 'sign define SignifyChangeDelete9 text='. s:sign_change .'9 texthl=SignifySignChange linehl='
   execute 'sign define SignifyChangeDeleteMore text='. s:sign_change .'> texthl=SignifySignChange linehl='
 
-  execute 'sign define SignifyDeleteFirstLine text='. s:sign_delete_first_line ' texthl=SignifySignDelete linehl='
+  execute 'sign define SignifyRemoveFirstLine text='. s:sign_delete_first_line ' texthl=SignifySignDelete linehl='
 
   let g:signify_line_highlight = 0
 endfunction

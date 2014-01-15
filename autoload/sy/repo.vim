@@ -217,7 +217,7 @@ function! sy#repo#process_diff(diff) abort
 
       if new_line == 0
         call add(signs, {
-              \ 'type': 'SignifyDeleteFirstLine',
+              \ 'type': 'SignifyRemoveFirstLine',
               \ 'lnum': 1 })
       elseif old_count <= 99
         call add(signs, {
