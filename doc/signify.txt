@@ -218,8 +218,6 @@ NOTE: This also saves the buffer to disk!
 <
 Update signs when Vim gains focus.
 
-NOTE: This also saves the buffer to disk!
-
 ------------------------------------------------------------------------------
                                                  *signify-option-line_highlight*
 >
