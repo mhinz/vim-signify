@@ -69,7 +69,7 @@ endfunction
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git() abort
   let diffoptions = has_key(g:signify_diffoptions, 'git') ? g:signify_diffoptions.git : ''
-  let diff = system('cd '. sy#util#escape(fnamemodify(b:sy.path, ':h')) .' && git diff --no-color --no-ext-diff -U0 '. diffoptions .' -- '. sy#util#escape(fnamemodify(b:sy.path, ':t')))
+  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'git diff --no-color --no-ext-diff -U0 '. diffoptions .' -- '. sy#util#escape(fnamemodify(b:sy.path, ':t')))
 
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
@@ -83,7 +83,7 @@ function! sy#repo#get_stat_git() abort
     return
   endif
   let root   = fnamemodify(root, ':h')
-  let output = system('cd '. sy#util#escape(root) .' && git diff --numstat')
+  let output = sy#util#run_in_dir(root, 'git diff --numstat')
   if v:shell_error
     echohl ErrorMsg | echomsg "'git diff --numstat' failed" | echohl None
     return
@@ -132,21 +132,21 @@ endfunction
 " Function: #get_diff_darcs {{{1
 function! sy#repo#get_diff_darcs() abort
   let diffoptions = has_key(g:signify_diffoptions, 'darcs') ? g:signify_diffoptions.darcs : ''
-  let diff = system('cd '. sy#util#escape(fnamemodify(b:sy.path, ':h')) .' && darcs diff --no-pause-for-gui --diff-command="'. s:difftool .' -U0 %1 %2 '. diffoptions .'" -- '. sy#util#escape(b:sy.path))
+  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'darcs diff --no-pause-for-gui --diff-command="'. s:difftool .' -U0 %1 %2 '. diffoptions .'" -- '. sy#util#escape(b:sy.path))
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_fossil {{{1
 function! sy#repo#get_diff_fossil() abort
   let diffoptions = has_key(g:signify_diffoptions, 'fossil') ? g:signify_diffoptions.fossil : ''
-  let diff = system('cd '. sy#util#escape(fnamemodify(b:sy.path, ':h')) .' && fossil set diff-command "'. s:difftool .' -U 0" && fossil diff --unified -c 0 '. diffoptions .' -- '. sy#util#escape(b:sy.path))
+  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'fossil set diff-command "'. s:difftool .' -U 0" && fossil diff --unified -c 0 '. diffoptions .' -- '. sy#util#escape(b:sy.path))
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_cvs {{{1
 function! sy#repo#get_diff_cvs() abort
   let diffoptions = has_key(g:signify_diffoptions, 'cvs') ? g:signify_diffoptions.cvs : ''
-  let diff = system('cd '. sy#util#escape(fnamemodify(b:sy.path, ':h')) .' && cvs diff -U0 '. diffoptions .' -- '. sy#util#escape(fnamemodify(b:sy.path, ':t')))
+  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'cvs diff -U0 '. diffoptions .' -- '. sy#util#escape(fnamemodify(b:sy.path, ':t')))
   return ((v:shell_error == 1) && (diff =~ '+++')) ? [1, diff] : [0, '']
 endfunction
 
@@ -160,7 +160,7 @@ endfunction
 " Function: #get_diff_accurev {{{1
 function! sy#repo#get_diff_accurev() abort
   let diffoptions = has_key(g:signify_diffoptions, 'accurev') ? g:signify_diffoptions.accurev : ''
-  let diff = system('cd '. sy#util#escape(fnamemodify(b:sy.path, ':h')) .' && accurev diff '. sy#util#escape(fnamemodify(b:sy.path, ':t')) . ' -- -U0 '. diffoptions)
+  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'accurev diff '. sy#util#escape(fnamemodify(b:sy.path, ':t')) . ' -- -U0 '. diffoptions)
   return (v:shell_error != 1) ? [0, ''] : [1, diff]
 endfunction
 
