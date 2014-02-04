@@ -10,7 +10,7 @@ function! sy#sign#get_others() abort
   let s:other_signs_line_numbers = {}
 
   let lang = v:lang
-  silent! execute 'language C'
+  silent! execute 'language message C'
 
   redir => signlist
     silent! execute 'sign place buffer='. b:sy.buffer
@@ -27,7 +27,7 @@ function! sy#sign#get_others() abort
     let s:other_signs_line_numbers[lnum] = 1
   endfor
 
-  silent! execute 'language' lang
+  silent! execute 'language message' lang
 endfunction
 
 " Function: #set {{{1
