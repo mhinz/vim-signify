@@ -44,9 +44,9 @@ What about vim-gitgutter?
 
 Sy provides a superset of gitgutter.
 
-So here is the short answer: The main difference is Sy its support for version
+So here is the short answer: The main difference in Sy is its support for version
 control systems other than git. Moreover, two of its design goals are speed and
-ease to use.
+ease of use.
 
 Installation & Documentation
 ----------------------------
