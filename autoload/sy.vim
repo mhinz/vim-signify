@@ -114,7 +114,10 @@ endfunction
 
 " Function: #toggle {{{1
 function! sy#toggle() abort
-  if empty(b:sy.path)
+  if !exists('b:sy')
+    echomsg 'signify: I cannot sy empty buffers!'
+    return
+  elseif empty(b:sy.path)
     echomsg 'signify: I cannot sy empty buffers!'
     return
   endif
