@@ -60,6 +60,7 @@ Supported VCS:~
     rcs
     fossil
     accurev
+    perforce
 <
 Sign explanation:~
 
