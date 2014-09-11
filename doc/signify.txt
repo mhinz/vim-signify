@@ -113,6 +113,16 @@ All available options:~
     let g:signify_vcs_list = [ 'git', 'hg' ]
 <
 Default: empty
+Possible values: 'accurev'
+                 'bzr'
+                 'cvs'
+                 'darcs'
+                 'fossil'
+                 'git'
+                 'hg'
+                 'perforce'
+                 'rcs'
+                 'svn'
 
 NOTE: This is the most important option, so read closely.
 
@@ -122,19 +132,16 @@ mercurial and only sometimes git, put 'hg' in the front of the list. It's
 basically a priority list.
 
 This can improve buffer loading time since by default all supported and
-installed VCS will be checked for, so you are advised to change this option
-to your needs.
+installed VCS will be checked for, so you are advised to change this option to
+your needs. (This only happens once at the first time the signs get updated.
+Afterwards, the VCS will be remembered anyway.)
 
-NOTE: This option improves execution speed by avoiding certain checks. Some
-VCS rely on a an external diff tool to work properly (svn, darcs, bzr,
-fossil), thus you have to make sure that Vim can find a valid diff tool. So
-either the one you set through |g:signify-option-difftool| or "diff" by
+NOTE: Some VCS rely on a an external diff tool to work properly (svn, darcs,
+bzr, fossil), thus you have to make sure that Vim can find a valid diff tool.
+So either the one you set through |signify-option-difftool| or "diff" by
 default.
 
-NOTE: This only happens once at the first time the signs get updated.
-Afterwards, the VCS will be remembered anyway.
-
-NOTE: If you don't change this list and Sy is activated, updating signs for a
+NOTE: If you don't set this option and Sy is activated, updating signs for a
 non-VCS file can lead to significant delay since all supported and installed
 VCS will be tested for.
 
