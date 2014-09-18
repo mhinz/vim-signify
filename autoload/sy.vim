@@ -11,6 +11,10 @@ if g:signify_sign_overwrite && (v:version < 703 || (v:version == 703 && !has('pa
   let g:signify_sign_overwrite = 0
 endif
 
+if !exists('g:signify_skip_filetype')
+  let g:signify_skip_filetype = { 'help': 1 }
+endif
+
 let g:id_top = 0x100
 let g:sy_cache = {}
 
