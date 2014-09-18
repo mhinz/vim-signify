@@ -13,8 +13,36 @@ function! sy#debug#list_active_buffers() abort
     let path = remove(sy, 'path')
 
     echo "\n". path ."\n". repeat('=', strlen(path))
-    for stat in sort(keys(sy))
-      echo printf("%20s  =  %s\n", stat, string(sy[stat]))
+
+    for k in ['active', 'buffer', 'type', 'stats', 'id_top']
+      if k == 'stats'
+        echo printf("%10s  =  %d added, %d changed, %d removed\n",
+              \ k,
+              \ sy.stats[0],
+              \ sy.stats[1],
+              \ sy.stats[2])
+      else
+        echo printf("%10s  =  %s\n", k, sy[k])
+      endif
     endfor
+
+    if empty(sy.hunks)
+      echo printf("%10s  =  %s\n", 'hunks', '[]')
+    else
+      for i in range(len(sy.hunks))
+        if i == 0
+          echo printf("%10s  =  start: %d, end: %d, IDs: %s\n",
+                \ 'hunks',
+                \ sy.hunks[i].start,
+                \ sy.hunks[i].end,
+                \ string(sy.hunks[i].ids))
+        else
+          echo printf("%20s: %d, %s: %d, %s: %s\n",
+                \ 'start', sy.hunks[i].start,
+                \ 'end',   sy.hunks[i].end,
+                \ 'IDs',   string(sy.hunks[i].ids))
+        endif
+      endfor
+    endif
   endfor
 endfunction
