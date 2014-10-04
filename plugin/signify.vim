@@ -2,10 +2,11 @@
 
 scriptencoding utf-8
 
-if exists('g:loaded_signify') || !has('signs') || &cp
+if exists('g:loaded_signify') || !has('signs') || &compatible
   finish
 endif
 
+" Init: values {{{1
 let g:loaded_signify = 1
 let g:signify_locked = 0
 
@@ -16,34 +17,26 @@ augroup signify
   autocmd VimEnter                         * call sy#highlight#setup()
   autocmd BufRead,BufEnter,SessionLoadPost * let b:sy_path = resolve(expand('<afile>:p'))
   autocmd BufRead,BufWritePost             * call sy#start(b:sy_path)
-  autocmd BufDelete                        * call sy#stop(expand('<abuf>'))
+  autocmd BufDelete                        * call sy#stop()
 
   autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
   autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
 
   if get(g:, 'signify_update_on_bufenter')
-    autocmd BufEnter * nested
-          \ if exists('b:sy') && b:sy.active && &modified |
-          \   write |
-          \ endif
+    autocmd BufEnter * nested call s:save()
   endif
-
   if get(g:, 'signify_cursorhold_normal')
-    autocmd CursorHold * nested
-          \ if exists('b:sy') && b:sy.active && &modified |
-          \   write |
-          \ endif
+    autocmd CursorHold * nested call s:save()
   endif
-
   if get(g:, 'signify_cursorhold_insert')
-    autocmd CursorHoldI * nested
-          \ if exists('b:sy') && b:sy.active && &modified |
-          \   write |
-          \ endif
+    autocmd CursorHoldI * nested call s:save()
   endif
 
   if get(g:, 'signify_update_on_focusgained') && !has('gui_win32')
-    autocmd FocusGained * if exists('b:sy') | call sy#start(b:sy.path) | endif
+    autocmd FocusGained *
+          \ if exists('b:sy') |
+          \   call sy#start(b:sy.path) |
+          \ endif
   endif
 augroup END
 
@@ -89,3 +82,10 @@ endif
 if empty(maparg('[c', 'n'))
   nmap [c <plug>(signify-prev-hunk)
 endif
+
+" Function: save {{{1
+function! s:save()
+  if exists('b:sy') && b:sy.active && &modified
+    write
+  endif
+endfunction

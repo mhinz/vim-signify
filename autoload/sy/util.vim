@@ -30,12 +30,14 @@ endfunction
 " Function: #run_in_dir {{{1
 function! sy#util#run_in_dir(dir, cmd) abort
   let chdir = haslocaldir() ? 'lcd' : 'cd'
-  let cwd = getcwd()
+  let cwd   = getcwd()
+
   try
-    exe chdir .' '. fnameescape(fnamemodify(a:dir, ':p'))
-    let resp = system(a:cmd)
+    execute chdir fnameescape(fnamemodify(a:dir, ':p'))
+    let ret = system(a:cmd)
   finally
-    exe chdir .' '. fnameescape(cwd)
+    execute chdir fnameescape(cwd)
   endtry
-  return resp
+
+  return ret
 endfunction

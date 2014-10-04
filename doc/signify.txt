@@ -94,7 +94,6 @@ All available options:~
     |g:signify_mapping_toggle|
     |g:signify_skip_filetype|
     |g:signify_skip_filename|
-    |g:signify_sign_overwrite|
     |g:signify_update_on_bufenter|
     |g:signify_update_on_focusgained|
     |g:signify_line_highlight|
@@ -193,21 +192,6 @@ Don't activate the plugin for these filetypes and/or filenames.
 NOTE: Filenames have to be absolute paths.
 
 Default: Both are empty.
-
-------------------------------------------------------------------------------
-                                                      *g:signify_sign_overwrite*
->
-    let g:signify_sign_overwrite = 0
-<
-Setting this to 1 means that Sy doesn't have to manage its signs and just
-removes ALL signs before adding its own signs. This typically results
-in a tad more performance, especially when a lot of signs are in use.
-
-If you need plugin compatibility though, you should set this to 0. In this
-case Sy will remember which signs it set last and only removes those at the
-next update.
-
-NOTE: This feature needs at least Vim 7.3.596!
 
 ------------------------------------------------------------------------------
                                                   *g:signify_update_on_bufenter*
