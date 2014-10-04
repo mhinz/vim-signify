@@ -3,8 +3,9 @@
 scriptencoding utf-8
 
 " Init: values {{{1
-let s:sign_delete      = get(g:, 'signify_sign_delete', '_')
-let s:delete_highlight = ['', 'SignifyLineDelete']
+let s:sign_delete_use_count = get(g:, 'signify_sign_delete_use_count', 1)
+let s:sign_delete           = get(g:, 'signify_sign_delete', '_')
+let s:delete_highlight      = ['', 'SignifyLineDelete']
 
 " Function: #get_next_id {{{1
 function! sy#sign#get_next_id() abort
@@ -92,10 +93,15 @@ function! sy#sign#process_diff(diff) abort
       let deleted += old_count
       if new_line == 0
         call add(ids, s:add_sign(1, 'SignifyRemoveFirstLine'))
-      elseif old_count <= 99
-        call add(ids, s:add_sign(new_line, 'SignifyDelete'. old_count, substitute(s:sign_delete . old_count, '.*\ze..$', '', '')))
+      elseif s:sign_delete_use_count
+        if old_count <= 99
+          let text = substitute(s:sign_delete . old_count, '.*\ze..$', '', '')
+        else
+          let text = s:sign_delete .'>'
+        endif
+        call add(ids, s:add_sign(new_line, 'SignifyDelete'. old_count, text))
       else
-        call add(ids, s:add_sign(new_line, 'SignifyDeleteMore', s:sign_delete .'>'))
+        call add(ids, s:add_sign(new_line, 'SignifyDeleteMore', s:sign_delete))
       endif
 
     " 2 lines changed:
@@ -182,6 +188,19 @@ function! sy#sign#process_diff(diff) abort
   let b:sy.stats = [added, modified, deleted]
 endfunction
 
+" Function: #remove_all_signs {{{1
+function! sy#sign#remove_all_signs() abort
+  for hunk in b:sy.hunks
+    for id in hunk.ids
+      execute 'sign unplace' id
+    endfor
+  endfor
+
+  let b:sy.hunks = []
+  let b:sy.stats = [0, 0, 0]
+endfunction
+
+" Function: s:add_sign {{{1
 function! s:add_sign(line, type, ...) abort
   call add(b:sy.lines, a:line)
   let b:sy.signtable[a:line] = 1
@@ -216,6 +235,7 @@ function! s:add_sign(line, type, ...) abort
   return id
 endfunction
 
+" Function: s:external_sign_present {{{1
 function! s:external_sign_present(line) abort
   if has_key(b:sy.external, a:line)
     if has_key(b:sy.internal, a:line)
@@ -226,14 +246,3 @@ function! s:external_sign_present(line) abort
   endif
 endfunction
 
-" Function: #remove_all_signs {{{1
-function! sy#sign#remove_all_signs() abort
-  for hunk in b:sy.hunks
-    for id in hunk.ids
-      execute 'sign unplace' id
-    endfor
-  endfor
-
-  let b:sy.hunks = []
-  let b:sy.stats = [0, 0, 0]
-endfunction
