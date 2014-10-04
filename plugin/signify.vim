@@ -16,7 +16,7 @@ augroup signify
 
   autocmd VimEnter                         * call sy#highlight#setup()
   autocmd BufRead,BufEnter,SessionLoadPost * let b:sy_path = resolve(expand('<afile>:p'))
-  autocmd BufRead,BufWritePost             * call sy#start(b:sy_path)
+  autocmd BufRead,BufWritePost             * call sy#start()
   autocmd BufDelete                        * call sy#stop()
 
   autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
@@ -35,7 +35,7 @@ augroup signify
   if get(g:, 'signify_update_on_focusgained') && !has('gui_win32')
     autocmd FocusGained *
           \ if exists('b:sy') |
-          \   call sy#start(b:sy.path) |
+          \   call sy#start() |
           \ endif
   endif
 augroup END

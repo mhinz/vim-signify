@@ -7,24 +7,28 @@ let g:id_top = 0x100
 let g:sy_cache = {}
 
 " Function: #start {{{1
-function! sy#start(path) abort
+function! sy#start() abort
   if g:signify_locked
     return
   endif
 
+  if !exists('b:sy_path')
+    let b:sy_path = resolve(expand('%:p'))
+  endif
+
   if &diff
-        \ || !filereadable(a:path)
+        \ || !filereadable(b:sy_path)
         \ || (exists('g:signify_skip_filetype') && (has_key(g:signify_skip_filetype, &ft)
         \                                       || (has_key(g:signify_skip_filetype, 'help')
         \                                       && &bt == 'help')))
-        \ || (exists('g:signify_skip_filename') && has_key(g:signify_skip_filename, a:path))
+        \ || (exists('g:signify_skip_filename') && has_key(g:signify_skip_filename, b:sy_path))
     return
   endif
 
   " new buffer.. add to list of registered files
-  if !exists('b:sy') || b:sy.path != a:path
+  if !exists('b:sy') || b:sy.path != b:sy_path
     let b:sy = {
-          \ 'path'  : a:path,
+          \ 'path'  : b:sy_path,
           \ 'buffer': bufnr(''),
           \ 'active': 0,
           \ 'type'  : 'unknown',
@@ -111,6 +115,6 @@ function! sy#toggle() abort
     let b:sy.stats = [-1, -1, -1]
   else
     let b:sy.active = 1
-    call sy#start(b:sy.path)
+    call sy#start()
   endif
 endfunction
