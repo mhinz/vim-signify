@@ -28,16 +28,15 @@ Features:
 
 - supports git, mercurial, darcs, bazaar, subversion, cvs, rcs, fossil, accurev,
   perforce
-- quick jumping between blocks of changed lines
+- quick jumping between blocks of changed lines ("hunks")
 - apart from signs there is also optional line highlighting
-- fully configurable through global variables (options and mappings)
-- optional preserving of signs from other plugins
+- preserves signs from other plugins
 - you can toggle the plugin per buffer
-- skip certain filetypes and filenames
 - good documentation
+- skip certain filetypes and filenames
 - depending on your usual workflow you can disable it per default and enable on
   demand later
-- quick developer response! :-)
+- fully configurable through global variables (options and mappings)
 
 What about vim-gitgutter?
 -------------------------

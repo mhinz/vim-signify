@@ -76,7 +76,7 @@ function! sy#start(path) abort
 
   if get(g:, 'signify_line_highlight')
     call sy#highlight#line_enable()
-  else 
+  else
     call sy#highlight#line_disable()
   endif
 
