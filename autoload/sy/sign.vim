@@ -3,8 +3,9 @@
 scriptencoding utf-8
 
 " Init: values {{{1
-let s:sign_delete      = get(g:, 'signify_sign_delete', '_')
-let s:delete_highlight = ['', 'SignifyLineDelete']
+let s:sign_delete_use_count = get(g:, 'signify_sign_delete_use_count', 1)
+let s:sign_delete           = get(g:, 'signify_sign_delete', '_')
+let s:delete_highlight      = ['', 'SignifyLineDelete']
 
 " Function: #get_next_id {{{1
 function! sy#sign#get_next_id() abort
@@ -93,9 +94,15 @@ function! sy#sign#process_diff(diff) abort
       if new_line == 0
         call add(ids, s:add_sign(1, 'SignifyRemoveFirstLine'))
       elseif old_count <= 99
-        call add(ids, s:add_sign(new_line, 'SignifyDelete'. old_count, substitute(s:sign_delete . old_count, '.*\ze..$', '', '')))
+        if s:sign_delete_use_count
+          let text = substitute(s:sign_delete . old_count, '.*\ze..$', '', '')
+        else
+          let text = s:sign_delete
+        endif
+        call add(ids, s:add_sign(new_line, 'SignifyDelete'. old_count, text))
       else
-        call add(ids, s:add_sign(new_line, 'SignifyDeleteMore', s:sign_delete .'>'))
+        let text = s:sign_delete_use_count ? s:sign_delete.'>' : s:sign_delete
+        call add(ids, s:add_sign(new_line, 'SignifyDeleteMore', text))
       endif
 
     " 2 lines changed:

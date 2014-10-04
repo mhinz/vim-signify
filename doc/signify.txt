@@ -100,7 +100,9 @@ All available options:~
     |g:signify_sign_delete_first_line|
     |g:signify_sign_delete|
     |g:signify_sign_change|
+    |g:signify-option-sign_changedelete|
     |g:signify_sign_add|
+    |g:signify-option-sign_delete_use_count|
     |g:signify_cursorhold_normal|
     |g:signify_cursorhold_insert|
     |g:signify_difftool|
@@ -217,18 +219,27 @@ Update signs when Vim gains focus.
 Enable line highlighting in addition to using signs by default.
 
 ------------------------------------------------------------------------------
-                                              *g:signify_sign_delete_first_line*
-                                              *g:signify_sign_delete*
-                                              *g:signify_sign_change*
-                                              *g:signify_sign_add*
+                                            *g:signify_sign_delete_first_line*
+                                            *g:signify_sign_delete*
+                                            *g:signify-option-sign_changedelete*
+                                            *g:signify_sign_add*
 >
     let g:signify_sign_add               = '+'
     let g:signify_sign_change            = '!'
+    let g:signify_sign_changedelete      = g:signify_sign_change
     let g:signify_sign_delete            = '_'
     let g:signify_sign_delete_first_line = '‾'
 <
 The sign to use if a line was added, deleted or changed or a combination of
 these.
+
+------------------------------------------------------------------------------
+                                         *signify-option-sign_delete_use_count*
+>
+    let g:signify_sign_delete_use_count  = 1
+<
+Show the number of deleted lines in the sign column. When disabled, only the
+text defined by |signify-option-sign_delete| will be shown.
 
 ------------------------------------------------------------------------------
                                                    *g:signify_cursorhold_normal*
@@ -286,13 +297,17 @@ This plugin defines highlighting groups for two different places: for lines
 and signs. Per default these don't really exist but are linked to the standard
 highlighting groups: DiffAdd, DiffChange, DiffDelete:
 >
-    highlight link SignifyLineAdd    DiffAdd
-    highlight link SignifyLineChange DiffChange
-    highlight link SignifyLineDelete DiffDelete
+    highlight link SignifyLineAdd             DiffAdd
+    highlight link SignifyLineChange          DiffChange
+    highlight link SignifyLineDelete          DiffDelete
+    highlight link SignifyLineChangeDelete    SignifyLineChange
+    highlight link SignifyLineDeleteFirstLine SignifyLineDelete
 
-    highlight link SignifySignAdd    DiffAdd
-    highlight link SignifySignChange DiffChange
-    highlight link SignifySignDelete DiffDelete
+    highlight link SignifySignAdd             DiffAdd
+    highlight link SignifySignChange          DiffChange
+    highlight link SignifySignDelete          DiffDelete
+    highlight link SignifySignChangeDelete    SignifySignChange
+    highlight link SignifySignDeleteFirstLine SignifySignDelete
 <
 Thus if you do not want to change the standard highlighting groups, but want
 different colors for either your signs or lines, you can define one of these 6
