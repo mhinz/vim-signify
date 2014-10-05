@@ -89,3 +89,35 @@ function! s:save()
     write
   endif
 endfunction
+
+" Text object: ac / ic {{{1
+function! s:hunk_text_object(emptylines) abort
+  if !exists('b:sy')
+    return
+  endif
+
+  let lnum  = line('.')
+  let hunks = filter(copy(b:sy.hunks), 'v:val.start <= lnum && v:val.end >= lnum')
+
+  if empty(hunks)
+    return
+  endif
+
+  execute hunks[0].start
+  normal! V
+
+  if a:emptylines
+    let lnum = hunks[0].end
+    while getline(lnum+1) =~ '^$'
+      let lnum += 1
+    endwhile
+    execute lnum
+  else
+    execute hunks[0].end
+  endif
+endfunction
+
+onoremap <silent> ac :<c-u>call <sid>hunk_text_object(1)<cr>
+xnoremap <silent> ac :<c-u>call <sid>hunk_text_object(1)<cr>
+onoremap <silent> ic :<c-u>call <sid>hunk_text_object(0)<cr>
+xnoremap <silent> ic :<c-u>call <sid>hunk_text_object(0)<cr>
