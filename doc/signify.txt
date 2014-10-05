@@ -167,6 +167,9 @@ Alternatively, you can also map it yourself:
 <
 There is no difference between both variants.
 
+NOTE: Analog to Vim's diff mode, you can also use |]c| and |[c| for jumping
+between hunks.
+
 ------------------------------------------------------------------------------
                                             *g:signify_mapping_toggle_highlight*
 >
