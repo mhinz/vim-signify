@@ -33,10 +33,7 @@ augroup signify
   endif
 
   if get(g:, 'signify_update_on_focusgained') && !has('gui_win32')
-    autocmd FocusGained *
-          \ if exists('b:sy') |
-          \   call sy#start() |
-          \ endif
+    autocmd FocusGained * call s:refresh_windows()
   endif
 augroup END
 
@@ -89,6 +86,13 @@ function! s:save()
   if exists('b:sy') && b:sy.active && &modified
     write
   endif
+endfunction
+
+" Function: refresh_windows {{{1
+function! s:refresh_windows() abort
+  let winnr = winnr()
+  windo if exists('b:sy') | call sy#start() | endif
+  execute winnr .'wincmd w'
 endfunction
 
 " Text object: ac / ic {{{1
