@@ -28,7 +28,7 @@ endfunction
 function! sy#highlight#line_enable() abort
   execute 'sign define SignifyAdd text='. s:sign_add 'texthl=SignifySignAdd linehl=SignifyLineAdd'
   execute 'sign define SignifyChange text='. s:sign_change 'texthl=SignifySignChange linehl=SignifyLineChange'
-  execute 'sign define SignifyRemoveFirstLine text='. s:sign_delete_first_line 'texthl=SignifySignDelete linehl=SignifyLineDeleteFirstLine'
+  execute 'sign define SignifyRemoveFirstLine text='. s:sign_delete_first_line 'texthl=SignifySignDeleteFirstLine linehl=SignifyLineDeleteFirstLine'
 
   if s:sign_show_count
     let s:sign_changedelete = substitute(s:sign_changedelete, '^.\zs.*', '', '')
@@ -50,7 +50,7 @@ endfunction
 function! sy#highlight#line_disable() abort
   execute 'sign define SignifyAdd text='. s:sign_add 'texthl=SignifySignAdd linehl='
   execute 'sign define SignifyChange text='. s:sign_change 'texthl=SignifySignChange linehl='
-  execute 'sign define SignifyRemoveFirstLine text='. s:sign_delete_first_line 'texthl=SignifySignDelete linehl='
+  execute 'sign define SignifyRemoveFirstLine text='. s:sign_delete_first_line 'texthl=SignifySignDeleteFirstLine linehl='
 
   if s:sign_show_count
     let s:sign_changedelete = substitute(s:sign_changedelete, '^.\zs.*', '', '')
