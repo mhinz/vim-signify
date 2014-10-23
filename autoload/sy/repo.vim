@@ -43,18 +43,16 @@ endif
 function! sy#repo#detect() abort
   let dir = fnamemodify(b:sy.path, ':h')
 
+  let vcs_list = s:vcs_list
   " Simple cache. If there is a registered VCS-controlled file in this
   " directory already, assume that this file is probably controlled by
-  " the same VCS. Thus we shuffle that VCS to the top of our vcs_list.
+  " the same VCS. Thus we shuffle that VCS to the top of our copy of
+  " s:vcs_list, so we don't affect the preference order of s:vcs_list.
   if has_key(g:sy_cache, dir)
-    let idx = index(s:vcs_list, g:sy_cache[dir])
-    if idx != -1
-      call remove(s:vcs_list, idx)
-      call insert(s:vcs_list, g:sy_cache[dir], 0)
-    endif
+    let vcs_list = [g:sy_cache[dir]] + filter(copy(s:vcs_list), 'v:val != "'. g:sy_cache[dir] .'"')
   endif
 
-  for type in s:vcs_list
+  for type in vcs_list
     let [istype, diff] = sy#repo#get_diff_{type}()
     if istype
       return [ diff, type ]
