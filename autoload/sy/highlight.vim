@@ -70,11 +70,6 @@ endfunction
 
 " Function: #line_toggle {{{1
 function! sy#highlight#line_toggle() abort
-  if !exists('b:sy')
-    echomsg 'signify: I cannot detect any changes!'
-    return
-  endif
-
   if get(g:, 'signify_line_highlight')
     call sy#highlight#line_disable()
   else
@@ -83,3 +78,6 @@ function! sy#highlight#line_toggle() abort
 
   call sy#start()
 endfunction
+" }}}
+
+call sy#highlight#setup()

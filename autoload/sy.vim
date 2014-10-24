@@ -12,9 +12,7 @@ function! sy#start() abort
     return
   endif
 
-  if !exists('b:sy_path')
-    let b:sy_path = resolve(expand('%:p'))
-  endif
+  let b:sy_path = resolve(expand('%:p'))
 
   if &diff
         \ || !filereadable(b:sy_path)
@@ -105,7 +103,7 @@ endfunction
 " Function: #toggle {{{1
 function! sy#toggle() abort
   if !exists('b:sy')
-    echomsg 'signify: I cannot sy empty buffers!'
+    call sy#start()
     return
   endif
 
