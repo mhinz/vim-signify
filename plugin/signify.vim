@@ -122,7 +122,33 @@ function! s:hunk_text_object(emptylines) abort
   endif
 endfunction
 
-onoremap <silent> ac :<c-u>call <sid>hunk_text_object(1)<cr>
-xnoremap <silent> ac :<c-u>call <sid>hunk_text_object(1)<cr>
-onoremap <silent> ic :<c-u>call <sid>hunk_text_object(0)<cr>
-xnoremap <silent> ic :<c-u>call <sid>hunk_text_object(0)<cr>
+onoremap <silent> <plug>(signify-inner-motion-pending) :<c-u>call <sid>hunk_text_object(0)<cr>
+xnoremap <silent> <plug>(signify-inner-motion-visual)  :<c-u>call <sid>hunk_text_object(0)<cr>
+onoremap <silent> <plug>(signify-outer-motion-pending) :<c-u>call <sid>hunk_text_object(1)<cr>
+xnoremap <silent> <plug>(signify-outer-motion-visual)  :<c-u>call <sid>hunk_text_object(1)<cr>
+
+if exists('g:signify_mapping_inner_motion')
+  execute 'onoremap <silent> '. g:signify_mapping_inner_motion .' <plug>(signify-inner-motion-pending)'
+  execute 'xnoremap <silent> '. g:signify_mapping_inner_motion .' <plug>(signify-inner-motion-visual)'
+else
+  if !hasmapto('<plug>(signify-inner-motion-pending)') && empty(maparg('ic', 'o'))
+    onoremap <silent> ic <plug>(signify-inner-motion-pending)
+  endif
+
+  if !hasmapto('<plug>(signify-inner-motion-visual)') && empty(maparg('ic', 'x'))
+    xnoremap <silent> ic <plug>(signify-inner-motion-visual)
+  endif
+endif
+
+if exists('g:signify_mapping_outer_motion')
+  execute 'onoremap <silent> '. g:signify_mapping_outer_motion .' <plug>(signify-outer-motion-pending)'
+  execute 'xnoremap <silent> '. g:signify_mapping_outer_motion .' <plug>(signify-outer-motion-visual)'
+else
+  if !hasmapto('<plug>(signify-outer-motion-pending)') && empty(maparg('ac', 'o'))
+    onoremap <silent> ac <plug>(signify-outer-motion-pending)
+  endif
+
+  if !hasmapto('<plug>(signify-outer-motion-visual)') && empty(maparg('ac', 'x'))
+    xnoremap <silent> ac <plug>(signify-outer-motion-visual)
+  endif
+endif
