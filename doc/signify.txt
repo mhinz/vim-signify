@@ -322,6 +322,13 @@ Does the same as ic and also removes all trailing empty lines.
 
 NOTE: Don't be surprised that this also works with "deleted lines".
 
+Map hunk text objects like this:
+>
+    omap ic <plug>(signify-motion-inner-pending)
+    xmap ic <plug>(signify-motion-inner-visual)
+    omap ac <plug>(signify-motion-outer-pending)
+    xmap ac <plug>(signify-motion-outer-visual)
+<
 ==============================================================================
 COLORS                                                          *signify-colors*
 
