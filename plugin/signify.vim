@@ -30,8 +30,8 @@ augroup signify
     autocmd CursorHoldI * nested call s:save()
   endif
 
-  if get(g:, 'signify_update_on_focusgained') && !has('gui_win32')
-    autocmd FocusGained * call s:refresh_windows()
+  if get(g:, 'signify_update_on_focus') && !has('gui_win32')
+    autocmd FocusGained,FocusLost * call s:refresh_windows()
   endif
 augroup END
 
