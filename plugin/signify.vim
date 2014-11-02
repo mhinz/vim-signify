@@ -30,8 +30,8 @@ augroup signify
     autocmd CursorHoldI * nested call s:save()
   endif
 
-  if get(g:, 'signify_update_on_focus') && !has('gui_win32')
-    autocmd FocusGained,FocusLost * call s:refresh_windows()
+  if get(g:, 'signify_update_on_focusgained') && !has('gui_win32')
+    autocmd FocusGained * call sy#util#refresh_windows()
   endif
 augroup END
 
@@ -100,13 +100,6 @@ function! s:save()
   if exists('b:sy') && b:sy.active && &modified
     write
   endif
-endfunction
-
-" Function: refresh_windows {{{1
-function! s:refresh_windows() abort
-  let winnr = winnr()
-  windo if exists('b:sy') | call sy#start() | endif
-  execute winnr .'wincmd w'
 endfunction
 
 " Function: hunk_text_object {{{1

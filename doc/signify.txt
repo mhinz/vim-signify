@@ -34,6 +34,7 @@ TOC                                                           *signify-contents*
   COMMANDS ....................... |signify-commands|
   MAPPINGS ....................... |signify-mappings|
   OBJECTS ........................ |signify-objects|
+  FUNCTIONS ...................... |signify-functions|
   COLORS ......................... |signify-colors|
 
 ==============================================================================
@@ -96,7 +97,7 @@ All available options:~
     |g:signify_skip_filetype|
     |g:signify_skip_filename|
     |g:signify_update_on_bufenter|
-    |g:signify_update_on_focus|
+    |g:signify_update_on_focusgained|
     |g:signify_line_highlight|
     |g:signify_sign_add|
     |g:signify_sign_delete|
@@ -209,11 +210,11 @@ Update signs when entering a buffer that was modified.
 NOTE: This also saves the buffer to disk!
 
 ------------------------------------------------------------------------------
-                                                     *g:signify_update_on_focus*
+                                               *g:signify_update_on_focusgained*
 >
-    let g:signify_update_on_focus = 0
+    let g:signify_update_on_focusgained = 0
 <
-Update signs when Vim gains/loses focus.
+Update signs when Vim gains focus.
 
 ------------------------------------------------------------------------------
                                                       *g:signify_line_highlight*
@@ -370,5 +371,18 @@ For Unix people there is a small script, showcolors.bash, in the repo that
 shows all 256 colors available to the terminal. That makes picking the right
 numbers much easier.
 
+==============================================================================
+FUNCTIONS                                                    *signify-functions*
+
+Signify exposes some functions which you can use to customize its behavior.
+
+------------------------------------------------------------------------------
+sy#util#refresh_windows()                            *sy#util#refresh_windows()*
+
+This function updates signs for all windows. For example, to update signs when
+Vim loses focus, you can add autocommand:
+>
+    autocmd FocusLost * call sy#util#refresh_windows()
+<
 ==============================================================================
 vim: tw=78

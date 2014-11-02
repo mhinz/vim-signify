@@ -41,3 +41,10 @@ function! sy#util#run_in_dir(dir, cmd) abort
 
   return ret
 endfunction
+
+" Function: #refresh_windows {{{1
+function! sy#util#refresh_windows() abort
+  let winnr = winnr()
+  windo if exists('b:sy') | call sy#start() | endif
+  execute winnr .'wincmd w'
+endfunction
