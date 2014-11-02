@@ -33,6 +33,7 @@ TOC                                                           *signify-contents*
   OPTIONS ........................ |signify-options|
   COMMANDS ....................... |signify-commands|
   MAPPINGS ....................... |signify-mappings|
+  FUNCTIONS ...................... |signify-functions|
   OBJECTS ........................ |signify-objects|
   COLORS ......................... |signify-colors|
 
@@ -96,7 +97,7 @@ All available options:~
     |g:signify_skip_filetype|
     |g:signify_skip_filename|
     |g:signify_update_on_bufenter|
-    |g:signify_update_on_focus|
+    |g:signify_update_on_focusgained|
     |g:signify_line_highlight|
     |g:signify_sign_add|
     |g:signify_sign_delete|
@@ -209,11 +210,11 @@ Update signs when entering a buffer that was modified.
 NOTE: This also saves the buffer to disk!
 
 ------------------------------------------------------------------------------
-                                                     *g:signify_update_on_focus*
+                                               *g:signify_update_on_focusgained*
 >
-    let g:signify_update_on_focus = 0
+    let g:signify_update_on_focusgained = 0
 <
-Update signs when Vim gains/loses focus.
+Update signs when Vim gains focus.
 
 ------------------------------------------------------------------------------
                                                       *g:signify_line_highlight*
@@ -307,6 +308,19 @@ Default mapping:  <leader>gt
 Toggle line highlighting for lines containing changes.
 Default mapping:  <leader>gh
 
+==============================================================================
+FUNCTIONS                                                    *signify-functions*
+
+Signify exposes some functions which you can use to customize its behavior.
+
+------------------------------------------------------------------------------
+                                                    *signify-#refresh_windows()*
+
+This function updates signs for all windows. For example, to update signs when
+Vim loses focus, you use:
+>
+    autocmd FocusLost * call sy#util#refresh_windows()
+<
 ==============================================================================
 OBJECTS                                                        *signify-objects*
 
