@@ -35,6 +35,7 @@ TOC                                                           *signify-contents*
   MAPPINGS ....................... |signify-mappings|
   FUNCTIONS ...................... |signify-functions|
   OBJECTS ........................ |signify-objects|
+  FUNCTIONS ...................... |signify-functions|
   COLORS ......................... |signify-colors|
 
 ==============================================================================
@@ -384,5 +385,18 @@ For Unix people there is a small script, showcolors.bash, in the repo that
 shows all 256 colors available to the terminal. That makes picking the right
 numbers much easier.
 
+==============================================================================
+FUNCTIONS                                                    *signify-functions*
+
+Signify exposes some functions which you can use to customize its behavior.
+
+------------------------------------------------------------------------------
+sy#util#refresh_windows()                            *sy#util#refresh_windows()*
+
+This function updates signs for all windows. For example, to update signs when
+Vim loses focus, you can add autocommand:
+>
+    autocmd FocusLost * call sy#util#refresh_windows()
+<
 ==============================================================================
 vim: tw=78
