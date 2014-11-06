@@ -33,7 +33,7 @@ augroup signify
   endif
 
   if get(g:, 'signify_update_on_focusgained') && !has('gui_win32')
-    autocmd FocusGained * call SignifyRefresh
+    autocmd FocusGained * SignifyRefresh
   endif
 augroup END
 
