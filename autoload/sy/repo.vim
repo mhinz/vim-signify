@@ -101,10 +101,42 @@ function! sy#repo#get_stat_git() abort
   "call setqflist(stats)
 endfunction
 
+function! sy#repo#get_hg_ext() abort
+  let in_ext=0
+  let ext=[]
+  for line in systemlist("hg help -v")
+    let m = matchlist(line, '^[^ ].*')
+    if len(m) > 0
+      let in_ext=0
+    endif
+    let m = matchlist(line, '\c^enabled extensions:')
+    if len(m) > 0
+      let in_ext=1
+    endif
+    if in_ext
+      let m = matchlist(line, '\v^[ 	]+([^ 	]+).*')
+      if len(m) > 0
+        let ext+=[m[1]]
+      endif
+    endif
+  endfor
+
+  return l:ext
+endfunction
+
 " Function: #get_diff_hg {{{1
 function! sy#repo#get_diff_hg() abort
   let diffoptions = has_key(g:signify_diffoptions, 'hg') ? g:signify_diffoptions.hg : ''
-  let diff = system('hg diff --nodates -U0 '. diffoptions .' -- '. sy#util#escape(b:sy.path))
+
+  let disable_ext_opt = ""
+  let ext = sy#repo#get_hg_ext()
+  if count(ext, 'color') > 0
+    let disable_ext_opt .= "--color never "
+  endif
+  if count(ext, 'pager') > 0
+    let disable_ext_opt .= "--pager never "
+  endif
+  let diff = system('hg diff --nodates -U0 '. disable_ext_opt . diffoptions .' -- '. sy#util#escape(b:sy.path))
 
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
