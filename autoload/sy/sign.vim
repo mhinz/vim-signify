@@ -189,15 +189,17 @@ function! sy#sign#process_diff(diff) abort
 endfunction
 
 " Function: #remove_all_signs {{{1
-function! sy#sign#remove_all_signs() abort
-  for hunk in b:sy.hunks
+function! sy#sign#remove_all_signs(bufnr) abort
+  let sy = getbufvar(a:bufnr, 'sy')
+
+  for hunk in sy.hunks
     for id in hunk.ids
       execute 'sign unplace' id
     endfor
   endfor
 
-  let b:sy.hunks = []
-  let b:sy.stats = [0, 0, 0]
+  let sy.hunks = []
+  let sy.stats = [0, 0, 0]
 endfunction
 
 " Function: s:add_sign {{{1

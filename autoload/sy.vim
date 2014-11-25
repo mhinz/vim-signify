@@ -88,15 +88,16 @@ function! sy#start() abort
 endfunction
 
 " Function: #stop {{{1
-function! sy#stop() abort
-  if !exists('b:sy')
+function! sy#stop(bufnr) abort
+  let sy = getbufvar(a:bufnr, 'sy')
+  if empty(sy)
     return
   endif
 
-  call sy#sign#remove_all_signs()
+  call sy#sign#remove_all_signs(a:bufnr)
 
   augroup signify
-    execute printf('autocmd! * <buffer=%d>', b:sy.buffer)
+    execute printf('autocmd! * <buffer=%d>', sy.buffer)
   augroup END
 endfunction
 
@@ -108,7 +109,7 @@ function! sy#toggle() abort
   endif
 
   if b:sy.active
-    call sy#stop()
+    call sy#stop(b:sy.buffer)
     let b:sy.active = 0
     let b:sy.stats = [-1, -1, -1]
   else

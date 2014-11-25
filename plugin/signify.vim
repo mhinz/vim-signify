@@ -17,7 +17,7 @@ augroup signify
   autocmd!
 
   autocmd BufRead,BufWritePost * call sy#start()
-  autocmd BufDelete            * call sy#stop()
+  autocmd BufDelete            * call sy#stop(expand('<abuf>'))
 
   autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
   autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
