@@ -75,3 +75,13 @@ function! sy#util#hunk_text_object(emptylines) abort
     execute hunks[0].end
   endif
 endfunction
+
+" Function: #devnull {{{1
+function! sy#util#devnull() abort
+  if has('win32') || has ('win64')
+    let null = 'NUL'
+  else
+    let null = '/dev/null'
+  endif
+  return null
+endfunction
