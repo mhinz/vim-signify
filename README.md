@@ -64,4 +64,4 @@ read `:h signify-option-vcs_list`.
 License
 -------
 
-MIT license. Copyright (c) 2013 Marco Hinz.
+MIT license. Copyright (c) 2015 Marco Hinz.
