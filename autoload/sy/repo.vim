@@ -151,7 +151,7 @@ endfunction
 
 " Function: #get_diff_rcs {{{1
 function! sy#repo#get_diff_rcs() abort
-  let diff = system('rcsdiff -U0 %f 2>/dev/null', s:info.path, 0)
+  let diff = s:run('rcsdiff -U0 %f 2>/dev/null', s:info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
@@ -163,7 +163,7 @@ endfunction
 
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce() abort
-  let diff = system('p4 info 2>&1 >'. sy#util#devnull() .
+  let diff = s:run('p4 info 2>&1 >'. sy#util#devnull() .
         \ ' && env P4DIFF=diff p4 diff -dU0 %f', s:info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
