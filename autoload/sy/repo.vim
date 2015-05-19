@@ -163,8 +163,8 @@ endfunction
 
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce() abort
-  let diff = s:run('p4 info 2>&1 >'. sy#util#devnull() .
-        \ ' && env P4DIFF=diff p4 diff -dU0 %f', s:info.path, 0)
+  let diff = s:run('p4 info 2>&1 >%n && env P4DIFF=diff p4 diff -dU0 %f',
+        \ s:info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
@@ -200,7 +200,8 @@ endfunction
 " Function: s:run {{{1
 function! s:run(cmd, path, do_switch_dir) abort
   let cmd = substitute(a:cmd, '%f', a:path, '')
-  let cmd = substitute(cmd, '%d', s:difftool, '')
+  let cmd = substitute(cmd,   '%d', s:difftool, '')
+  let cmd = substitute(cmd,   '%n', sy#util#devnull(), '')
 
   if a:do_switch_dir
     try
