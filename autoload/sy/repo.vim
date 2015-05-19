@@ -47,8 +47,8 @@ let s:diffcmds = {
       \ 'perforce': 'p4 info 2>&1 >%n && env P4DIFF=diff p4 diff -dU0 %f',
       \ }
 
-if exists('g:signify_diffcmds')
-  call extend(s:diffcmds, g:signify_diffcmds')
+if exists('g:signify_vcs_cmds')
+  call extend(s:diffcmds, g:signify_vcs_cmds)
 endif
 
 " Function: #detect {{{1
