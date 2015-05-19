@@ -2,12 +2,6 @@
 
 scriptencoding utf-8
 
-" Function: #separator {{{1
-function! sy#util#separator() abort
-  return !exists('+shellslash') || &shellslash ? '/' : '\'
-endfunction
-
-
 " Function: #refresh_windows {{{1
 function! sy#util#refresh_windows() abort
   let winnr = winnr()
@@ -42,12 +36,3 @@ function! sy#util#hunk_text_object(emptylines) abort
   endif
 endfunction
 
-" Function: #devnull {{{1
-function! sy#util#devnull() abort
-  if has('win32') || has ('win64')
-    let null = 'NUL'
-  else
-    let null = '/dev/null'
-  endif
-  return null
-endfunction

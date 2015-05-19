@@ -59,7 +59,7 @@ function! sy#repo#detect() abort
         \ 'path':     s:escape(b:sy.path),
         \ 'file':     s:escape(fnamemodify(b:sy.path, ':t')),
         \ 'difftool': s:escape(s:difftool),
-        \ 'devnull':  sy#util#devnull(),
+        \ 'devnull':  s:devnull(),
         \ }
 
   for type in vcs_list
@@ -77,37 +77,6 @@ function! sy#repo#get_diff_git() abort
   let diff = s:run('git diff --no-color --no-ext-diff -U0 -- %f',
         \ s:info.file, 1)
   return v:shell_error ? [0, ''] : [1, diff]
-endfunction
-
-" Function: #get_stat_git {{{1
-function! sy#repo#get_stat_git() abort
-  let s:stats = []
-  let root  = finddir('.git', fnamemodify(b:sy.path, ':h') .';')
-  if empty(root)
-    echohl ErrorMsg | echomsg 'Cannot find the git root directory: '. b:sy.path | echohl None
-    return
-  endif
-  let root   = fnamemodify(root, ':h')
-  let output = sy#util#run_in_dir(root, 'git diff --numstat')
-  if v:shell_error
-    echohl ErrorMsg | echomsg "'git diff --numstat' failed" | echohl None
-    return
-  endif
-  for stat in split(output, '\n')
-    let tokens = matchlist(stat, '\v([0-9-]+)\t([0-9-]+)\t(.*)')
-    if empty(tokens)
-      echohl ErrorMsg | echomsg 'Cannot parse this line: '. stat | echohl None
-    elseif tokens[1] == '-'
-      continue
-    else
-      let path = root . sy#util#separator() . tokens[3]
-      if !bufexists(path)
-        execute 'argadd '. path
-      endif
-      call add(s:stats, { 'bufnr': bufnr(path), 'text': tokens[1] .' additions, '. tokens[2] .' deletions', 'lnum': 1, 'col': 1 })
-    endif
-  endfor
-  "call setqflist(stats)
 endfunction
 
 " Function: #get_diff_hg {{{1
@@ -179,6 +148,11 @@ function! sy#repo#get_stats() abort
   return b:sy.stats
 endfunction
 
+" Function: s:devnull {{{1
+function! s:devnull() abort
+  return has('win32') || has ('win64') ? 'NUL' : '/dev/null'
+endfunction
+
 " Function: s:escape {{{1
 function! s:escape(path) abort
   if exists('+shellslash')
@@ -217,3 +191,4 @@ function! s:run(cmd, path, do_switch_dir) abort
 
   return system(cmd)
 endfunction
+
