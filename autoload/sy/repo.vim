@@ -34,6 +34,23 @@ if empty(s:vcs_list)
   let s:vcs_list = keys(filter(s:vcs_dict, 'executable(v:val)'))
 endif
 
+let s:diffcmds = {
+      \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
+      \ 'hg':       'hg diff --config extensions.color=! --config defaults.diff= --nodates -U0 -- %f',
+      \ 'svn':      'svn diff --diff-cmd %d -x -U0 -- %f',
+      \ 'bzr':      'bzr diff --using %d --diff-options=-U0 -- %f',
+      \ 'darcs':    'darcs diff --no-pause-for-gui --diff-command="%d -U0 %1 %2" -- %f',
+      \ 'fossil':   'fossil set diff-command "%d -U 0" && fossil diff --unified -c 0 -- %f',
+      \ 'cvs':      'cvs diff -U0 -- %f',
+      \ 'rcs':      'rcsdiff -U0 %f 2>/dev/null',
+      \ 'accurev':  'accurev diff %f -- -U0',
+      \ 'perforce': 'p4 info 2>&1 >%n && env P4DIFF=diff p4 diff -dU0 %f',
+      \ }
+
+if exists('g:signify_diffcmds')
+  call extend(s:diffcmds, g:signify_diffcmds')
+endif
+
 " Function: #detect {{{1
 function! sy#repo#detect() abort
   let s:info = {
@@ -68,68 +85,61 @@ endfunction
 
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git() abort
-  let diff = s:run('git diff --no-color --no-ext-diff -U0 -- %f',
-        \ s:info.file, 1)
+  let diff = s:run(s:diffcmds.git, s:info.file, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_hg {{{1
 function! sy#repo#get_diff_hg() abort
-  let diff = s:run('hg diff --config extensions.color=! --config defaults.diff= --nodates -U0 -- %f',
-        \ s:info.path, 1)
+  let diff = s:run(s:diffcmds.hg, s:info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_svn {{{1
 function! sy#repo#get_diff_svn() abort
-  let diff = s:run('svn diff --diff-cmd %d -x -U0 -- %f',
-        \ s:info.path, 0)
+  let diff = s:run(s:diffcmds.svn, s:info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_bzr {{{1
 function! sy#repo#get_diff_bzr() abort
-  let diff = s:run('bzr diff --using %d --diff-options=-U0 -- %f',
-        \ s:info.path, 0)
+  let diff = s:run(s:diffcmds.bzr, s:info.path, 0)
   return (v:shell_error =~ '[012]') ? [1, diff] : [0, '']
 endfunction
 
 " Function: #get_diff_darcs {{{1
 function! sy#repo#get_diff_darcs() abort
-  let diff = s:run('darcs diff --no-pause-for-gui --diff-command="%d -U0 %1 %2" -- %f',
-        \ s:info.path, 1)
+  let diff = s:run(s:diffcmds.darcs, s:info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_fossil {{{1
 function! sy#repo#get_diff_fossil() abort
-  let diff = s:run('fossil set diff-command "%d -U 0" && fossil diff --unified -c 0 -- %f',
-        \ s:info.path, 1)
+  let diff = s:run(s:diffcmds.fossil, s:info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_cvs {{{1
 function! sy#repo#get_diff_cvs() abort
-  let diff = s:run('cvs diff -U0 -- %f', s:info.file, 1)
+  let diff = s:run(s:diffcmds.cvs, s:info.file, 1)
   return ((v:shell_error == 1) && (diff =~ '+++')) ? [1, diff] : [0, '']
 endfunction
 
 " Function: #get_diff_rcs {{{1
 function! sy#repo#get_diff_rcs() abort
-  let diff = s:run('rcsdiff -U0 %f 2>/dev/null', s:info.path, 0)
+  let diff = s:run(s:diffcmds.rcs, s:info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_accurev {{{1
 function! sy#repo#get_diff_accurev() abort
-  let diff = s:run('accurev diff %f -- -U0', s:info.file, 1)
+  let diff = s:run(s:diffcmds.accurev, s:info.file, 1)
   return (v:shell_error != 1) ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce() abort
-  let diff = s:run('p4 info 2>&1 >%n && env P4DIFF=diff p4 diff -dU0 %f',
-        \ s:info.path, 0)
+  let diff = s:run(s:diffcmds.perforce, s:info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
