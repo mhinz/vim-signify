@@ -52,6 +52,14 @@ function! sy#repo#detect() abort
     let vcs_list = [g:sy_cache[dir]] + filter(copy(s:vcs_list), 'v:val != "'. g:sy_cache[dir] .'"')
   endif
 
+  let s:info = {
+        \ 'chdir': haslocaldir() ? 'lcd' : 'cd',
+        \ 'cwd':   getcwd(),
+        \ 'dir':   fnamemodify(b:sy.path, ':p:h'),
+        \ 'path':  s:escape(b:sy.path),
+        \ 'file':  s:escape(fnamemodify(b:sy.path, ':t')),
+        \ }
+
   for type in vcs_list
     let [istype, diff] = sy#repo#get_diff_{type}()
     if istype
@@ -64,9 +72,8 @@ endfunction
 
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git() abort
-  let diffoptions = has_key(g:signify_diffoptions, 'git') ? g:signify_diffoptions.git : ''
-  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'git diff --no-color --no-ext-diff -U0 '. diffoptions .' -- '. sy#util#escape(fnamemodify(b:sy.path, ':t')))
-
+  let diff = s:run('git diff --no-color --no-ext-diff -U0 -- %f',
+        \ s:info.file, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
@@ -103,67 +110,61 @@ endfunction
 
 " Function: #get_diff_hg {{{1
 function! sy#repo#get_diff_hg() abort
-  let diffoptions = has_key(g:signify_diffoptions, 'hg') ? g:signify_diffoptions.hg : ''
-  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'hg diff --config extensions.color=! --config defaults.diff= --nodates -U0 '. diffoptions .' -- '. sy#util#escape(b:sy.path))
-
+  let diff = s:run('hg diff --config extensions.color=! --config defaults.diff= --nodates -U0 -- %f',
+        \ s:info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_svn {{{1
 function! sy#repo#get_diff_svn() abort
-  let diffoptions = has_key(g:signify_diffoptions, 'svn') ? g:signify_diffoptions.svn : ''
-  let diff = system('svn diff --diff-cmd '. s:difftool .' -x -U0 '. diffoptions .' -- '. sy#util#escape(b:sy.path))
-
+  let diff = s:run('svn diff --diff-cmd %d -x -U0 -- %f',
+        \ s:info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_bzr {{{1
 function! sy#repo#get_diff_bzr() abort
-  let diffoptions = has_key(g:signify_diffoptions, 'bzr') ? g:signify_diffoptions.bzr : ''
-  let diff = system('bzr diff --using '. s:difftool .' --diff-options=-U0 '. diffoptions .' -- '. sy#util#escape(b:sy.path))
-
+  let diff = s:run('bzr diff --using %d --diff-options=-U0 -- %f',
+        \ s:info.path, 0)
   return (v:shell_error =~ '[012]') ? [1, diff] : [0, '']
 endfunction
 
 " Function: #get_diff_darcs {{{1
 function! sy#repo#get_diff_darcs() abort
-  let diffoptions = has_key(g:signify_diffoptions, 'darcs') ? g:signify_diffoptions.darcs : ''
-  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'darcs diff --no-pause-for-gui --diff-command="'. s:difftool .' -U0 %1 %2 '. diffoptions .'" -- '. sy#util#escape(b:sy.path))
+  let diff = s:run('darcs diff --no-pause-for-gui --diff-command="%d -U0 %1 %2" -- %f',
+        \ s:info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_fossil {{{1
 function! sy#repo#get_diff_fossil() abort
-  let diffoptions = has_key(g:signify_diffoptions, 'fossil') ? g:signify_diffoptions.fossil : ''
-  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'fossil set diff-command "'. s:difftool .' -U 0" && fossil diff --unified -c 0 '. diffoptions .' -- '. sy#util#escape(b:sy.path))
+  let diff = s:run('fossil set diff-command "%d -U 0" && fossil diff --unified -c 0 -- %f',
+        \ s:info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_cvs {{{1
 function! sy#repo#get_diff_cvs() abort
-  let diffoptions = has_key(g:signify_diffoptions, 'cvs') ? g:signify_diffoptions.cvs : ''
-  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'cvs diff -U0 '. diffoptions .' -- '. sy#util#escape(fnamemodify(b:sy.path, ':t')))
+  let diff = s:run('cvs diff -U0 -- %f', s:info.file, 1)
   return ((v:shell_error == 1) && (diff =~ '+++')) ? [1, diff] : [0, '']
 endfunction
 
 " Function: #get_diff_rcs {{{1
 function! sy#repo#get_diff_rcs() abort
-  let diffoptions = has_key(g:signify_diffoptions, 'rcs') ? g:signify_diffoptions.rcs : ''
-  let diff = system('rcsdiff -U0 '. diffoptions .' '. sy#util#escape(b:sy.path) .' 2>/dev/null')
+  let diff = system('rcsdiff -U0 %f 2>/dev/null', s:info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_accurev {{{1
 function! sy#repo#get_diff_accurev() abort
-  let diffoptions = has_key(g:signify_diffoptions, 'accurev') ? g:signify_diffoptions.accurev : ''
-  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'accurev diff '. sy#util#escape(fnamemodify(b:sy.path, ':t')) . ' -- -U0 '. diffoptions)
+  let diff = s:run('accurev diff %f -- -U0', s:info.file, 1)
   return (v:shell_error != 1) ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce() abort
-  let diffoptions = has_key(g:signify_diffoptions, 'perforce') ? g:signify_diffoptions.perforce : ''
-  let diff = system(sy#util#escape('p4 info 2>&1 >') . sy#util#devnull() . ' && env P4DIFF=diff p4 diff -dU0 '. diffoptions .' '. sy#util#escape(b:sy.path))
+  let diff = system('p4 info 2>&1 >'. sy#util#devnull() .
+        \ ' && env P4DIFF=diff p4 diff -dU0 %f', s:info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
@@ -174,4 +175,42 @@ function! sy#repo#get_stats() abort
   endif
 
   return b:sy.stats
+endfunction
+
+" Function: s:escape {{{1
+function! s:escape(path) abort
+  if exists('+shellslash')
+    let old_ssl = &shellslash
+    if fnamemodify(&shell, ':t') == 'cmd.exe'
+      set noshellslash
+    else
+      set shellslash
+    endif
+  endif
+
+  let path = shellescape(a:path)
+
+  if exists('old_ssl')
+    let &shellslash = old_ssl
+  endif
+
+  return path
+endfunction
+
+" Function: s:run {{{1
+function! s:run(cmd, path, do_switch_dir) abort
+  let cmd = substitute(a:cmd, '%f', a:path, '')
+  let cmd = substitute(cmd, '%d', s:difftool, '')
+
+  if a:do_switch_dir
+    try
+      execute s:info.chdir fnameescape(s:info.dir)
+      let ret = system(cmd)
+    finally
+      execute s:info.chdir fnameescape(s:info.cwd)
+    endtry
+    return ret
+  endif
+
+  return sytem(cmd)
 endfunction
