@@ -3,12 +3,7 @@
 scriptencoding utf-8
 
 " Init: values {{{1
-if !exists('g:signify_diffoptions')
-  let g:signify_diffoptions = {}
-endif
-
 let s:difftool = get(g:, 'signify_difftool', 'diff')
-
 if executable(s:difftool)
   let s:vcs_dict = {
         \ 'git':      'git',
@@ -41,17 +36,6 @@ endif
 
 " Function: #detect {{{1
 function! sy#repo#detect() abort
-  let dir = fnamemodify(b:sy.path, ':h')
-
-  let vcs_list = s:vcs_list
-  " Simple cache. If there is a registered VCS-controlled file in this
-  " directory already, assume that this file is probably controlled by
-  " the same VCS. Thus we shuffle that VCS to the top of our copy of
-  " s:vcs_list, so we don't affect the preference order of s:vcs_list.
-  if has_key(g:sy_cache, dir)
-    let vcs_list = [g:sy_cache[dir]] + filter(copy(s:vcs_list), 'v:val != "'. g:sy_cache[dir] .'"')
-  endif
-
   let s:info = {
         \ 'chdir':    haslocaldir() ? 'lcd' : 'cd',
         \ 'cwd':      getcwd(),
@@ -62,14 +46,24 @@ function! sy#repo#detect() abort
         \ 'devnull':  s:devnull(),
         \ }
 
+  let vcs_list = s:vcs_list
+  " Simple cache. If there is a registered VCS-controlled file in this
+  " directory already, assume that this file is probably controlled by
+  " the same VCS. Thus we shuffle that VCS to the top of our copy of
+  " s:vcs_list, so we don't affect the preference order of s:vcs_list.
+  if has_key(g:sy_cache, s:info.dir)
+    let vcs_list = [g:sy_cache[s:info.dir]] +
+          \ filter(copy(s:vcs_list), 'v:val != "'. g:sy_cache[s:info.dir] .'"')
+  endif
+
   for type in vcs_list
     let [istype, diff] = sy#repo#get_diff_{type}()
     if istype
-      return [ diff, type ]
+      return [diff, type]
     endif
   endfor
 
-  return [ '', 'unknown' ]
+  return ['', 'unknown']
 endfunction
 
 " Function: #get_diff_git {{{1
