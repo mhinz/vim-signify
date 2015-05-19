@@ -53,11 +53,13 @@ function! sy#repo#detect() abort
   endif
 
   let s:info = {
-        \ 'chdir': haslocaldir() ? 'lcd' : 'cd',
-        \ 'cwd':   getcwd(),
-        \ 'dir':   fnamemodify(b:sy.path, ':p:h'),
-        \ 'path':  s:escape(b:sy.path),
-        \ 'file':  s:escape(fnamemodify(b:sy.path, ':t')),
+        \ 'chdir':    haslocaldir() ? 'lcd' : 'cd',
+        \ 'cwd':      getcwd(),
+        \ 'dir':      fnamemodify(b:sy.path, ':p:h'),
+        \ 'path':     s:escape(b:sy.path),
+        \ 'file':     s:escape(fnamemodify(b:sy.path, ':t')),
+        \ 'difftool': s:escape(s:difftool),
+        \ 'devnull':  sy#util#devnull(),
         \ }
 
   for type in vcs_list
@@ -199,9 +201,9 @@ endfunction
 
 " Function: s:run {{{1
 function! s:run(cmd, path, do_switch_dir) abort
-  let cmd = substitute(a:cmd, '%f', a:path, '')
-  let cmd = substitute(cmd,   '%d', s:difftool, '')
-  let cmd = substitute(cmd,   '%n', sy#util#devnull(), '')
+  let cmd = substitute(a:cmd, '%f', a:path,          '')
+  let cmd = substitute(cmd,   '%d', s:info.difftool, '')
+  let cmd = substitute(cmd,   '%n', s:info.devnull,  '')
 
   if a:do_switch_dir
     try
@@ -213,5 +215,5 @@ function! s:run(cmd, path, do_switch_dir) abort
     return ret
   endif
 
-  return sytem(cmd)
+  return system(cmd)
 endfunction
