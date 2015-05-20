@@ -4,22 +4,15 @@ scriptencoding utf-8
 
 " Function: #detect {{{1
 function! sy#repo#detect() abort
-  let s:info = {
-        \ 'chdir':    haslocaldir() ? 'lcd' : 'cd',
-        \ 'cwd':      getcwd(),
-        \ 'dir':      fnamemodify(b:sy.path, ':p:h'),
-        \ 'path':     s:escape(b:sy.path),
-        \ 'file':     s:escape(fnamemodify(b:sy.path, ':t')),
-        \ }
-
   let vcs_list = s:vcs_list
   " Simple cache. If there is a registered VCS-controlled file in this
   " directory already, assume that this file is probably controlled by
   " the same VCS. Thus we shuffle that VCS to the top of our copy of
   " s:vcs_list, so we don't affect the preference order of s:vcs_list.
-  if has_key(g:sy_cache, s:info.dir)
-    let vcs_list = [g:sy_cache[s:info.dir]] +
-          \ filter(copy(s:vcs_list), 'v:val != "'. g:sy_cache[s:info.dir] .'"')
+  if has_key(g:sy_cache, b:sy_info.dir)
+    let vcs_list = [g:sy_cache[b:sy_info.dir]] +
+          \ filter(copy(s:vcs_list), 'v:val != "'.
+          \        g:sy_cache[b:sy_info.dir] .'"')
   endif
 
   for type in vcs_list
@@ -34,61 +27,61 @@ endfunction
 
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git() abort
-  let diff = s:run(s:diffcmds.git, s:info.file, 1)
+  let diff = s:run(s:diffcmds.git, b:sy_info.file, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_hg {{{1
 function! sy#repo#get_diff_hg() abort
-  let diff = s:run(s:diffcmds.hg, s:info.path, 1)
+  let diff = s:run(s:diffcmds.hg, b:sy_info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_svn {{{1
 function! sy#repo#get_diff_svn() abort
-  let diff = s:run(s:diffcmds.svn, s:info.path, 0)
+  let diff = s:run(s:diffcmds.svn, b:sy_info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_bzr {{{1
 function! sy#repo#get_diff_bzr() abort
-  let diff = s:run(s:diffcmds.bzr, s:info.path, 0)
+  let diff = s:run(s:diffcmds.bzr, b:sy_info.path, 0)
   return (v:shell_error =~ '[012]') ? [1, diff] : [0, '']
 endfunction
 
 " Function: #get_diff_darcs {{{1
 function! sy#repo#get_diff_darcs() abort
-  let diff = s:run(s:diffcmds.darcs, s:info.path, 1)
+  let diff = s:run(s:diffcmds.darcs, b:sy_info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_fossil {{{1
 function! sy#repo#get_diff_fossil() abort
-  let diff = s:run(s:diffcmds.fossil, s:info.path, 1)
+  let diff = s:run(s:diffcmds.fossil, b:sy_info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_cvs {{{1
 function! sy#repo#get_diff_cvs() abort
-  let diff = s:run(s:diffcmds.cvs, s:info.file, 1)
+  let diff = s:run(s:diffcmds.cvs, b:sy_info.file, 1)
   return ((v:shell_error == 1) && (diff =~ '+++')) ? [1, diff] : [0, '']
 endfunction
 
 " Function: #get_diff_rcs {{{1
 function! sy#repo#get_diff_rcs() abort
-  let diff = s:run(s:diffcmds.rcs, s:info.path, 0)
+  let diff = s:run(s:diffcmds.rcs, b:sy_info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_accurev {{{1
 function! sy#repo#get_diff_accurev() abort
-  let diff = s:run(s:diffcmds.accurev, s:info.file, 1)
+  let diff = s:run(s:diffcmds.accurev, b:sy_info.file, 1)
   return (v:shell_error != 1) ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce() abort
-  let diff = s:run(s:diffcmds.perforce, s:info.path, 0)
+  let diff = s:run(s:diffcmds.perforce, b:sy_info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
@@ -101,26 +94,6 @@ function! sy#repo#get_stats() abort
   return b:sy.stats
 endfunction
 
-" Function: s:escape {{{1
-function! s:escape(path) abort
-  if exists('+shellslash')
-    let old_ssl = &shellslash
-    if fnamemodify(&shell, ':t') == 'cmd.exe'
-      set noshellslash
-    else
-      set shellslash
-    endif
-  endif
-
-  let path = shellescape(a:path)
-
-  if exists('old_ssl')
-    let &shellslash = old_ssl
-  endif
-
-  return path
-endfunction
-
 " Function: s:run {{{1
 function! s:run(cmd, path, do_switch_dir) abort
   let cmd = substitute(a:cmd, '%f', a:path,     '')
@@ -129,10 +102,10 @@ function! s:run(cmd, path, do_switch_dir) abort
 
   if a:do_switch_dir
     try
-      execute s:info.chdir fnameescape(s:info.dir)
+      execute b:sy_info.chdir fnameescape(b:sy_info.dir)
       let ret = system(cmd)
     finally
-      execute s:info.chdir fnameescape(s:info.cwd)
+      execute b:sy_info.chdir fnameescape(b:sy_info.cwd)
     endtry
     return ret
   endif
@@ -140,7 +113,7 @@ function! s:run(cmd, path, do_switch_dir) abort
   return system(cmd)
 endfunction
 
-" s:vars {{{1
+" Variables {{{1
 let s:difftool = get(g:, 'signify_difftool', 'diff')
 if executable(s:difftool)
   let s:vcs_dict = {
@@ -189,5 +162,5 @@ if exists('g:signify_vcs_cmds')
   call extend(s:diffcmds, g:signify_vcs_cmds)
 endif
 
-let s:difftool = s:escape(s:difftool)
+let s:difftool = sy#util#escape(s:difftool)
 let s:devnull  = has('win32') || has ('win64') ? 'NUL' : '/dev/null'

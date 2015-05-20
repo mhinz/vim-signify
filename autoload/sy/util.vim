@@ -2,6 +2,26 @@
 
 scriptencoding utf-8
 
+" Function: #escape {{{1
+function! sy#util#escape(path) abort
+  if exists('+shellslash')
+    let old_ssl = &shellslash
+    if fnamemodify(&shell, ':t') == 'cmd.exe'
+      set noshellslash
+    else
+      set shellslash
+    endif
+  endif
+
+  let path = shellescape(a:path)
+
+  if exists('old_ssl')
+    let &shellslash = old_ssl
+  endif
+
+  return path
+endfunction
+
 " Function: #refresh_windows {{{1
 function! sy#util#refresh_windows() abort
   let winnr = winnr()
