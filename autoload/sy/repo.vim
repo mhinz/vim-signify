@@ -153,7 +153,7 @@ let s:diffcmds = {
       \ 'darcs':    'darcs diff --no-pause-for-gui --diff-command="%d -U0 %1 %2" -- %f',
       \ 'fossil':   'fossil set diff-command "%d -U 0" && fossil diff --unified -c 0 -- %f',
       \ 'cvs':      'cvs diff -U0 -- %f',
-      \ 'rcs':      'rcsdiff -U0 %f 2>/dev/null',
+      \ 'rcs':      'rcsdiff -U0 %f 2>%n',
       \ 'accurev':  'accurev diff %f -- -U0',
       \ 'perforce': 'p4 info 2>&1 >%n && env P4DIFF=diff p4 diff -dU0 %f',
       \ }
