@@ -59,7 +59,7 @@ documentation for further customization:
     :h signify
 
 _NOTE_: The single most important option by far is `g:signify_vcs_list`. Please
-read `:h signify-option-vcs_list`.
+read `:h signify_vcs_list`.
 
 License
 -------
