@@ -103,6 +103,7 @@ All available options:~
     |g:signify_cursorhold_normal|
     |g:signify_cursorhold_insert|
     |g:signify_difftool|
+    |g:signify_cmdoptions|
     |g:signify_diffoptions|
 
 ------------------------------------------------------------------------------
@@ -245,6 +246,19 @@ systems that rely on an external diff tool that supports the -U0 flag. These
 are: svn, bzr, darcs, fossil.
 
 Default: "diff"
+
+------------------------------------------------------------------------------
+                                                          *g:signify_cmdoptions*
+>
+    let g:signify_cmdoptions = { 'cvs': '-d '. $CVSROOT,
+                               \ 'svn': '--username abc' }
+<
+This will insert the given additional options between the selected VCS command
+and the 'diff' token. For example, the above configuration would run
+'svn --username abc diff ...' whenever 'svn' is run. Applies to CVS, Git,
+Mercurial, Perforce, and Subversion.
+
+Default: Does not exist.
 
 ------------------------------------------------------------------------------
                                                          *g:signify_diffoptions*

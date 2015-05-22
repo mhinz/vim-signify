@@ -6,6 +6,9 @@ scriptencoding utf-8
 if !exists('g:signify_diffoptions')
   let g:signify_diffoptions = {}
 endif
+if !exists('g:signify_cmdoptions')
+  let g:signify_cmdoptions = {}
+endif
 
 let s:difftool = get(g:, 'signify_difftool', 'diff')
 
@@ -64,8 +67,9 @@ endfunction
 
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git() abort
+  let cmdoptions = has_key(g:signify_cmdoptions, 'git') ? g:signify_cmdoptions.git : ''
   let diffoptions = has_key(g:signify_diffoptions, 'git') ? g:signify_diffoptions.git : ''
-  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'git diff --no-color --no-ext-diff -U0 '. diffoptions .' -- '. sy#util#escape(fnamemodify(b:sy.path, ':t')))
+  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'git '. cmdoptions .' diff --no-color --no-ext-diff -U0 '. diffoptions .' -- '. sy#util#escape(fnamemodify(b:sy.path, ':t')))
 
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
@@ -103,16 +107,18 @@ endfunction
 
 " Function: #get_diff_hg {{{1
 function! sy#repo#get_diff_hg() abort
+  let cmdoptions = has_key(g:signify_cmdoptions, 'hg') ? g:signify_cmdoptions.hg : ''
   let diffoptions = has_key(g:signify_diffoptions, 'hg') ? g:signify_diffoptions.hg : ''
-  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'hg diff --config extensions.color=! --config defaults.diff= --nodates -U0 '. diffoptions .' -- '. sy#util#escape(b:sy.path))
+  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'hg '. cmdoptions .' diff --config extensions.color=! --config defaults.diff= --nodates -U0 '. diffoptions .' -- '. sy#util#escape(b:sy.path))
 
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_svn {{{1
 function! sy#repo#get_diff_svn() abort
+  let cmdoptions = has_key(g:signify_cmdoptions, 'svn') ? g:signify_cmdoptions.svn : ''
   let diffoptions = has_key(g:signify_diffoptions, 'svn') ? g:signify_diffoptions.svn : ''
-  let diff = system('svn diff --diff-cmd '. s:difftool .' -x -U0 '. diffoptions .' -- '. sy#util#escape(b:sy.path))
+  let diff = system('svn '. cmdoptions .' diff --diff-cmd '. s:difftool .' -x -U0 '. diffoptions .' -- '. sy#util#escape(b:sy.path))
 
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
@@ -141,8 +147,9 @@ endfunction
 
 " Function: #get_diff_cvs {{{1
 function! sy#repo#get_diff_cvs() abort
+  let cmdoptions = has_key(g:signify_cmdoptions, 'cvs') ? g:signify_cmdoptions.cvs : ''
   let diffoptions = has_key(g:signify_diffoptions, 'cvs') ? g:signify_diffoptions.cvs : ''
-  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'cvs diff -U0 '. diffoptions .' -- '. sy#util#escape(fnamemodify(b:sy.path, ':t')))
+  let diff = sy#util#run_in_dir(fnamemodify(b:sy.path, ':h'), 'cvs '. cmdoptions .' diff -U0 '. diffoptions .' -- '. sy#util#escape(fnamemodify(b:sy.path, ':t')))
   return ((v:shell_error == 1) && (diff =~ '+++')) ? [1, diff] : [0, '']
 endfunction
 
@@ -162,8 +169,9 @@ endfunction
 
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce() abort
+  let cmdoptions = has_key(g:signify_cmdoptions, 'perforce') ? g:signify_cmdoptions.perforce : ''
   let diffoptions = has_key(g:signify_diffoptions, 'perforce') ? g:signify_diffoptions.perforce : ''
-  let diff = system(sy#util#escape('p4 info 2>&1 >') . sy#util#devnull() . ' && env P4DIFF=diff p4 diff -dU0 '. diffoptions .' '. sy#util#escape(b:sy.path))
+  let diff = system(sy#util#escape('p4 '. cmdoptions .' info 2>&1 >') . sy#util#devnull() . ' && env P4DIFF=diff p4 '. cmdoptions .' diff -dU0 '. diffoptions .' '. sy#util#escape(b:sy.path))
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
