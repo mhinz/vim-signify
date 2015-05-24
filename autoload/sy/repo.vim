@@ -94,11 +94,13 @@ function! sy#repo#get_stats() abort
   return b:sy.stats
 endfunction
 
+
 " Function: s:run {{{1
 function! s:run(cmd, path, do_switch_dir) abort
   let cmd = substitute(a:cmd, '%f', a:path,     '')
   let cmd = substitute(cmd,   '%d', s:difftool, '')
   let cmd = substitute(cmd,   '%n', s:devnull,  '')
+  let b:sy_info.cmd = cmd
 
   if a:do_switch_dir
     try

@@ -46,3 +46,29 @@ function! sy#debug#list_active_buffers() abort
     endif
   endfor
 endfunction
+
+" Function #verbose_diff_cmd {{{1
+function! sy#debug#verbose_diff_cmd() abort
+  if exists('b:sy_info')
+    echohl Statement
+    echo 'Command: '. b:sy_info.cmd
+    echohl NONE
+    let output = sy#repo#get_diff_{b:sy.type}()[1]
+    if empty(output)
+      echo 'Output: []'
+    else
+      echo 'Output:'
+      for line in split(output, '\n')
+        if line[0] == '+'
+          echohl DiffAdd
+        elseif line[0] == '-'
+          echohl DiffDelete
+        else
+          echohl NONE
+        endif
+        echo line
+        echohl NONE
+      endfor
+    endif
+  endif
+endfunction
