@@ -88,6 +88,7 @@ default values, as long as no "Default:" section is given.
 All available options:~
 
     |g:signify_vcs_list|
+    |g:signify_vcs_cmds|
     |g:signify_disable_by_default|
     |g:signify_skip_filetype|
     |g:signify_skip_filename|
@@ -103,7 +104,6 @@ All available options:~
     |g:signify_cursorhold_normal|
     |g:signify_cursorhold_insert|
     |g:signify_difftool|
-    |g:signify_diffoptions|
 
 ------------------------------------------------------------------------------
                                                             *g:signify_vcs_list*
@@ -142,6 +142,39 @@ NOTE: If you don't set this option and Sy is activated, updating signs for a
 non-VCS file can lead to significant delay since all supported and installed
 VCS will be tested for.
 
+------------------------------------------------------------------------------
+                                                            *g:signify_vcs_cmds*
+>
+    let g:signify_vcs_cmds = {
+        \ 'cvs': 'cvs -d '. $CVSROOT .' diff -U0 -- %f' }
+<
+This is a |dict|. They key is any version control system from |g:signify_vcs_list|
+and the value is the corresponding command line.
+
+Modifiers:~
+
+    %f       actual filepath
+    %d       |g:signify_difftool|
+    %n       Unix: "/dev/null", Windows: "NUL"
+
+NOTE: The output format mustn't change, otherwise Sy won't give any reasonable
+results. It's probably wise to start with the respective default values.
+
+Default:
+>
+    let g:signify_vcs_cmds = {
+      \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
+      \ 'hg':       'hg diff --config extensions.color=! --config defaults.diff= --nodates -U0 -- %f',
+      \ 'svn':      'svn diff --diff-cmd %d -x -U0 -- %f',
+      \ 'bzr':      'bzr diff --using %d --diff-options=-U0 -- %f',
+      \ 'darcs':    'darcs diff --no-pause-for-gui --diff-command="%d -U0 %1 %2" -- %f',
+      \ 'fossil':   'fossil set diff-command "%d -U 0" && fossil diff --unified -c 0 -- %f',
+      \ 'cvs':      'cvs diff -U0 -- %f',
+      \ 'rcs':      'rcsdiff -U0 %f 2>%n',
+      \ 'accurev':  'accurev diff %f -- -U0',
+      \ 'perforce': 'p4 info >%n 2>&1 && env P4DIFF=diff p4 diff -dU0 %f',
+      \ }
+<
 ------------------------------------------------------------------------------
                                                   *g:signify_disable_by_default*
 >
@@ -245,15 +278,6 @@ systems that rely on an external diff tool that supports the -U0 flag. These
 are: svn, bzr, darcs, fossil.
 
 Default: "diff"
-
-------------------------------------------------------------------------------
-                                                         *g:signify_diffoptions*
->
-    let g:signify_diffoptions = { 'git': '-w', 'hg': '-w' }
-<
-This will pass the given additional options to the selected VCS diff command.
-
-Default: Does not exist.
 
 ==============================================================================
 COMMAND                                                       *signify-commands*

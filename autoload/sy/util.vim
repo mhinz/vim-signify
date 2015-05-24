@@ -22,26 +22,6 @@ function! sy#util#escape(path) abort
   return path
 endfunction
 
-" Function: #separator {{{1
-function! sy#util#separator() abort
-  return !exists('+shellslash') || &shellslash ? '/' : '\'
-endfunction
-
-" Function: #run_in_dir {{{1
-function! sy#util#run_in_dir(dir, cmd) abort
-  let chdir = haslocaldir() ? 'lcd' : 'cd'
-  let cwd   = getcwd()
-
-  try
-    execute chdir fnameescape(fnamemodify(a:dir, ':p'))
-    let ret = system(a:cmd)
-  finally
-    execute chdir fnameescape(cwd)
-  endtry
-
-  return ret
-endfunction
-
 " Function: #refresh_windows {{{1
 function! sy#util#refresh_windows() abort
   let winnr = winnr()
@@ -76,12 +56,3 @@ function! sy#util#hunk_text_object(emptylines) abort
   endif
 endfunction
 
-" Function: #devnull {{{1
-function! sy#util#devnull() abort
-  if has('win32') || has ('win64')
-    let null = 'NUL'
-  else
-    let null = '/dev/null'
-  endif
-  return null
-endfunction
