@@ -49,11 +49,11 @@ endfunction
 
 " Function #verbose_diff_cmd {{{1
 function! sy#debug#verbose_diff_cmd() abort
-  if exists('b:sy_info')
+  if exists('b:sy') && b:sy.type != 'unknown'
+    let output = sy#repo#get_diff_{b:sy.type}()[1]
     echohl Statement
     echo 'Command: '. b:sy_info.cmd
     echohl NONE
-    let output = sy#repo#get_diff_{b:sy.type}()[1]
     if empty(output)
       echo 'Output: []'
     else
@@ -70,5 +70,7 @@ function! sy#debug#verbose_diff_cmd() abort
         echohl NONE
       endfor
     endif
+  else
+    echo 'signify: I cannot detect any changes!'
   endif
 endfunction

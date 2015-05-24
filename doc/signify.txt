@@ -308,6 +308,13 @@ Refresh signs in all windows.
 <
 Outputs debug info for all managed buffers.
 
+------------------------------------------------------------------------------
+                                                     *signify-:SignifyDebugDiff*
+>
+    :SignifyDebugDiff
+<
+Print the diff command for the current buffer and its output.
+
 ==============================================================================
 MAPPINGS                                                      *signify-mappings*
 
