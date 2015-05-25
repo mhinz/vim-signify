@@ -20,7 +20,7 @@ function! sy#sign#get_current_signs() abort
   let b:sy.external = {}
 
   let lang = v:lang
-  silent! execute 'language message C'
+  language message C
   redir => signlist
     silent! execute 'sign place buffer='. b:sy.buffer
   redir END
