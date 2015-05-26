@@ -27,61 +27,61 @@ endfunction
 
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git() abort
-  let diff = s:run(s:diffcmds.git, b:sy_info.file, 1)
+  let diff = s:run(s:vcs_cmds.git, b:sy_info.file, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_hg {{{1
 function! sy#repo#get_diff_hg() abort
-  let diff = s:run(s:diffcmds.hg, b:sy_info.path, 1)
+  let diff = s:run(s:vcs_cmds.hg, b:sy_info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_svn {{{1
 function! sy#repo#get_diff_svn() abort
-  let diff = s:run(s:diffcmds.svn, b:sy_info.path, 0)
+  let diff = s:run(s:vcs_cmds.svn, b:sy_info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_bzr {{{1
 function! sy#repo#get_diff_bzr() abort
-  let diff = s:run(s:diffcmds.bzr, b:sy_info.path, 0)
+  let diff = s:run(s:vcs_cmds.bzr, b:sy_info.path, 0)
   return (v:shell_error =~ '[012]') ? [1, diff] : [0, '']
 endfunction
 
 " Function: #get_diff_darcs {{{1
 function! sy#repo#get_diff_darcs() abort
-  let diff = s:run(s:diffcmds.darcs, b:sy_info.path, 1)
+  let diff = s:run(s:vcs_cmds.darcs, b:sy_info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_fossil {{{1
 function! sy#repo#get_diff_fossil() abort
-  let diff = s:run(s:diffcmds.fossil, b:sy_info.path, 1)
+  let diff = s:run(s:vcs_cmds.fossil, b:sy_info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_cvs {{{1
 function! sy#repo#get_diff_cvs() abort
-  let diff = s:run(s:diffcmds.cvs, b:sy_info.file, 1)
+  let diff = s:run(s:vcs_cmds.cvs, b:sy_info.file, 1)
   return ((v:shell_error == 1) && (diff =~ '+++')) ? [1, diff] : [0, '']
 endfunction
 
 " Function: #get_diff_rcs {{{1
 function! sy#repo#get_diff_rcs() abort
-  let diff = s:run(s:diffcmds.rcs, b:sy_info.path, 0)
+  let diff = s:run(s:vcs_cmds.rcs, b:sy_info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_accurev {{{1
 function! sy#repo#get_diff_accurev() abort
-  let diff = s:run(s:diffcmds.accurev, b:sy_info.file, 1)
+  let diff = s:run(s:vcs_cmds.accurev, b:sy_info.file, 1)
   return (v:shell_error != 1) ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce() abort
-  let diff = s:run(s:diffcmds.perforce, b:sy_info.path, 0)
+  let diff = s:run(s:vcs_cmds.perforce, b:sy_info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
@@ -94,13 +94,57 @@ function! sy#repo#get_stats() abort
   return b:sy.stats
 endfunction
 
+" Function: #debug_detection {{{1
+function! sy#repo#debug_detection()
+  if !exists('b:sy')
+    echomsg 'signify: I cannot detect any changes!'
+    return
+  endif
 
-" Function: s:run {{{1
-function! s:run(cmd, path, do_switch_dir) abort
+  let vcs_args = {
+        \ 'git':      [s:vcs_cmds.git,      b:sy_info.file, 1],
+        \ 'hg':       [s:vcs_cmds.hg,       b:sy_info.path, 1],
+        \ 'svn':      [s:vcs_cmds.svn,      b:sy_info.path, 0],
+        \ 'darcs':    [s:vcs_cmds.darcs,    b:sy_info.path, 1],
+        \ 'bzr':      [s:vcs_cmds.bzr,      b:sy_info.path, 0],
+        \ 'fossil':   [s:vcs_cmds.fossil,   b:sy_info.path, 1],
+        \ 'cvs':      [s:vcs_cmds.cvs,      b:sy_info.file, 1],
+        \ 'rcs':      [s:vcs_cmds.rcs,      b:sy_info.path, 0],
+        \ 'accurev':  [s:vcs_cmds.accurev,  b:sy_info.file, 1],
+        \ 'perforce': [s:vcs_cmds.perforce, b:sy_info.path, 0],
+        \ }
+
+  for vcs in s:vcs_list
+    let cmd = s:expand_cmd(vcs_args[vcs][0], vcs_args[vcs][1])
+    echohl Statement
+    echo cmd
+    echo repeat('=', len(cmd))
+    echohl NONE
+
+    let diff = call('s:run', vcs_args[vcs])
+    if v:shell_error
+      echohl ErrorMsg
+      echo diff
+      echohl NONE
+    else
+      echo empty(diff) ? "<none>" : diff
+    endif
+    echo "\n"
+  endfor
+endfunction
+
+" Function: s:expand_cmd {{{1
+function! s:expand_cmd(cmd, path) abort
   let cmd = substitute(a:cmd, '%f', a:path,     '')
   let cmd = substitute(cmd,   '%d', s:difftool, '')
   let cmd = substitute(cmd,   '%n', s:devnull,  '')
   let b:sy_info.cmd = cmd
+  return cmd
+endfunction
+
+" Function: s:run {{{1
+function! s:run(cmd, path, do_switch_dir)
+  let cmd = s:expand_cmd(a:cmd, a:path)
 
   if a:do_switch_dir
     try
@@ -147,7 +191,7 @@ if empty(s:vcs_list)
   let s:vcs_list = keys(filter(s:vcs_dict, 'executable(v:val)'))
 endif
 
-let s:diffcmds = {
+let s:vcs_cmds = {
       \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
       \ 'hg':       'hg diff --config extensions.color=! --config defaults.diff= --nodates -U0 -- %f',
       \ 'svn':      'svn diff --diff-cmd %d -x -U0 -- %f',
@@ -161,7 +205,7 @@ let s:diffcmds = {
       \ }
 
 if exists('g:signify_vcs_cmds')
-  call extend(s:diffcmds, g:signify_vcs_cmds)
+  call extend(s:vcs_cmds, g:signify_vcs_cmds)
 endif
 
 let s:difftool = sy#util#escape(s:difftool)

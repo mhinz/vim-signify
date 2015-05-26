@@ -40,6 +40,7 @@ augroup END
 
 command! -nargs=0 -bar SignifyDebug           call sy#debug#list_active_buffers()
 command! -nargs=0 -bar SignifyDebugDiff       call sy#debug#verbose_diff_cmd()
+command! -nargs=0 -bar SignifyDebugUnknown    call sy#repo#debug_detection()
 command! -nargs=0 -bar SignifyRefresh         call sy#util#refresh_windows()
 command! -nargs=0 -bar SignifyToggle          call sy#toggle()
 command! -nargs=0 -bar SignifyToggleHighlight call sy#highlight#line_toggle()

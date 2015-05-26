@@ -315,6 +315,17 @@ Outputs debug info for all managed buffers.
 <
 Print the diff command for the current buffer and its output.
 
+------------------------------------------------------------------------------
+                                                  *signify-:SignifyDebugUnknown*
+>
+    :SignifyDebugUnknown
+<
+In case no signs are shown, although the buffer contains a file controlled by
+a supported VCS, use this command.
+
+It will show all tried commands and its output. Errors will be highlighted via
+|hl-ErrorMsg|.
+
 ==============================================================================
 MAPPINGS                                                      *signify-mappings*
 

@@ -47,7 +47,7 @@ function! sy#debug#list_active_buffers() abort
   endfor
 endfunction
 
-" Function #verbose_diff_cmd {{{1
+" Function: #verbose_diff_cmd {{{1
 function! sy#debug#verbose_diff_cmd() abort
   if exists('b:sy') && b:sy.type != 'unknown'
     let output = sy#repo#get_diff_{b:sy.type}()[1]
