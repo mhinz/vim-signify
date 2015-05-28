@@ -148,10 +148,11 @@ function! s:run(cmd, path, do_switch_dir)
 
   if a:do_switch_dir
     try
+      let cwd = getcwd()
       execute b:sy_info.chdir fnameescape(b:sy_info.dir)
       let ret = system(cmd)
     finally
-      execute b:sy_info.chdir fnameescape(b:sy_info.cwd)
+      execute b:sy_info.chdir cwd
     endtry
     return ret
   endif
