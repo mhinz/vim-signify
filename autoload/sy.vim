@@ -24,14 +24,13 @@ function! sy#start() abort
   endif
 
   " sy_info is used in autoload/sy/repo
-  if !exists('b:sy_info')
-    let b:sy_info = {
-          \ 'chdir': haslocaldir() ? 'lcd' : 'cd',
-          \ 'dir':   fnamemodify(b:sy_path, ':p:h'),
-          \ 'path':  sy#util#escape(b:sy_path),
-          \ 'file':  sy#util#escape(fnamemodify(b:sy_path, ':t')),
-          \ }
-  endif
+  let b:sy_info = {
+        \ 'chdir': haslocaldir() ? 'lcd' : 'cd',
+        \ 'cwd':   fnameescape(getcwd()),
+        \ 'dir':   fnamemodify(b:sy_path, ':p:h'),
+        \ 'path':  sy#util#escape(b:sy_path),
+        \ 'file':  sy#util#escape(fnamemodify(b:sy_path, ':t')),
+        \ }
 
   " new buffer.. add to list of registered files
   if !exists('b:sy') || b:sy.path != b:sy_path
