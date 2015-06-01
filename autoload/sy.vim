@@ -108,10 +108,6 @@ function! sy#stop(bufnr) abort
   endif
 
   call sy#sign#remove_all_signs(a:bufnr)
-
-  augroup signify
-    execute printf('autocmd! * <buffer=%d>', sy.buffer)
-  augroup END
 endfunction
 
 " Function: #toggle {{{1
