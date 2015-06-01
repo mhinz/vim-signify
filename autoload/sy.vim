@@ -20,6 +20,10 @@ function! sy#start() abort
         \                                       || (has_key(g:signify_skip_filetype, 'help')
         \                                       && &bt == 'help')))
         \ || (exists('g:signify_skip_filename') && has_key(g:signify_skip_filename, b:sy_path))
+    if exists('b:sy')
+      call sy#sign#remove_all_signs(bufnr(''))
+      unlet! b:sy b:sy_info
+    endif
     return
   endif
 
