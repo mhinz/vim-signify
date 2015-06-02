@@ -104,6 +104,7 @@ All available options:~
     |g:signify_cursorhold_normal|
     |g:signify_cursorhold_insert|
     |g:signify_difftool|
+    |g:signify_fold_context|
 
 ------------------------------------------------------------------------------
                                                             *g:signify_vcs_list*
@@ -279,6 +280,23 @@ are: svn, bzr, darcs, fossil.
 
 Default: "diff"
 
+------------------------------------------------------------------------------
+                                                        *g:signify_fold_context*
+>
+    let g:signify_fold_context = [0, 3]
+<
+This changes the number of lines of context that |signify-:SignifyFold| should
+use. The first element describes the context at foldlevel 0 and the second the
+context at foldlevel 1.
+
+Example:~
+
+Using "[0,3]" means that after using :SignifyFold, only changed lines will be
+unfolded. Using |zo| (and similar |fold-commands|) on a folded line will reveal
+3 more lines of context. Using |zo| a second time will reveal everything.
+
+Default: [3, 8]
+
 ==============================================================================
 COMMAND                                                       *signify-commands*
                                                         *signify-:SignifyToggle*
@@ -300,6 +318,22 @@ Toggle line highlighting for lines containing changes.
     :SignifyRefresh
 <
 Refresh signs in all windows.
+
+------------------------------------------------------------------------------
+                                                          *signify-:SignifyFold*
+>
+    :SignifyFold
+<
+Open the current buffer in a new tabpage and set |'foldexpr'| so that only
+changed lines with their surrounding context are unfolded.
+
+The number of lines per context can be changed via |g:signify_fold_context|.
+
+The |foldtext| will be set so that the left side shows the first line in the
+fold and the right side shows something like "50 [1]" which whereas "50"
+stands for the number of folded lines and the "1" is the foldlevel.
+
+See |folds| to learn more about folding.
 
 ------------------------------------------------------------------------------
                                                          *signify-:SignifyDebug*

@@ -6,6 +6,7 @@
 !README.md
 !autoload/sy.vim
 !autoload/sy/debug.vim
+!autoload/sy/fold.vim
 !autoload/sy/highlight.vim
 !autoload/sy/jump.vim
 !autoload/sy/repo.vim
