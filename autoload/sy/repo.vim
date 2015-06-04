@@ -135,9 +135,9 @@ endfunction
 
 " Function: s:expand_cmd {{{1
 function! s:expand_cmd(cmd, path) abort
-  let cmd = substitute(a:cmd, '%f', a:path,     '')
-  let cmd = substitute(cmd,   '%d', s:difftool, '')
-  let cmd = substitute(cmd,   '%n', s:devnull,  '')
+  let cmd = s:replace(a:cmd, '%f', a:path)
+  let cmd = s:replace(cmd,   '%d', s:difftool)
+  let cmd = s:replace(cmd,   '%n', s:devnull)
   let b:sy_info.cmd = cmd
   return cmd
 endfunction
@@ -157,6 +157,16 @@ function! s:run(cmd, path, do_switch_dir)
   endif
 
   return system(cmd)
+endfunction
+
+" Function: s:replace {{{1
+function! s:replace(cmd, pat, sub)
+  let tmp = split(a:cmd, a:pat, 1)
+  if len(tmp) > 1
+    return  tmp[0] . a:sub . tmp[1]
+  else
+    return a:cmd
+  endif
 endfunction
 
 " Variables {{{1
