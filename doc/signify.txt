@@ -34,6 +34,7 @@ TOC                                                           *signify-contents*
   COMMANDS ....................... |signify-commands|
   MAPPINGS ....................... |signify-mappings|
   COLORS ......................... |signify-colors|
+  FAQ ............................ |signify-faq|
   EXAMPLE ........................ |signify-example|
 
 ==============================================================================
@@ -429,6 +430,39 @@ For Unix people there is a small script, showcolors.bash, in the repo that
 shows all 256 colors available to the terminal. That makes picking the right
 numbers much easier.
 
+==============================================================================
+FAQ                                                                *signify-faq*
+
+    |signify-faq-01|  What about vim-flagship support?
+
+------------------------------------------------------------------------------
+                                                                *signify-faq-01*
+What about vim-flagship support?~
+
+sy#repo#get_stats() returns a list with 3 integers for added, modified and
+removed lines. Create a wrapper function around it and return a string:
+>
+    function! s:sy_stats_wrapper()
+      let symbols = ['+', '-', '~']
+      let [added, modified, removed] = sy#repo#get_stats()
+      let stats = [added, removed, modified]  " reorder
+      let hunkline = ''
+
+      for i in range(3)
+        if stats[i] > 0
+          let hunkline .= printf('%s%s ', symbols[i], stats[i])
+        endif
+      endfor
+
+      if !empty(hunkline)
+        let hunkline = printf('[%s]', hunkline[:-2])
+      endif
+
+      return hunkline
+    endfunction
+
+    autocmd User Flags call Hoist('buffer', function('s:sy_stats_wrapper'))
+<
 ==============================================================================
 EXAMPLE                                                        *signify-example*
 
