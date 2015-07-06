@@ -144,19 +144,17 @@ endfunction
 
 " Function: s:run {{{1
 function! s:run(cmd, path, do_switch_dir)
-  let cmd = s:expand_cmd(a:cmd, a:path)
-
-  if a:do_switch_dir
-    try
-      execute b:sy_info.chdir fnameescape(b:sy_info.dir)
-      let ret = system(cmd)
-    finally
-      execute b:sy_info.chdir b:sy_info.cwd
-    endtry
+  execute b:sy_info.chdir fnameescape(b:sy_info.dir)
+  try
+    let ret = system(s:expand_cmd(a:cmd, a:path))
+  catch
+    " This exception message can be seen via :SignifyDebugUnknown.
+    " E.g. unquoted VCS programs in vcd_cmds can lead to E484.
+    let ret = v:exception .' at '. v:throwpoint
+  finally
+    execute b:sy_info.chdir b:sy_info.cwd
     return ret
-  endif
-
-  return system(cmd)
+  endtry
 endfunction
 
 " Function: s:replace {{{1
