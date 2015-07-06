@@ -166,7 +166,7 @@ NOTE: If your VCS program is not in $PATH and you have to specify an absolute
 path, escape spaces by quoting, e.g.:
 >
     let g:signify_vcs_cmds = {
-      \ 'git': '"C:\Program Files (x86)\Git\bin\git.exe" --no-color --no-ext-diff -U0 -- %f'
+      \ 'git': '"C:\Program Files (x86)\Git\bin\git.exe" diff --no-color --no-ext-diff -U0 -- %f'
       \ }
 <
 Default:
