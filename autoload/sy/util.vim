@@ -56,3 +56,16 @@ function! sy#util#hunk_text_object(emptylines) abort
   endif
 endfunction
 
+" Function: #shell_redirect {{{1
+function! sy#util#shell_redirect(path) abort
+  " if shellredir contains a %s it is replaced with the path
+  " otherwise, just append it (from :help shellredir:
+  "   The name of the temporary file can be represented by '%s' if necessary
+  "   (the file name is appended automatically if no %s appears in the value
+  "   of this option)
+  if &shellredir =~# '%s'
+    return substitute(&shellredir, '\C%s', a:path, 'g')
+  else
+    return &shellredir .' '. a:path
+  endif
+endfunction

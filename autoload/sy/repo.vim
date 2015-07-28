@@ -209,7 +209,7 @@ let s:vcs_cmds = {
       \ 'cvs':      'cvs diff -U0 -- %f',
       \ 'rcs':      'rcsdiff -U0 %f 2>%n',
       \ 'accurev':  'accurev diff %f -- -U0',
-      \ 'perforce': 'p4 info >%n 2>&1 && env P4DIFF=%d p4 diff -dU0 %f',
+      \ 'perforce': 'p4 info '. sy#util#shell_redirect('%n') .' && env P4DIFF=%d p4 diff -dU0 %f',
       \ }
 
 if exists('g:signify_vcs_cmds')
