@@ -27,61 +27,61 @@ endfunction
 
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git() abort
-  let diff = s:run(s:vcs_cmds.git, b:sy_info.file, 1)
+  let diff = s:run(g:signify_vcs_cmds.git, b:sy_info.file, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_hg {{{1
 function! sy#repo#get_diff_hg() abort
-  let diff = s:run(s:vcs_cmds.hg, b:sy_info.path, 1)
+  let diff = s:run(g:signify_vcs_cmds.hg, b:sy_info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_svn {{{1
 function! sy#repo#get_diff_svn() abort
-  let diff = s:run(s:vcs_cmds.svn, b:sy_info.path, 0)
+  let diff = s:run(g:signify_vcs_cmds.svn, b:sy_info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_bzr {{{1
 function! sy#repo#get_diff_bzr() abort
-  let diff = s:run(s:vcs_cmds.bzr, b:sy_info.path, 0)
+  let diff = s:run(g:signify_vcs_cmds.bzr, b:sy_info.path, 0)
   return (v:shell_error =~ '[012]') ? [1, diff] : [0, '']
 endfunction
 
 " Function: #get_diff_darcs {{{1
 function! sy#repo#get_diff_darcs() abort
-  let diff = s:run(s:vcs_cmds.darcs, b:sy_info.path, 1)
+  let diff = s:run(g:signify_vcs_cmds.darcs, b:sy_info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_fossil {{{1
 function! sy#repo#get_diff_fossil() abort
-  let diff = s:run(s:vcs_cmds.fossil, b:sy_info.path, 1)
+  let diff = s:run(g:signify_vcs_cmds.fossil, b:sy_info.path, 1)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_cvs {{{1
 function! sy#repo#get_diff_cvs() abort
-  let diff = s:run(s:vcs_cmds.cvs, b:sy_info.file, 1)
+  let diff = s:run(g:signify_vcs_cmds.cvs, b:sy_info.file, 1)
   return ((v:shell_error == 1) && (diff =~ '+++')) ? [1, diff] : [0, '']
 endfunction
 
 " Function: #get_diff_rcs {{{1
 function! sy#repo#get_diff_rcs() abort
-  let diff = s:run(s:vcs_cmds.rcs, b:sy_info.path, 0)
+  let diff = s:run(g:signify_vcs_cmds.rcs, b:sy_info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_accurev {{{1
 function! sy#repo#get_diff_accurev() abort
-  let diff = s:run(s:vcs_cmds.accurev, b:sy_info.file, 1)
+  let diff = s:run(g:signify_vcs_cmds.accurev, b:sy_info.file, 1)
   return (v:shell_error != 1) ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce() abort
-  let diff = s:run(s:vcs_cmds.perforce, b:sy_info.path, 0)
+  let diff = s:run(g:signify_vcs_cmds.perforce, b:sy_info.path, 0)
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
@@ -102,16 +102,16 @@ function! sy#repo#debug_detection()
   endif
 
   let vcs_args = {
-        \ 'git':      [s:vcs_cmds.git,      b:sy_info.file, 1],
-        \ 'hg':       [s:vcs_cmds.hg,       b:sy_info.path, 1],
-        \ 'svn':      [s:vcs_cmds.svn,      b:sy_info.path, 0],
-        \ 'darcs':    [s:vcs_cmds.darcs,    b:sy_info.path, 1],
-        \ 'bzr':      [s:vcs_cmds.bzr,      b:sy_info.path, 0],
-        \ 'fossil':   [s:vcs_cmds.fossil,   b:sy_info.path, 1],
-        \ 'cvs':      [s:vcs_cmds.cvs,      b:sy_info.file, 1],
-        \ 'rcs':      [s:vcs_cmds.rcs,      b:sy_info.path, 0],
-        \ 'accurev':  [s:vcs_cmds.accurev,  b:sy_info.file, 1],
-        \ 'perforce': [s:vcs_cmds.perforce, b:sy_info.path, 0],
+        \ 'git':      [g:signify_vcs_cmds.git,      b:sy_info.file, 1],
+        \ 'hg':       [g:signify_vcs_cmds.hg,       b:sy_info.path, 1],
+        \ 'svn':      [g:signify_vcs_cmds.svn,      b:sy_info.path, 0],
+        \ 'darcs':    [g:signify_vcs_cmds.darcs,    b:sy_info.path, 1],
+        \ 'bzr':      [g:signify_vcs_cmds.bzr,      b:sy_info.path, 0],
+        \ 'fossil':   [g:signify_vcs_cmds.fossil,   b:sy_info.path, 1],
+        \ 'cvs':      [g:signify_vcs_cmds.cvs,      b:sy_info.file, 1],
+        \ 'rcs':      [g:signify_vcs_cmds.rcs,      b:sy_info.path, 0],
+        \ 'accurev':  [g:signify_vcs_cmds.accurev,  b:sy_info.file, 1],
+        \ 'perforce': [g:signify_vcs_cmds.perforce, b:sy_info.path, 0],
         \ }
 
   for vcs in s:vcs_list
@@ -213,7 +213,9 @@ let s:vcs_cmds = {
       \ }
 
 if exists('g:signify_vcs_cmds')
-  call extend(s:vcs_cmds, g:signify_vcs_cmds)
+  call extend(g:signify_vcs_cmds, s:vcs_cmds, 'keep')
+else
+    let g:signify_vcs_cmds = s:vcs_cmds
 endif
 
 let s:difftool = sy#util#escape(s:difftool)
