@@ -76,6 +76,7 @@ function! sy#highlight#line_toggle() abort
     call sy#highlight#line_enable()
   endif
 
+  redraw!
   call sy#start()
 endfunction
 " }}}
