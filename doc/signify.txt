@@ -324,6 +324,14 @@ Toggle the plugin for the current buffer only.
 Toggle line highlighting for lines containing changes.
 
 ------------------------------------------------------------------------------
+                                               *signify-:SignifyToggleFold*
+>
+    :SignifyToggleFold
+<
+Toggle folding for lines without changes. Using <bang> does on current buffer,
+without it on new tab.
+
+------------------------------------------------------------------------------
                                                        *signify-:SignifyRefresh*
 >
     :SignifyRefresh
@@ -333,7 +341,7 @@ Refresh signs in all windows.
 ------------------------------------------------------------------------------
                                                           *signify-:SignifyFold*
 >
-    :SignifyFold
+    :SignifyFold[!]
 <
 Open the current buffer in a new tabpage and set |'foldexpr'| so that only
 changed lines with their surrounding context are unfolded.
@@ -343,6 +351,9 @@ The number of lines per context can be changed via |g:signify_fold_context|.
 The |foldtext| will be set so that the left side shows the first line in the
 fold and the right side shows something like "50 [1]" which whereas "50"
 stands for the number of folded lines and the "1" is the foldlevel.
+
+If [!] is given, Sy will do the same without opening an extra tabpage. Another
+":SignifyFold!" will toggle back to the previous settings.
 
 See |folds| to learn more about folding.
 

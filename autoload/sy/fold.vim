@@ -31,21 +31,62 @@ function! SignifyFoldText()
   return left . fill . right
 endfunction
 
-" Function: #do {{{1
-function! sy#fold#do() abort
+" Function: #dispatch {{{1
+function! sy#fold#dispatch(do_tab) abort
+  if a:do_tab
+    call sy#fold#enable(1)
+  else
+    call sy#fold#toggle()
+  endif
+endfunction
+
+" Function: #enable {{{1
+function! sy#fold#enable(do_tab) abort
   if !exists('b:sy')
     echomsg 'signify: I cannot detect any changes!'
     return
   endif
 
-  tabedit %
+  if a:do_tab
+    tabedit %
+  endif
+
   let [s:context0, s:context1] = get(g:, 'signify_fold_context', [3, 8])
   let s:levels = s:get_levels(s:get_lines())
 
-  set foldexpr=SignifyFoldExpr(v:lnum)
-  set foldtext=SignifyFoldText()
-  set foldmethod=expr
-  set foldlevel=0
+  setlocal foldexpr=SignifyFoldExpr(v:lnum)
+  setlocal foldtext=SignifyFoldText()
+  setlocal foldmethod=expr
+  setlocal foldlevel=0
+endfunction
+
+" Function: #disable {{{1
+function! sy#fold#disable() abort
+  let &l:foldmethod = w:sy_folded.method
+  let &l:foldtext = w:sy_folded.text
+  normal! zv
+endfunction
+
+" Function: #toggle {{{1
+function! sy#fold#toggle() abort
+  if exists('w:sy_folded')
+    call sy#fold#disable()
+    if w:sy_folded.method == 'manual'
+      loadview
+    endif
+    unlet w:sy_folded
+  else
+    let w:sy_folded = { 'method': &foldmethod, 'text': &foldtext }
+    if &foldmethod == 'manual'
+      let old_vop = &viewoptions
+      mkview
+      let &viewoptions = old_vop
+    endif
+    call sy#fold#enable(0)
+  endif
+
+  redraw!
+  call sy#start()
 endfunction
 
 " Function: s:get_lines {{{1
@@ -64,6 +105,7 @@ function! s:get_lines() abort
 
   return reverse(lines)
 endfunction
+" }}}
 
 " Function: s:get_levels {{{1
 function! s:get_levels(lines) abort
