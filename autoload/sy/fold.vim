@@ -53,17 +53,26 @@ endfunction
 
 " Function: #disable {{{1
 function! sy#fold#disable() abort
-  let &l:foldmethod = w:sy_fdm
-  normal! zO
+  let &l:foldmethod = w:sy_folded.method
+  let &l:foldtext = w:sy_folded.text
+  normal! zv
 endfunction
 
 " Function: #toggle {{{1
 function! sy#fold#toggle(do_tab) abort
-  if exists('w:sy_fdm')
+  if exists('w:sy_folded')
     call sy#fold#disable()
-    unlet w:sy_fdm
+    if w:sy_folded.method == 'manual'
+      loadview
+    endif
+    unlet w:sy_folded
   else
-    let w:sy_fdm = &foldmethod
+    let w:sy_folded = { 'method': &foldmethod, 'text': &foldtext }
+    if &foldmethod == 'manual'
+      let old_vop = &viewoptions
+      mkview
+      let &viewoptions = old_vop
+    endif
     call sy#fold#enable(a:do_tab)
   endif
 
