@@ -32,10 +32,14 @@ function! SignifyFoldText()
 endfunction
 
 " Function: #do {{{1
-function! sy#fold#do() abort
+function! sy#fold#do(bang) abort
   if !exists('b:sy')
     echomsg 'signify: I cannot detect any changes!'
     return
+  endif
+
+  if empty(a:bang)
+    tabedit %
   endif
 
   let [s:context0, s:context1] = get(g:, 'signify_fold_context', [3, 8])
@@ -43,18 +47,28 @@ function! sy#fold#do() abort
 
   set foldexpr=SignifyFoldExpr(v:lnum)
   set foldtext=SignifyFoldText()
-  let g:old_fdm=&foldmethod
+  if empty(a:bang)
+    if ! empty(get(g:, 'old_fdm', ''))
+      unlet g:old_fdm
+    endif
+  else
+    let g:old_fdm=&foldmethod
+  endif
   set foldmethod=expr
   set foldlevel=0
   let g:signify_fold = 1
 endfunction
 
 function! sy#fold#disable() "abort
-  let &foldmethod=g:old_fdm
-  try
-    normal zE
-  catch
-  endtry
+  if empty(get(g:, 'old_fdm', '')) && get(g:, 'signify_fold')
+    tabclose
+  else
+    let &foldmethod=g:old_fdm
+    try
+      normal zE
+    catch
+    endtry
+  endif
   let g:signify_fold = 0
 endfunction
 
@@ -76,11 +90,11 @@ function! s:get_lines() abort
 endfunction
 
 " Function: #fold_toggle {{{1
-function! sy#fold#toggle() abort
+function! sy#fold#toggle(bang) abort
   if get(g:, 'signify_fold')
     call sy#fold#disable()
   else
-    call sy#fold#do()
+    call sy#fold#do(a:bang)
   endif
 
   redraw!
