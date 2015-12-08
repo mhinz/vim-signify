@@ -38,14 +38,13 @@ augroup END
 
 " Init: commands {{{1
 
-command! -nargs=0 -bar SignifyDebug           call sy#debug#list_active_buffers()
-command! -nargs=0 -bar SignifyDebugDiff       call sy#debug#verbose_diff_cmd()
-command! -nargs=0 -bar SignifyDebugUnknown    call sy#repo#debug_detection()
-command! -nargs=0 -bar SignifyFold            call sy#fold#enable(1)
-command! -nargs=0 -bar SignifyRefresh         call sy#util#refresh_windows()
-command! -nargs=0 -bar SignifyToggle          call sy#toggle()
-command! -nargs=0 -bar SignifyToggleFold      call sy#fold#toggle(0)
-command! -nargs=0 -bar SignifyToggleHighlight call sy#highlight#line_toggle()
+command! -nargs=0 -bar       SignifyDebug           call sy#debug#list_active_buffers()
+command! -nargs=0 -bar       SignifyDebugDiff       call sy#debug#verbose_diff_cmd()
+command! -nargs=0 -bar       SignifyDebugUnknown    call sy#repo#debug_detection()
+command! -nargs=0 -bar -bang SignifyFold            call sy#fold#dispatch(<bang>1)
+command! -nargs=0 -bar       SignifyRefresh         call sy#util#refresh_windows()
+command! -nargs=0 -bar       SignifyToggle          call sy#toggle()
+command! -nargs=0 -bar       SignifyToggleHighlight call sy#highlight#line_toggle()
 
 " Init: mappings {{{1
 

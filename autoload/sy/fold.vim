@@ -31,6 +31,15 @@ function! SignifyFoldText()
   return left . fill . right
 endfunction
 
+" Function: #dispatch {{{1
+function! sy#fold#dispatch(do_tab) abort
+  if a:do_tab
+    call sy#fold#enable(1)
+  else
+    call sy#fold#toggle()
+  endif
+endfunction
+
 " Function: #enable {{{1
 function! sy#fold#enable(do_tab) abort
   if !exists('b:sy')
@@ -59,7 +68,7 @@ function! sy#fold#disable() abort
 endfunction
 
 " Function: #toggle {{{1
-function! sy#fold#toggle(do_tab) abort
+function! sy#fold#toggle() abort
   if exists('w:sy_folded')
     call sy#fold#disable()
     if w:sy_folded.method == 'manual'
@@ -73,7 +82,7 @@ function! sy#fold#toggle(do_tab) abort
       mkview
       let &viewoptions = old_vop
     endif
-    call sy#fold#enable(a:do_tab)
+    call sy#fold#enable(0)
   endif
 
   redraw!
