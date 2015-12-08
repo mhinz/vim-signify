@@ -324,14 +324,6 @@ Toggle the plugin for the current buffer only.
 Toggle line highlighting for lines containing changes.
 
 ------------------------------------------------------------------------------
-                                               *signify-:SignifyToggleFold*
->
-    :SignifyToggleFold
-<
-Toggle folding for lines without changes. Using <bang> does on current buffer,
-without it on new tab.
-
-------------------------------------------------------------------------------
                                                        *signify-:SignifyRefresh*
 >
     :SignifyRefresh
