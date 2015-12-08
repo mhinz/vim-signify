@@ -38,7 +38,6 @@ function! sy#fold#do() abort
     return
   endif
 
-  tabedit %
   let [s:context0, s:context1] = get(g:, 'signify_fold_context', [3, 8])
   let s:levels = s:get_levels(s:get_lines())
 
@@ -46,6 +45,13 @@ function! sy#fold#do() abort
   set foldtext=SignifyFoldText()
   set foldmethod=expr
   set foldlevel=0
+  let g:signify_fold = 1
+endfunction
+
+function! sy#fold#disable() "abort
+  set foldmethod=manual
+  normal zE
+  let g:signify_fold = 0
 endfunction
 
 " Function: s:get_lines {{{1
@@ -64,6 +70,19 @@ function! s:get_lines() abort
 
   return reverse(lines)
 endfunction
+
+" Function: #fold_toggle {{{1
+function! sy#fold#toggle() abort
+  if get(g:, 'signify_fold')
+    call sy#fold#disable()
+  else
+    call sy#fold#do()
+  endif
+
+  redraw!
+  call sy#start()
+endfunction
+" }}}
 
 " Function: s:get_levels {{{1
 function! s:get_levels(lines) abort

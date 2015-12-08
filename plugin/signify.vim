@@ -45,6 +45,7 @@ command! -nargs=0 -bar SignifyFold            call sy#fold#do()
 command! -nargs=0 -bar SignifyRefresh         call sy#util#refresh_windows()
 command! -nargs=0 -bar SignifyToggle          call sy#toggle()
 command! -nargs=0 -bar SignifyToggleHighlight call sy#highlight#line_toggle()
+command! -nargs=0 -bar SignifyToggleFold      call sy#fold#toggle()
 
 " Init: mappings {{{1
 
