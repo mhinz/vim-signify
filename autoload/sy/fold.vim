@@ -43,14 +43,18 @@ function! sy#fold#do() abort
 
   set foldexpr=SignifyFoldExpr(v:lnum)
   set foldtext=SignifyFoldText()
+  let g:old_fdm=&foldmethod
   set foldmethod=expr
   set foldlevel=0
   let g:signify_fold = 1
 endfunction
 
 function! sy#fold#disable() "abort
-  set foldmethod=manual
-  normal zE
+  let &foldmethod=g:old_fdm
+  try
+    normal zE
+  catch
+  endtry
   let g:signify_fold = 0
 endfunction
 
