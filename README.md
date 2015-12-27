@@ -1,20 +1,9 @@
-vim-signify
------------
+![vim-signify](https://raw.githubusercontent.com/mhinz/vim-signify/master/pictures/signify-logo.png)
 
-![Example:signify in action](https://github.com/mhinz/vim-signify/raw/master/signify.gif)
+[![Join the chat at https://gitter.im/mhinz/mhinz](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mhinz/mhinz?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![LICENSE](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/mhinz/vim-signify/master/LICENSE)
 
-by Marco Hinz
-
-Twitter: https://twitter.com/_mhinz_  
-IRC: __mhi^__ (Freenode)
-
-If you use any of my plugins, please star them on github. It's a great way of
-getting feedback and gives me the kick to put more time into their development.
-If you encounter any bugs or have feature requests, just open an issue report on
-Github.
-
-Intro
------
+---
 
 Signify (or just Sy) is a quite unobtrusive plugin. It uses signs to indicate
 added, modified and removed lines based on data of an underlying version
@@ -27,9 +16,7 @@ look at [vim-gitgutter](https://github.com/airblade/vim-gitgutter). It provides
 more git-specific features that would be unfeasible for Sy, since it only
 implements features that work for _all_ supported VCS.
 
----
-
-Features:
+**Features:**
 
 - supports git, mercurial, darcs, bazaar, subversion, cvs, rcs, fossil, accurev,
   perforce
@@ -43,25 +30,36 @@ Features:
   demand later
 - fully configurable through global variables (options and mappings)
 
-Installation & Documentation
-----------------------------
+## Installation and Documentation
 
-If you have no preferred installation method, I suggest using tpope's
-[pathogen](https://github.com/tpope/vim-pathogen). Afterwards installing
-vim-signify is as easy as pie:
+Use your favorite plugin manager.
 
-    $ git clone https://github.com/mhinz/vim-signify ~/.vim/bundle/vim-signify
+Using [vim-plug](https://github.com/junegunn/vim-plug):
+
+    Plug 'mhinz/vim-signify'
 
 It works without any configuration, but you might want to look into the
 documentation for further customization:
 
-    :Helptags  " rebuilding tags files
     :h signify
 
 _NOTE_: The single most important option by far is `g:signify_vcs_list`. Please
 read `:h g:signify_vcs_list`.
 
-License
--------
+## Demo
 
-MIT license. Copyright (c) 2015 Marco Hinz.
+![Example:signify in action](https://raw.githubusercontent.com/mhinz/vim-signify/master/pictures/signify-demo.gif)
+
+## Author and Feedback
+
+If you like my plugins, please star them on Github. It's a great way of getting
+feedback. Same goes for issues reports or feature requests.
+
+Contact:
+[Mail](mailto:mh.codebro@gmail.com) |
+[Twitter](https://twitter.com/_mhinz_) |
+[Gitter](https://gitter.im/mhinz/mhinz)
+
+Co-maintainer: [@jamessan](https://github.com/jamessan)
+
+_Get your Vim on!_
