@@ -310,6 +310,20 @@ Default: [3, 8]
 
 ==============================================================================
 COMMAND                                                       *signify-commands*
+                                                        *signify-:SignifyEnable*
+>
+    :SignifyEnable
+<
+Enable the plugin for the current buffer only.
+
+------------------------------------------------------------------------------
+                                                       *signify-:SignifyDisable*
+>
+    :SignifyDisable
+<
+Disable the plugin for the current buffer only.
+
+------------------------------------------------------------------------------
                                                         *signify-:SignifyToggle*
 >
     :SignifyToggle

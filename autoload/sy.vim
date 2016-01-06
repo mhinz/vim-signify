@@ -110,19 +110,33 @@ function! sy#stop(bufnr) abort
   call sy#sign#remove_all_signs(a:bufnr)
 endfunction
 
-" Function: #toggle {{{1
-function! sy#toggle() abort
+" Function: #enable {{{1
+function! sy#enable() abort
   if !exists('b:sy')
     call sy#start()
     return
   endif
 
-  if b:sy.active
+  if !b:sy.active
+    let b:sy.active = 1
+    call sy#start()
+  endif
+endfunction
+
+" Function: #disable {{{1
+function! sy#disable() abort
+  if exists('b:sy') && b:sy.active
     call sy#stop(b:sy.buffer)
     let b:sy.active = 0
     let b:sy.stats = [-1, -1, -1]
+  endif
+endfunction
+
+" Function: #toggle {{{1
+function! sy#toggle() abort
+  if !exists('b:sy') || !b:sy.active
+    call sy#enable()
   else
-    let b:sy.active = 1
-    call sy#start()
+    call sy#disable()
   endif
 endfunction
