@@ -391,18 +391,22 @@ It will show all tried commands and its output. Errors will be highlighted via
 ==============================================================================
 MAPPINGS                                                      *signify-mappings*
 
-There are no default mappings, except for ]c / [c, but there are additional
-plug mappings available that you can put into your vimrc.
-
 ------------------------------------------------------------------------------
 Hunk jumping:~
+
+    ]c   Jump to next hunk.
+    [c   Jump to previous hunk.
+
+    ]C   Jump to last hunk.
+    [C   Jump to first hunk.
+
+If you don't like these mappings, you can map them yourself:
 >
     nmap <leader>gj <plug>(signify-next-hunk)
     nmap <leader>gk <plug>(signify-prev-hunk)
+    nmap <leader>gJ 9999<leader>gj
+    nmap <leader>gK 9999<leader>gk
 <
-NOTE: Analog to Vim's diff mode, you can also use |]c| and |[c| for
-jumping between hunks.
-
 ------------------------------------------------------------------------------
 Hunk text object:~
 >

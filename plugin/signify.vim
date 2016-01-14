@@ -60,9 +60,11 @@ nnoremap <silent> <expr> <plug>(signify-prev-hunk) &diff
 
 if empty(maparg(']c', 'n'))
   nmap ]c <plug>(signify-next-hunk)
+  nmap ]C 9999]c
 endif
 if empty(maparg('[c', 'n'))
   nmap [c <plug>(signify-prev-hunk)
+  nmap [C 9999[c
 endif
 
 " hunk text object
