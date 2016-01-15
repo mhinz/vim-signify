@@ -142,7 +142,8 @@ So either the one you set through |g:signify_difftool| or "diff" by default.
 
 NOTE: If you don't set this option and Sy is activated, updating signs for a
 non-VCS file can lead to significant delay since all supported and installed
-VCS will be tested for.
+VCS will be tested for. (But this also happens only once, afterwards the
+buffer is registered as inactive.)
 
 ------------------------------------------------------------------------------
                                                             *g:signify_vcs_cmds*
@@ -315,6 +316,9 @@ COMMAND                                                       *signify-commands*
     :SignifyEnable
 <
 Enable the plugin for the current buffer only.
+
+Can also be used to when a repository was initialized while Sy was already
+loaded.
 
 ------------------------------------------------------------------------------
                                                        *signify-:SignifyDisable*

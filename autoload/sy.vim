@@ -55,6 +55,7 @@ function! sy#start() abort
 
     let [ diff, b:sy.type ] = sy#repo#detect()
     if b:sy.type == 'unknown'
+      call sy#disable()
       return
     endif
 
@@ -80,6 +81,7 @@ function! sy#start() abort
     let [ diff, b:sy.type ] = sy#repo#detect()
     if b:sy.type == 'unknown'
       " no VCS found
+      call sy#disable()
       return
     endif
 
