@@ -145,5 +145,5 @@ endfunction
 
 " Function: #buffer_is_active {{{1
 function! sy#buffer_is_active()
-  return (!exists('b:sy') || !b:sy.active) ? 0 : 1
+  return exists('b:sy') && b:sy.active
 endfunction
