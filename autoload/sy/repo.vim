@@ -166,12 +166,8 @@ endfunction
 
 " Function: s:replace {{{1
 function! s:replace(cmd, pat, sub)
-  let tmp = split(a:cmd, a:pat, 1)
-  if len(tmp) > 1
-    return  tmp[0] . a:sub . tmp[1]
-  else
-    return a:cmd
-  endif
+  let parts = split(a:cmd, a:pat, 1)
+  return join(parts, a:sub)
 endfunction
 
 " Function: s:strip_context {{{1
