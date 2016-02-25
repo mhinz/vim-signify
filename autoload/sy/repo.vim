@@ -85,6 +85,12 @@ function! sy#repo#get_diff_perforce() abort
   return v:shell_error ? [0, ''] : [1, diff]
 endfunction
 
+" Function: #get_diff_tfs {{{1
+function! sy#repo#get_diff_tfs() abort
+  let diff = s:run(g:signify_vcs_cmds.tfs, b:sy_info.file, 0)
+  return v:shell_error ? [0, ''] : [1, s:strip_context(diff)]
+endfunction
+
 " Function: #get_stats {{{1
 function! sy#repo#get_stats() abort
   if !exists('b:sy') || !has_key(b:sy, 'stats')
@@ -112,6 +118,7 @@ function! sy#repo#debug_detection()
         \ 'rcs':      [g:signify_vcs_cmds.rcs,      b:sy_info.path, 0],
         \ 'accurev':  [g:signify_vcs_cmds.accurev,  b:sy_info.file, 1],
         \ 'perforce': [g:signify_vcs_cmds.perforce, b:sy_info.path, 0],
+        \ 'tfs':      [g:signify_vcs_cmds.tfs,      b:sy_info.file, 0],
         \ }
 
   for vcs in s:vcs_list
@@ -167,6 +174,80 @@ function! s:replace(cmd, pat, sub)
   endif
 endfunction
 
+" Function: s:strip_context {{{1
+function! s:strip_context(context)
+  let diff = []
+  let hunk = []
+  let state = 0
+  let lines = split(a:context,"\n",1)
+  let linenr = 0
+
+  while linenr < len(lines)
+    let line = lines[linenr]
+
+    if state == 0
+      if line =~ "^@@ "
+        let tokens = matchlist(line, '^@@ -\v(\d+),?(\d*) \+(\d+),?(\d*)')
+        let old_line = str2nr(tokens[1])
+        let new_line = str2nr(tokens[3])
+        let old_count = empty(tokens[2]) ? 1 : str2nr(tokens[2])
+        let new_count = empty(tokens[4]) ? 1 : str2nr(tokens[4])
+        let state = 1
+      else
+        call add(diff,line)
+      endif
+      let linenr = linenr + 1
+    elseif state == 1
+      if line[0] == ' '
+        let old_line = old_line + 1
+        let new_line = new_line + 1
+        let old_count = old_count - 1
+        let new_count = new_count - 1
+        let linenr = linenr + 1
+      else
+        let hunk = []
+        let old_count_part = 0
+        let new_count_part = 0
+        let state = 2
+      endif
+    elseif state == 2
+      if line[0] == '-'
+        call add(hunk,line)
+        let old_count_part = old_count_part + 1
+        let linenr = linenr + 1
+      else
+        let state = 3
+      endif
+    elseif state == 3
+      if line[0] == '+'
+        call add(hunk,line)
+        let new_count_part = new_count_part + 1
+        let linenr = linenr + 1
+      else
+        call add(diff, printf("@@ -%d,%d +%d,%d @@",old_line, old_count_part, (new_count_part == 0 && new_line > 0) ? new_line - 1 : new_line, new_count_part))
+        let diff = diff + hunk
+        let hunk = []
+        let old_count = old_count - old_count_part
+        let new_count = new_count - new_count_part
+        let old_line = old_line + old_count_part
+        let new_line = new_line + new_count_part
+        let state = 1
+      endif
+    endif
+
+    if state > 0 && new_count <= 0 && old_count <= 0
+      if len(hunk) > 0
+        call add(diff, printf("@@ -%d,%d +%d,%d @@",old_line, old_count_part, (new_count_part == 0 && new_line > 0) ? new_line - 1 : new_line, new_count_part))
+        let diff = diff + hunk
+        let hunk = []
+      endif
+      let state = 0
+    endif
+  endwhile
+
+  return join(diff,"\n")."\n"
+endfunction
+
 " Variables {{{1
 let s:difftool = get(g:, 'signify_difftool', 'diff')
 if executable(s:difftool)
@@ -180,7 +261,8 @@ if executable(s:difftool)
         \ 'cvs':      'cvs',
         \ 'rcs':      'rcsdiff',
         \ 'accurev':  'accurev',
-        \ 'perforce': 'p4'
+        \ 'perforce': 'p4',
+        \ 'tfs':      'tf'
         \ }
 else
   echomsg 'signify: No diff tool found -> no support for svn, darcs, bzr, fossil.'
@@ -190,7 +272,8 @@ else
         \ 'cvs':      'cvs',
         \ 'rcs':      'rcsdiff',
         \ 'accurev':  'accurev',
-        \ 'perforce': 'p4'
+        \ 'perforce': 'p4',
+        \ 'tfs':      'tf'
         \ }
 endif
 
@@ -210,6 +293,7 @@ let s:vcs_cmds = {
       \ 'rcs':      'rcsdiff -U0 %f 2>%n',
       \ 'accurev':  'accurev diff %f -- -U0',
       \ 'perforce': 'p4 info '. sy#util#shell_redirect('%n') .' && env P4DIFF=%d p4 diff -dU0 %f',
+      \ 'tfs':      'tf diff -version:W -noprompt -format:Unified %f'
       \ }
 
 if exists('g:signify_vcs_cmds')

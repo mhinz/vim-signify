@@ -63,6 +63,7 @@ Supported VCS:~
     fossil
     accurev
     perforce
+    tfs
 <
 Sign explanation:~
 
@@ -123,6 +124,7 @@ Possible values: 'accurev'
                  'perforce'
                  'rcs'
                  'svn'
+                 'tfs'
 
 NOTE: This is the most important option, so read closely.
 
@@ -186,6 +188,7 @@ Default:
       \ 'rcs':      'rcsdiff -U0 %f 2>%n',
       \ 'accurev':  'accurev diff %f -- -U0',
       \ 'perforce': 'p4 info '. sy#util#shell_redirect('%n') .' && env P4DIFF=%d p4 diff -dU0 %f'
+      \ 'tfs':      'tf diff -version:W -noprompt %f',
       \ }
 <
 ------------------------------------------------------------------------------

@@ -16,7 +16,7 @@ implements features that work for _all_ supported VCS.
 **Features:**
 
 - supports git, mercurial, darcs, bazaar, subversion, cvs, rcs, fossil, accurev,
-  perforce
+  perforce, tfs
 - quick jumping between blocks of changed lines ("hunks")
 - apart from signs there is also optional line highlighting
 - preserves signs from other plugins
