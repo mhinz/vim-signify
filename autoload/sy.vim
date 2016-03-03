@@ -14,12 +14,7 @@ function! sy#start() abort
 
   let sy_path = resolve(expand('%:p'))
 
-  if &diff
-        \ || !filereadable(sy_path)
-        \ || (exists('g:signify_skip_filetype') && (has_key(g:signify_skip_filetype, &ft)
-        \                                       || (has_key(g:signify_skip_filetype, 'help')
-        \                                       && &bt == 'help')))
-        \ || (exists('g:signify_skip_filename') && has_key(g:signify_skip_filename, sy_path))
+  if s:skip(sy_path)
     if exists('b:sy')
       call sy#sign#remove_all_signs(bufnr(''))
       unlet! b:sy b:sy_info
@@ -146,4 +141,32 @@ endfunction
 " Function: #buffer_is_active {{{1
 function! sy#buffer_is_active()
   return exists('b:sy') && b:sy.active
+endfunction
+
+function! s:skip(path)
+  if &diff || !filereadable(a:path)
+    return 1
+  endif
+
+  if exists('g:signify_skip_filetype')
+    if has_key(g:signify_skip_filetype, &filetype)
+      return 1
+    elseif has_key(g:signify_skip_filetype, 'help') && (&buftype == 'help')
+      return 1
+    endif
+  endif
+
+  if exists('g:signify_skip_filename') && has_key(g:signify_skip_filename, a:path)
+    return 1
+  endif
+
+  if exists('g:signify_skip_filename_pattern')
+    for pattern in g:signify_skip_filename_pattern
+      if a:path =~ pattern
+        return 1
+      endif
+    endfor
+  endif
+
+  return 0
 endfunction

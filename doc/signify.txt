@@ -94,6 +94,7 @@ All available options:~
     |g:signify_disable_by_default|
     |g:signify_skip_filetype|
     |g:signify_skip_filename|
+    |g:signify_skip_filename_pattern|
     |g:signify_update_on_bufenter|
     |g:signify_update_on_focusgained|
     |g:signify_line_highlight|
@@ -200,17 +201,23 @@ This loads Sy, but it won't look for changes. You can toggle it anytime via
 :SignifyToggle.
 
 ------------------------------------------------------------------------------
-                                                       *g:signify_skip_filetype*
+                                               *g:signify_skip_filename_pattern*
                                                        *g:signify_skip_filename*
+                                                       *g:signify_skip_filetype*
 >
     let g:signify_skip_filetype = { 'vim': 1, 'c': 1 }
     let g:signify_skip_filename = { '/home/user/.vimrc': 1 }
 <
-Don't activate the plugin for these filetypes and/or filenames.
+Don't activate the plugin for these filetypes and/or filenames. Filenames have
+to be absolute paths.
 
-NOTE: Filenames have to be absolute paths.
+These options must be |Dict|s for faster lookup.
+>
+    let g:signify_skip_filename_pattern = [ 'foo.*bar', 'tmp' ]
+<
+Don't activate the plugin for filenames matching these patterns.
 
-Default: Both are empty.
+Default: <none>
 
 ------------------------------------------------------------------------------
                                                   *g:signify_update_on_bufenter*
