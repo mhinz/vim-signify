@@ -32,6 +32,7 @@ TOC                                                           *signify-contents*
   USAGE .......................... |signify-usage|
   OPTIONS ........................ |signify-options|
   COMMANDS ....................... |signify-commands|
+  AUTOCOMMAND .................... |signify-autocommand|
   MAPPINGS ....................... |signify-mappings|
   COLORS ......................... |signify-colors|
   FAQ ............................ |signify-faq|
@@ -401,6 +402,21 @@ a supported VCS, use this command.
 
 It will show all tried commands and its output. Errors will be highlighted via
 |hl-ErrorMsg|.
+
+==============================================================================
+AUTOCOMMAND                                                *signify-autocommand*
+
+If Sy detects changes to a version-controlled file, it will trigger the |User|
+autocommand |{event}| with "Signify" as the autocommand |{pat}|.  This allows
+you to perform actions in response to Sy detecting differences.
+
+For example,
+>
+    autocmd User Signify call sy#sign#remove_all_signs(bufnr(''))
+<
+removes all the signs that Sy placed in the current buffer.  This may be
+useful if your want to use the values from `sy#repo#get_stats()` but do not
+want to see the signs.
 
 ==============================================================================
 MAPPINGS                                                      *signify-mappings*

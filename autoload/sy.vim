@@ -95,6 +95,8 @@ function! sy#start() abort
   call sy#sign#process_diff(diff)
 
   let b:sy.id_top = (g:id_top - 1)
+
+  silent doautocmd <nomodeline> User Signify
 endfunction
 
 " Function: #stop {{{1
