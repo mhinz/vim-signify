@@ -199,7 +199,6 @@ function! sy#sign#remove_all_signs(bufnr) abort
   endfor
 
   let sy.hunks = []
-  let sy.stats = [0, 0, 0]
 endfunction
 
 " Function: s:add_sign {{{1
