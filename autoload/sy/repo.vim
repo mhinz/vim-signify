@@ -76,7 +76,7 @@ endfunction
 " Function: #get_diff_accurev {{{1
 function! sy#repo#get_diff_accurev() abort
   let diff = s:run(g:signify_vcs_cmds.accurev, b:sy_info.file, 1)
-  return (v:shell_error == 2) ? [0, ''] : [1, diff]
+  return (v:shell_error >= 2) ? [0, ''] : [1, diff]
 endfunction
 
 " Function: #get_diff_perforce {{{1
