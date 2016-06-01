@@ -188,20 +188,23 @@ function! s:strip_context(context)
         let new_line = str2nr(tokens[3])
         let old_count = empty(tokens[2]) ? 1 : str2nr(tokens[2])
         let new_count = empty(tokens[4]) ? 1 : str2nr(tokens[4])
+        let hunk = []
         let state = 1
       else
         call add(diff,line)
       endif
-      let linenr = linenr + 1
+      let linenr += 1
+    elseif index([1,2,3],state) >= 0 && index(['\','/'],line[0]) >= 0
+      let linenr += 1
+      call add(hunk,line)
     elseif state == 1
       if line[0] == ' '
-        let old_line = old_line + 1
-        let new_line = new_line + 1
-        let old_count = old_count - 1
-        let new_count = new_count - 1
-        let linenr = linenr + 1
+        let old_line += 1
+        let new_line += 1
+        let old_count -= 1
+        let new_count -= 1
+        let linenr += 1
       else
-        let hunk = []
         let old_count_part = 0
         let new_count_part = 0
         let state = 2
@@ -209,38 +212,42 @@ function! s:strip_context(context)
     elseif state == 2
       if line[0] == '-'
         call add(hunk,line)
-        let old_count_part = old_count_part + 1
-        let linenr = linenr + 1
+        let old_count_part += 1
+        let linenr += 1
       else
         let state = 3
       endif
     elseif state == 3
       if line[0] == '+'
         call add(hunk,line)
-        let new_count_part = new_count_part + 1
-        let linenr = linenr + 1
+        let new_count_part += 1
+        let linenr += 1
       else
-        call add(diff, printf("@@ -%d,%d +%d,%d @@",old_line, old_count_part, (new_count_part == 0 && new_line > 0) ? new_line - 1 : new_line, new_count_part))
-        let diff = diff + hunk
+        call add(diff, printf("@@ -%d%s +%d%s @@",(old_count_part == 0 && old_line > 0) ? old_line -1 : old_line, old_count_part == 1 ? "" : printf(",%d", old_count_part), (new_count_part == 0 && new_line > 0) ? new_line - 1 : new_line, new_count_part == 1 ? "" : printf(",%d", new_count_part)))
+        let diff += hunk
         let hunk = []
-        let old_count = old_count - old_count_part
-        let new_count = new_count - new_count_part
-        let old_line = old_line + old_count_part
-        let new_line = new_line + new_count_part
+        let old_count -= old_count_part
+        let new_count -= new_count_part
+        let old_line += old_count_part
+        let new_line += new_count_part
         let state = 1
       endif
     endif
 
     if state > 0 && new_count <= 0 && old_count <= 0
       if len(hunk) > 0
-        call add(diff, printf("@@ -%d,%d +%d,%d @@",old_line, old_count_part, (new_count_part == 0 && new_line > 0) ? new_line - 1 : new_line, new_count_part))
+        call add(diff, printf("@@ -%d%s +%d%s @@",(old_count_part == 0 && old_line > 0) ? old_line -1 : old_line, old_count_part == 1 ? "" : printf(",%d", old_count_part), (new_count_part == 0 && new_line > 0) ? new_line - 1 : new_line, new_count_part == 1 ? "" : printf(",%d", new_count_part)))
         let diff = diff + hunk
         let hunk = []
       endif
       let state = 0
     endif
   endwhile
-
+  if len(hunk) > 0
+    call add(diff, printf("@@ -%d%s +%d%s @@",(old_count_part == 0 && old_line > 0) ? old_line -1 : old_line, old_count_part == 1 ? "" : printf(",%d", old_count_part), (new_count_part == 0 && new_line > 0) ? new_line - 1 : new_line, new_count_part == 1 ? "" : printf(",%d", new_count_part)))
+    let diff = diff + hunk
+    let hunk = []
+  endif
   return join(diff,"\n")."\n"
 endfunction
 
