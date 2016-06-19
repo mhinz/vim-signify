@@ -96,7 +96,7 @@ function! sy#start() abort
 
   let b:sy.id_top = (g:id_top - 1)
 
-  silent doautocmd <nomodeline> User Signify
+  silent! doautocmd <nomodeline> User Signify
 endfunction
 
 " Function: #stop {{{1
