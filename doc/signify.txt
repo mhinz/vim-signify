@@ -418,6 +418,9 @@ removes all the signs that Sy placed in the current buffer.  This may be
 useful if your want to use the values from `sy#repo#get_stats()` but do not
 want to see the signs.
 
+NOTE: Autocmds don't nest by default. If you use any command that triggers new
+events, make sure to add "nested": |autocmd-nested|.
+
 ==============================================================================
 MAPPINGS                                                      *signify-mappings*
 
