@@ -418,8 +418,6 @@ removes all the signs that Sy placed in the current buffer.  This may be
 useful if your want to use the values from `sy#repo#get_stats()` but do not
 want to see the signs.
 
-NOTE: This feature requires at least Vim 7.3.438 for |<nomodeline>|.
-
 ==============================================================================
 MAPPINGS                                                      *signify-mappings*
 
