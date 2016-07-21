@@ -6,6 +6,8 @@ scriptencoding utf-8
 let g:id_top = 0x100
 let g:sy_cache = {}
 
+let s:has_doau_modeline = v:version > 703 || v:version == 703 && has('patch442')
+
 " Function: #start {{{1
 function! sy#start() abort
   if g:signify_locked
@@ -96,7 +98,9 @@ function! sy#start() abort
 
   let b:sy.id_top = (g:id_top - 1)
 
-  silent! doautocmd <nomodeline> User Signify
+  if exists('#User#Signify')
+    execute 'doautocmd' (s:has_doau_modeline ? '<nomodeline>' : '') 'User Signify'
+  endif
 endfunction
 
 " Function: #stop {{{1
