@@ -3,10 +3,17 @@
 scriptencoding utf-8
 
 " Init: values {{{1
-let s:sign_add               = get(g:, 'signify_sign_add',               '+')
-let s:sign_delete_first_line = get(g:, 'signify_sign_delete_first_line', '‾')
-let s:sign_change            = get(g:, 'signify_sign_change',            '!')
-let s:sign_changedelete      = get(g:, 'signify_sign_changedelete',      s:sign_change)
+if get(g:, 'signify_sign_show_text', 1)
+  let s:sign_add               = get(g:, 'signify_sign_add',               '+')
+  let s:sign_delete_first_line = get(g:, 'signify_sign_delete_first_line', '‾')
+  let s:sign_change            = get(g:, 'signify_sign_change',            '!')
+  let s:sign_changedelete      = get(g:, 'signify_sign_changedelete',      s:sign_change)
+else
+  let s:sign_add               = ' '
+  let s:sign_delete_first_line = ' '
+  let s:sign_change            = ' '
+  let s:sign_changedelete      = ' '
+endif
 let s:sign_show_count        = get(g:, 'signify_sign_show_count',        1)
 
 " Function: #setup {{{1

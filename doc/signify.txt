@@ -105,6 +105,7 @@ All available options:~
     |g:signify_sign_change|
     |g:signify_sign_changedelete|
     |g:signify_sign_show_count|
+    |g:signify_sign_show_text|
     |g:signify_cursorhold_normal|
     |g:signify_cursorhold_insert|
     |g:signify_difftool|
@@ -278,6 +279,20 @@ NOTE: You can use up to 2 characters for the signs with two exceptions that
 Add the number of deleted lines to |g:signify_sign_delete| (up to 99) and
 |g:signify_sign_changedelete| (up to 9). Otherwise only the normal signs will
 be shown.
+
+------------------------------------------------------------------------------
+                                                      *g:signify_sign_show_text*
+>
+    let g:signify_sign_show_text = 1
+<
+Don't show any text in the sign column. (Actually it will show a non-breaking
+space.)
+
+This is useful if you only want to see colors instead. If your colorscheme
+doesn't do it for you, you can set the background color of a particular sign
+yourself: |signify-colors|.
+
+If you want no sign column at all and use Vim 7.4.2201+, use |'signcolumn'|.
 
 ------------------------------------------------------------------------------
                                                    *g:signify_cursorhold_normal*
