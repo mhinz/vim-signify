@@ -513,6 +513,7 @@ numbers much easier.
 FAQ                                                                *signify-faq*
 
     |signify-faq-01|  What about vim-flagship support?
+    |signify-faq-02|  The plugin is slow!
 
 ------------------------------------------------------------------------------
                                                                 *signify-faq-01*
@@ -542,6 +543,24 @@ removed lines. Create a wrapper function around it and return a string:
 
     autocmd User Flags call Hoist('buffer', function('s:sy_stats_wrapper'))
 <
+------------------------------------------------------------------------------
+                                                                *signify-faq-02*
+The plugin is slow!~
+
+  * Set |g:signify_vcs_list|. Always.
+
+  * Sy relies on external tools. Check if these are the bottleneck.
+
+    If you use a centralized VCS like Subversion, is the connection to the
+    server slow?
+
+    If you use a decentralized VCS like Git, are you working on a slow remote
+    file system?
+
+  * Vim its sign handling code is known to be slow. If the delay is very long,
+    chances are the diff is just huge. This often happens after adding (or
+    removing) a huge file to the repo.
+
 ==============================================================================
 EXAMPLE                                                        *signify-example*
 
