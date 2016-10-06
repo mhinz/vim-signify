@@ -24,9 +24,18 @@ function! sy#start() abort
     return
   endif
 
+
+  function! s:chdir()
+    if has('nvim')
+      return haslocaldir() ? 'lcd' : haslocaldir(-1, 0) ? 'tcd' : 'cd'
+    else
+      return haslocaldir() ? 'lcd' : 'cd'
+    endif
+  endfunction
+
   " sy_info is used in autoload/sy/repo
   let b:sy_info = {
-        \ 'chdir': haslocaldir() ? 'lcd' : 'cd',
+        \ 'chdir': s:chdir(),
         \ 'cwd':   fnameescape(getcwd()),
         \ 'dir':   fnamemodify(sy_path, ':p:h'),
         \ 'path':  sy#util#escape(sy_path),
