@@ -27,7 +27,7 @@ It's __fast__, __easy to use__ and __well documented__.
 _If git is the only version control system you use, I suggest having a look at
 [vim-gitgutter](https://github.com/airblade/vim-gitgutter). It provides more
 git-specific features that would be unfeasible for Sy, since it only implements
-features that work for _all_ supported VCS._
+features that work for all supported VCS._
 
 ## Installation and Documentation
 
