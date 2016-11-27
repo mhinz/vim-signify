@@ -3,17 +3,12 @@
 ---
 
 Signify (or just Sy) is a quite unobtrusive plugin. It uses signs to indicate
-added, modified and removed lines based on data of an underlying version
-control system.
+added, modified and removed lines based on data of an underlying version control
+system.
 
 It's __fast__, __easy to use__ and __well documented__.
 
-_NOTE:_ If git is the only version control system you use, I suggest having a
-look at [vim-gitgutter](https://github.com/airblade/vim-gitgutter). It provides
-more git-specific features that would be unfeasible for Sy, since it only
-implements features that work for _all_ supported VCS.
-
-**Features:**
+---
 
 - supports git, mercurial, darcs, bazaar, subversion, cvs, rcs, fossil, accurev,
   perforce, tfs
@@ -27,11 +22,18 @@ implements features that work for _all_ supported VCS.
   demand later
 - fully configurable through global variables (options and mappings)
 
+---
+
+_If git is the only version control system you use, I suggest having a look at
+[vim-gitgutter](https://github.com/airblade/vim-gitgutter). It provides more
+git-specific features that would be unfeasible for Sy, since it only implements
+features that work for _all_ supported VCS._
+
 ## Installation and Documentation
 
-Use your favorite plugin manager.
-
-Using [vim-plug](https://github.com/junegunn/vim-plug):
+Use your favorite [plugin
+manager](https://github.com/mhinz/vim-galore#managing-plugins), e.g. using
+[vim-plug](https://github.com/junegunn/vim-plug):
 
     Plug 'mhinz/vim-signify'
 
@@ -40,8 +42,8 @@ documentation for further customization:
 
     :h signify
 
-_NOTE_: The single most important option by far is `g:signify_vcs_list`. Please
-read `:h g:signify_vcs_list`.
+_The single most important option by far is `g:signify_vcs_list`. Please read
+`:h g:signify_vcs_list`._
 
 ## Demo
 
@@ -49,14 +51,9 @@ read `:h g:signify_vcs_list`.
 
 ## Author and Feedback
 
-If you like my plugins, please star them on Github. It's a great way of getting
-feedback. Same goes for issues reports or feature requests.
+If you like this plugin, star it! It's a great way of getting feedback. The same
+goes for reporting issues or feature requests.
 
-Contact:
-[Mail](mailto:mh.codebro@gmail.com) |
-[Twitter](https://twitter.com/_mhinz_) |
-[Gitter](https://gitter.im/mhinz/mhinz)
+Contact: [Twitter](https://twitter.com/_mhinz_)
 
 Co-maintainer: [@jamessan](https://github.com/jamessan)
-
-_Get your Vim on!_
