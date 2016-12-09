@@ -24,9 +24,19 @@ endfunction
 
 " Function: #refresh_windows {{{1
 function! sy#util#refresh_windows() abort
-  let winnr = winnr()
+  if exists('*win_getid')
+    let winid = win_getid()
+  else
+    let winnr = winnr()
+  endif
+
   windo if exists('b:sy') | call sy#start() | endif
-  execute winnr .'wincmd w'
+
+  if exists('winid')
+    call win_gotoid(winid)
+  else
+    execute winnr .'wincmd w'
+  endif
 endfunction
 
 " Function: #hunk_text_object {{{1
