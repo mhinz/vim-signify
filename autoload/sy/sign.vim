@@ -24,15 +24,12 @@ function! sy#sign#get_current_signs() abort
   let b:sy.internal = {}
   let b:sy.external = {}
 
-  let lang = v:lang
-  language message C
   redir => signlist
     silent! execute 'sign place buffer='. b:sy.buffer
   redir END
-  silent! execute 'language message' lang
 
   for signline in split(signlist, '\n')[2:]
-    let tokens = matchlist(signline, '\v^\s+line\=(\d+)\s+id\=(\d+)\s+name\=(.*)$')
+    let tokens = matchlist(signline, '\v^\s+\S+\=(\d+)\s+\S+\=(\d+)\s+\S+\=(.*)$')
     let line   = str2nr(tokens[1])
     let id     = str2nr(tokens[2])
     let type   = tokens[3]
