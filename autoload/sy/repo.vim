@@ -149,11 +149,57 @@ function! s:expand_cmd(cmd, path) abort
   return cmd
 endfunction
 
+" Function: s:python_cmd {{{1
+function! s:python_cmd(command)
+  let mswin = has('win32') || has('win16') || has('win95') || has('win64')
+  if mswin != 0 && has('python')
+    py import subprocess, vim
+    py argv = {'args': vim.eval('a:command'), 'shell': True}
+    py argv['stdout'] = subprocess.PIPE
+    py argv['stderr'] = subprocess.STDOUT
+    py p = subprocess.Popen(**argv)
+    py text = p.stdout.read()
+    py p.stdout.close()
+    py p.wait()
+    if has('patch-7.4.145') || v:version >= 800
+      let l:text = pyeval('text')
+    else
+      py text = text.replace('\\', '\\\\').replace('"', '\\"')
+      py text = text.replace('\n', '\\n').replace('\r', '\\r')
+      py vim.command('let l:text = "%s"'%text)
+    endif
+    return l:text
+  elseif mswin != 0 && has('python3')
+    py3 import subprocess, vim
+    py3 argv = {'args': vim.eval('a:command'), 'shell': True}
+    py3 argv['stdout'] = subprocess.PIPE
+    py3 argv['stderr'] = subprocess.STDOUT
+    py3 p = subprocess.Popen(**argv)
+    py3 text = p.stdout.read()
+    py3 p.stdout.close()
+    py3 p.wait()
+    if has('patch-7.4.145') || v:version >= 800
+      let l:text = py3eval('text')
+    else
+      py3 text = text.replace('\\', '\\\\').replace('"', '\\"')
+      py3 text = text.replace('\n', '\\n').replace('\r', '\\r')
+      py3 vim.command('let l:text = "%s"'%text)
+    endif
+    return l:text
+  else
+    return system(a:command)
+  endif
+endfunction
+
 " Function: s:run {{{1
 function! s:run(cmd, path, do_switch_dir)
   execute b:sy_info.chdir fnameescape(b:sy_info.dir)
   try
-    let ret = system(s:expand_cmd(a:cmd, a:path))
+    if get(g:, "signify_python_cmd", 0) != 0
+      let ret = s:python_cmd(s:expand_cmd(a:cmd, a:path))
+    else
+      let ret = system(s:expand_cmd(a:cmd, a:path))
+    endif
   catch
     " This exception message can be seen via :SignifyDebugUnknown.
     " E.g. unquoted VCS programs in vcd_cmds can lead to E484.
