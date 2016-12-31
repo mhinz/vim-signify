@@ -26,11 +26,7 @@ function! sy#start() abort
 
 
   function! s:chdir()
-    if has('nvim')
-      return haslocaldir() ? 'lcd' : haslocaldir(-1, 0) ? 'tcd' : 'cd'
-    else
-      return haslocaldir() ? 'lcd' : 'cd'
-    endif
+    return haslocaldir() ? 'lcd' : (exists(':tcd') && haslocaldir(-1, 0)) ? 'tcd' : 'cd'
   endfunction
 
   " sy_info is used in autoload/sy/repo
