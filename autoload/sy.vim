@@ -154,6 +154,7 @@ function! sy#buffer_is_active()
   return exists('b:sy') && b:sy.active
 endfunction
 
+" Function: s:skip {{{1
 function! s:skip(path)
   if &diff || !filereadable(a:path)
     return 1
