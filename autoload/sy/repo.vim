@@ -16,15 +16,8 @@ function! sy#repo#detect(do_register) abort
   endif
 
   for type in vcs_list
-    call sy#repo#get_diff_{type}(a:do_register)
+    call sy#repo#get_diff_start(type, a:do_register)
   endfor
-    " let [istype, diff] = sy#repo#get_diff_{type}()
-    " if istype
-    "   return [diff, type]
-    " endif
-  " endfor
-
-  " return ['', 'unknown']
 endfunction
 
 " Function: s:callback_stdout_nvim {{{1
@@ -40,36 +33,52 @@ endfunction
 
 " Function: s:callback_exit {{{1
 function! s:callback_exit(_job_id, exitcode, _event) dict abort
-  call sy#verbose('Running callback_exit(). Exit code: '. a:exitcode)
-  let [found_diff, diff] = a:exitcode ? [0, ''] : [1, join(self.stdoutbuf, "\n")]
-  if found_diff
+  call sy#verbose('Running callback_exit().')
+  call s:get_diff_end(a:exitcode, join(self.stdoutbuf, "\n"), self.do_register)
+endfunction
+
+" Function: sy#get_diff_start {{{1
+function! sy#repo#get_diff_start(vcs, do_register) abort
+  if has('nvim')
+    let id = get(b:, 'job_id_'. a:vcs)
+    if id
+      silent! call jobstop(id)
+    endif
+    let cmd = s:expand_cmd(g:signify_vcs_cmds[a:vcs], b:sy_info.file)
+    let cmd = (has('win32') && &shell =~ 'cmd')  ? cmd : ['sh', '-c', cmd]
+    execute b:sy_info.chdir fnameescape(b:sy_info.dir)
+    try
+      let s:job_id_git = jobstart(cmd, {
+            \ 'stdoutbuf':   [],
+            \ 'do_register': a:do_register,
+            \ 'on_stdout':   function('s:callback_stdout_nvim'),
+            \ 'on_exit':     function('s:callback_exit'),
+            \ })
+    finally
+      execute b:sy_info.chdir b:sy_info.cwd
+    endtry
+  else
+    let diff = s:run(g:signify_vcs_cmds[a:vcs], b:sy_info.path)
+    call s:get_diff_end(v:shell_error, diff, a:do_register)
+  endif
+endfunction
+
+" Function: s:get_diff_end {{{1
+function! s:get_diff_end(exitcode, diff, do_register) abort
+  if !a:exitcode
     let b:sy.type = 'git'
   endif
-  if !self.do_register
+  if !a:do_register
     let b:sy.id_top = g:id_top
   endif
-  call sy#set_signs(diff, self.do_register)
+  call sy#set_signs(a:diff, a:do_register)
 endfunction
 
 " Function: #get_diff_git {{{1
-function! sy#repo#get_diff_git(do_register) abort
+function! sy#repo#get_diff_git(exitcode, diff, do_register) abort
   call sy#verbose('Running get_diff_git().')
-  let cmd = s:expand_cmd(g:signify_vcs_cmds.git, b:sy_info.file)
-  let cmd = (has('win32') && &shell =~ 'cmd')  ? cmd : ['sh', '-c', cmd]
-  if exists('s:job_id_git')
-    silent! call jobstop(s:job_id_git)
-  endif
-  execute b:sy_info.chdir fnameescape(b:sy_info.dir)
-  try
-    let s:job_id_git = jobstart(cmd, {
-          \ 'stdoutbuf':   [],
-          \ 'do_register': a:do_register,
-          \ 'on_stdout':   function('s:callback_stdout_nvim'),
-          \ 'on_exit':     function('s:callback_exit'),
-          \ })
-  finally
-    execute b:sy_info.chdir b:sy_info.cwd
-  endtry
+  let [found_diff, diff] = a:exitcode ? [0, ''] : [1, join(self.stdoutbuf, "\n")]
+  call s:get_diff_end(found_diff, diff, self.do_register)
 endfunction
 
 " Function: #get_diff_hg {{{1

@@ -8,13 +8,6 @@ let g:sy_cache = {}
 
 let s:has_doau_modeline = v:version > 703 || v:version == 703 && has('patch442')
 
-" Function: #verbose {{{1
-function! sy#verbose(msg) abort
-  if &verbose
-    echomsg printf('[sy] %s', a:msg)
-  endif
-endfunction
-
 " Function: #start {{{1
 function! sy#start() abort
   if g:signify_locked
@@ -72,7 +65,7 @@ function! sy#start() abort
     call sy#repo#detect(0)
   else
     call sy#verbose('Updating signs.')
-    call sy#repo#get_diff_{b:sy.type}(0)
+    call sy#repo#get_diff_start(b:sy.type, 0)
   endif
 endfunction
 
@@ -154,6 +147,13 @@ endfunction
 " Function: #buffer_is_active {{{1
 function! sy#buffer_is_active()
   return exists('b:sy') && b:sy.active
+endfunction
+
+" Function: #verbose {{{1
+function! sy#verbose(msg) abort
+  if &verbose
+    echomsg printf('[sy] %s', a:msg)
+  endif
 endfunction
 
 " Function: s:skip {{{1
