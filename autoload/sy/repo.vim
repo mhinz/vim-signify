@@ -34,40 +34,45 @@ endfunction
 " Function: s:callback_exit {{{1
 function! s:callback_exit(_job_id, exitcode, _event) dict abort
   call sy#verbose('Running callback_exit().')
-  call s:get_diff_end(a:exitcode, self.vcs, join(self.stdoutbuf, "\n"),
-        \ self.do_register)
+  if !a:exitcode
+    call sy#repo#get_diff_{self.vcs}(a:exitcode, join(self.stdoutbuf, "\n"),
+          \ self.do_register)
+  endif
+  silent! unlet b:job_id_{self.vcs}
 endfunction
 
 " Function: sy#get_diff_start {{{1
 function! sy#repo#get_diff_start(vcs, do_register) abort
+  call sy#verbose('Running s:get_diff_start().')
   if has('nvim')
-    let id = get(b:, 'job_id_'. a:vcs)
-    if id
-      silent! call jobstop(id)
+    if exists('b:job_id_'.a:vcs)
+      silent! call jobstop(b:job_id_{a:vcs})
     endif
     let cmd = s:expand_cmd(g:signify_vcs_cmds[a:vcs], b:sy_info.file)
     let cmd = (has('win32') && &shell =~ 'cmd')  ? cmd : ['sh', '-c', cmd]
     execute b:sy_info.chdir fnameescape(b:sy_info.dir)
     try
-      let s:job_id_git = jobstart(cmd, {
+      let b:job_id_{a:vcs} = jobstart(cmd, {
             \ 'stdoutbuf':   [],
             \ 'vcs':         a:vcs,
             \ 'do_register': a:do_register,
             \ 'on_stdout':   function('s:callback_stdout_nvim'),
             \ 'on_exit':     function('s:callback_exit'),
             \ })
+      call sy#verbose('Running jobstart(). Job ID: '. b:job_id_{a:vcs})
     finally
       execute b:sy_info.chdir b:sy_info.cwd
     endtry
   else
     let diff = s:run(g:signify_vcs_cmds[a:vcs], b:sy_info.path)
-    call s:get_diff_end(v:shell_error, a:vcs, diff, a:do_register)
+    call s:get_diff_{a:vcs}(v:shell_error, diff, a:do_register)
   endif
 endfunction
 
 " Function: s:get_diff_end {{{1
-function! s:get_diff_end(exitcode, type, diff, do_register) abort
-  if !a:exitcode
+function! s:get_diff_end(found_diff, type, diff, do_register) abort
+  call sy#verbose('Running s:get_diff_end().')
+  if a:found_diff
     let b:sy.type = a:type
   endif
   if !a:do_register
@@ -79,68 +84,82 @@ endfunction
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git(exitcode, diff, do_register) abort
   call sy#verbose('Running get_diff_git().')
-  let [found_diff, diff] = a:exitcode ? [0, ''] : [1, join(self.stdoutbuf, "\n")]
-  call s:get_diff_end(found_diff, diff, self.do_register)
+  let [found_diff, diff] = a:exitcode ? [0, ''] : [1, a:diff]
+  call s:get_diff_end(found_diff, 'git', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_hg {{{1
-function! sy#repo#get_diff_hg() abort
-  let diff = s:run(g:signify_vcs_cmds.hg, b:sy_info.path)
-  return v:shell_error ? [0, ''] : [1, diff]
+function! sy#repo#get_diff_hg(exitcode, diff, do_register) abort
+  call sy#verbose('Running get_diff_hg().')
+  let [found_diff, diff] = v:shell_error ? [0, ''] : [1, a:diff]
+  call s:get_diff_end(found_diff, 'hg', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_svn {{{1
-function! sy#repo#get_diff_svn() abort
-  let diff = s:run(g:signify_vcs_cmds.svn, b:sy_info.path)
-  return v:shell_error ? [0, ''] : [1, diff]
+function! sy#repo#get_diff_svn(exitcode, diff, do_register) abort
+  call sy#verbose('Running get_diff_svn().')
+  let [found_diff, diff] = v:shell_error ? [0, ''] : [1, a:diff]
+  call s:get_diff_end(found_diff, 'svn', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_bzr {{{1
-function! sy#repo#get_diff_bzr() abort
-  let diff = s:run(g:signify_vcs_cmds.bzr, b:sy_info.path)
-  return (v:shell_error =~ '[012]') ? [1, diff] : [0, '']
+function! sy#repo#get_diff_bzr(exitcode, diff, do_register) abort
+  call sy#verbose('Running get_diff_bzr().')
+  let [found_diff, diff] = (v:shell_error =~ '[012]') ? [1, a:diff] : [0, '']
+  call s:get_diff_end(found_diff, 'bzr', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_darcs {{{1
-function! sy#repo#get_diff_darcs() abort
-  let diff = s:run(g:signify_vcs_cmds.darcs, b:sy_info.path)
-  return v:shell_error ? [0, ''] : [1, diff]
+function! sy#repo#get_diff_darcs(exitcode, diff, do_register) abort
+  call sy#verbose('Running get_diff_darcs().')
+  let [found_diff, diff] = v:shell_error ? [0, ''] : [1, a:diff]
+  call s:get_diff_end(found_diff, 'darcs', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_fossil {{{1
-function! sy#repo#get_diff_fossil() abort
-  let diff = s:run(g:signify_vcs_cmds.fossil, b:sy_info.path)
-  return v:shell_error ? [0, ''] : [1, diff]
+function! sy#repo#get_diff_fossil(exitcode, diff, do_register) abort
+  call sy#verbose('Running get_diff_fossil().')
+  let [found_diff, diff] = v:shell_error ? [0, ''] : [1, a:diff]
+  call s:get_diff_end(found_diff, 'fossil', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_cvs {{{1
-function! sy#repo#get_diff_cvs() abort
-  let diff = s:run(g:signify_vcs_cmds.cvs, b:sy_info.file)
-  return ((v:shell_error == 1) && (diff =~ '+++')) ? [1, diff] : [0, '']
+function! sy#repo#get_diff_cvs(exitcode, diff, do_register) abort
+  call sy#verbose('Running get_diff_cvs().')
+  let [found_diff, diff] = ((v:shell_error == 1) && (a:diff =~ '+++'))
+        \ ? [1, diff]
+        \ : [0, '']
+  call s:get_diff_end(found_diff, 'cvs', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_rcs {{{1
 function! sy#repo#get_diff_rcs() abort
-  let diff = s:run(g:signify_vcs_cmds.rcs, b:sy_info.path)
-  return v:shell_error ? [0, ''] : [1, diff]
+  call sy#verbose('Running get_diff_rcs().')
+  let [found_diff, diff] = v:shell_error ? [0, ''] : [1, a:diff]
+  call s:get_diff_end(found_diff, 'rcs', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_accurev {{{1
 function! sy#repo#get_diff_accurev() abort
-  let diff = s:run(g:signify_vcs_cmds.accurev, b:sy_info.file)
-  return (v:shell_error >= 2) ? [0, ''] : [1, diff]
+  call sy#verbose('Running get_diff_accurev().')
+  let [found_diff, diff] = (v:shell_error >= 2) ? [0, ''] : [1, a:diff]
+  call s:get_diff_end(found_diff, 'accurev', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce() abort
-  let diff = s:run(g:signify_vcs_cmds.perforce, b:sy_info.path)
-  return v:shell_error ? [0, ''] : [1, diff]
+  call sy#verbose('Running get_diff_perforce().')
+  let [found_diff, diff] = v:shell_error ? [0, ''] : [1, a:diff]
+  call s:get_diff_end(found_diff, 'perforce', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_tfs {{{1
 function! sy#repo#get_diff_tfs() abort
-  let diff = s:run(g:signify_vcs_cmds.tfs, b:sy_info.file)
-  return v:shell_error ? [0, ''] : [1, s:strip_context(diff)]
+  call sy#verbose('Running get_diff_tfs().')
+  let [found_diff, diff] = v:shell_error
+        \ ? [0, '']
+        \ : [1, s:strip_context(a:diff)]
+  call s:get_diff_end(found_diff, 'tfs', diff, a:do_register)
 endfunction
 
 " Function: #get_stats {{{1
