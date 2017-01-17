@@ -34,7 +34,8 @@ endfunction
 " Function: s:callback_exit {{{1
 function! s:callback_exit(_job_id, exitcode, _event) dict abort
   call sy#verbose('Running callback_exit().')
-  call s:get_diff_end(a:exitcode, join(self.stdoutbuf, "\n"), self.do_register)
+  call s:get_diff_end(a:exitcode, self.vcs, join(self.stdoutbuf, "\n"),
+        \ self.do_register)
 endfunction
 
 " Function: sy#get_diff_start {{{1
@@ -50,6 +51,7 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
     try
       let s:job_id_git = jobstart(cmd, {
             \ 'stdoutbuf':   [],
+            \ 'vcs':         a:vcs,
             \ 'do_register': a:do_register,
             \ 'on_stdout':   function('s:callback_stdout_nvim'),
             \ 'on_exit':     function('s:callback_exit'),
@@ -59,14 +61,14 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
     endtry
   else
     let diff = s:run(g:signify_vcs_cmds[a:vcs], b:sy_info.path)
-    call s:get_diff_end(v:shell_error, diff, a:do_register)
+    call s:get_diff_end(v:shell_error, a:vcs, diff, a:do_register)
   endif
 endfunction
 
 " Function: s:get_diff_end {{{1
-function! s:get_diff_end(exitcode, diff, do_register) abort
+function! s:get_diff_end(exitcode, type, diff, do_register) abort
   if !a:exitcode
-    let b:sy.type = 'git'
+    let b:sy.type = a:type
   endif
   if !a:do_register
     let b:sy.id_top = g:id_top
