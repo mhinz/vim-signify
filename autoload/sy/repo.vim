@@ -65,8 +65,8 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
     execute b:sy_info.chdir fnameescape(b:sy_info.dir)
     try
       let b:job_id_{a:vcs} = jobstart(cmd, extend(options, {
-            \ 'on_stdout':   function('s:callback_stdout_nvim'),
-            \ 'on_exit':     function('s:callback_exit'),
+            \ 'on_stdout': function('s:callback_stdout_nvim'),
+            \ 'on_exit':   function('s:callback_exit'),
             \ }))
       call sy#verbose('job_start()', a:vcs)
     finally
@@ -79,8 +79,8 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
     execute b:sy_info.chdir fnameescape(b:sy_info.dir)
     try
       let b:job_id_{a:vcs} = job_start(cmd, {
-            \ 'in_io':    'null',
-            \ 'out_cb':   function('s:callback_stdout_vim', options),
+            \ 'in_io':   'null',
+            \ 'out_cb':  function('s:callback_stdout_vim', options),
             \ 'exit_cb': function('s:callback_exit', options),
             \ })
       call sy#verbose('job_start()', a:vcs)
