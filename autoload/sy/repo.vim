@@ -16,19 +16,53 @@ function! sy#repo#detect() abort
   endif
 
   for type in vcs_list
-    let [istype, diff] = sy#repo#get_diff_{type}()
-    if istype
-      return [diff, type]
-    endif
+    call sy#repo#get_diff_{type}()
   endfor
+    " let [istype, diff] = sy#repo#get_diff_{type}()
+    " if istype
+    "   return [diff, type]
+    " endif
+  " endfor
 
-  return ['', 'unknown']
+  " return ['', 'unknown']
+endfunction
+
+" Function: s:callback_stdout_nvim {{{1
+function! s:callback_stdout_nvim(_job_id, data, _event) dict abort
+  if empty(self.stdoutbuf) || empty(self.stdoutbuf[-1])
+    let self.stdoutbuf += a:data
+  else
+    let self.stdoutbuf = self.stdoutbuf[:2]
+          \ + [self.stdoutbuf[-1] . get(a:data, 0, '')
+          \ + a:data[1:]
+  endif
+endfunction
+
+" Function: s:callback_exit {{{1
+function! s:callback_exit(_job_id, exitcode, _event) dict abort
+  let [found_diff, diff] = a:exitcode ? [0, ''] : [1, diff]
+  call sy#update_signs(found_diff, diff)
 endfunction
 
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git() abort
-  let diff = s:run(g:signify_vcs_cmds.git, b:sy_info.file)
-  return v:shell_error ? [0, ''] : [1, diff]
+  let cmd = (has('win32') && &shell =~ 'cmd')
+        \ ? g:signify_vcs_cmds.git
+        \ : ['sh', '-c', g:signify_vcs_cmds.git]
+  let cmd = s:expand_cmd(cmd, b:sy_info.file)
+  if exists('s:job_id_git')
+    silent! call jobstop(s:job_id_git)
+  endif
+  execute b:sy_info.chdir fnameescape(b:sy_info.dir)
+  try
+    let s:job_id_git = jobstart(cmd, {
+          \ 'stdoutbuf': [],
+          \ 'on_stdout': function('s:callback_stdout_nvim'),
+          \ 'on_exit':   function('s:callback_exit'),
+          \ })
+  finally
+    execute b:sy_info.chdir b:sy_info.cwd
+  endtry
 endfunction
 
 " Function: #get_diff_hg {{{1

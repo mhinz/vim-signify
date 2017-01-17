@@ -55,12 +55,52 @@ function! sy#start() abort
     " register buffer as active
     let b:sy.active = 1
 
-    let [ diff, b:sy.type ] = sy#repo#detect()
-    if b:sy.type == 'unknown'
-      call sy#disable()
-      return
-    endif
+    call sy#repo#detect(1)
+    " let [ diff, b:sy.type ] = sy#repo#detect()
+    " if b:sy.type == 'unknown'
+    "   call sy#disable()
+    "   return
+    " endif
 
+    " " register file as active with found VCS
+    " let b:sy.stats = [0, 0, 0]
+
+    " let dir = fnamemodify(b:sy.path, ':h')
+    " if !has_key(g:sy_cache, dir)
+    "   let g:sy_cache[dir] = b:sy.type
+    " endif
+
+    " if empty(diff)
+    "   " no changes found
+    "   return
+    " endif
+
+  " inactive buffer.. bail out
+  elseif !b:sy.active
+    return
+
+  " retry detecting VCS
+  elseif b:sy.type == 'unknown'
+    call sy#repo#detect(0)
+
+  " update signs
+  else
+    let diff = sy#repo#get_diff_{b:sy.type}()[1]
+    let b:sy.id_top = g:id_top
+  endif
+
+  call sy#update_signs(diff, type)
+endfunction
+
+function! sy#update_signs(diff, type, do_register) abort
+  if b:sy.type == 'unknown'
+    echomsg 'DEBUG: type unknown'
+    " no VCS found
+    call sy#disable()
+    return
+  endif
+
+  if do_register
     " register file as active with found VCS
     let b:sy.stats = [0, 0, 0]
 
@@ -73,24 +113,6 @@ function! sy#start() abort
       " no changes found
       return
     endif
-
-  " inactive buffer.. bail out
-  elseif !b:sy.active
-    return
-
-  " retry detecting VCS
-  elseif b:sy.type == 'unknown'
-    let [ diff, b:sy.type ] = sy#repo#detect()
-    if b:sy.type == 'unknown'
-      " no VCS found
-      call sy#disable()
-      return
-    endif
-
-  " update signs
-  else
-    let diff = sy#repo#get_diff_{b:sy.type}()[1]
-    let b:sy.id_top = g:id_top
   endif
 
   if get(g:, 'signify_line_highlight')
@@ -99,7 +121,7 @@ function! sy#start() abort
     call sy#highlight#line_disable()
   endif
 
-  call sy#sign#process_diff(diff)
+  call sy#sign#process_diff(a:diff)
 
   let b:sy.id_top = (g:id_top - 1)
 
