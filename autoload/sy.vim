@@ -8,6 +8,13 @@ let g:sy_cache = {}
 
 let s:has_doau_modeline = v:version > 703 || v:version == 703 && has('patch442')
 
+" Function: #verbose {{{1
+function! sy#verbose(msg) abort
+  if &verbose
+    echomsg printf('[sy] %s', a:msg)
+  endif
+endfunction
+
 " Function: #start {{{1
 function! sy#start() abort
   if g:signify_locked
@@ -24,9 +31,10 @@ function! sy#start() abort
     return
   endif
 
-
   function! s:chdir()
-    return haslocaldir() ? 'lcd' : (exists(':tcd') && haslocaldir(-1, 0)) ? 'tcd' : 'cd'
+    return haslocaldir()
+          \ ? 'lcd'
+          \ : (exists(':tcd') && haslocaldir(-1, 0)) ? 'tcd' : 'cd'
   endfunction
 
   " sy_info is used in autoload/sy/repo
@@ -38,8 +46,8 @@ function! sy#start() abort
         \ 'file':  sy#util#escape(fnamemodify(sy_path, ':t')),
         \ }
 
-  " new buffer.. add to list of registered files
   if !exists('b:sy') || b:sy.path != sy_path
+    call sy#verbose('Register new file: '. sy_path)
     let b:sy = {
           \ 'path'  : sy_path,
           \ 'buffer': bufnr(''),
@@ -51,65 +59,39 @@ function! sy#start() abort
     if get(g:, 'signify_disable_by_default')
       return
     endif
-
-    " register buffer as active
     let b:sy.active = 1
-
     call sy#repo#detect(1)
-    " let [ diff, b:sy.type ] = sy#repo#detect()
-    " if b:sy.type == 'unknown'
-    "   call sy#disable()
-    "   return
-    " endif
-
-    " " register file as active with found VCS
-    " let b:sy.stats = [0, 0, 0]
-
-    " let dir = fnamemodify(b:sy.path, ':h')
-    " if !has_key(g:sy_cache, dir)
-    "   let g:sy_cache[dir] = b:sy.type
-    " endif
-
-    " if empty(diff)
-    "   " no changes found
-    "   return
-    " endif
-
-  " inactive buffer.. bail out
   elseif !b:sy.active
+    call sy#verbose('Inactive buffer: '. sy_path)
     return
-
-  " retry detecting VCS
   elseif b:sy.type == 'unknown'
+    call sy#verbose('Retry detecting VCS: '. sy_path)
     call sy#repo#detect(0)
-
-  " update signs
   else
-    let diff = sy#repo#get_diff_{b:sy.type}()[1]
-    let b:sy.id_top = g:id_top
+    call sy#verbose('Update signs: '. sy_path)
+    call sy#repo#get_diff_{b:sy.type}(0)
   endif
-
-  call sy#update_signs(diff, type)
 endfunction
 
-function! sy#update_signs(diff, type, do_register) abort
-  if b:sy.type == 'unknown'
-    echomsg 'DEBUG: type unknown'
-    " no VCS found
-    call sy#disable()
-    return
-  endif
+function! sy#update_signs(diff, do_register) abort
+  " if b:sy.type == 'unknown'
+  "   echomsg 'DEBUG: type unknown'
+  "   " no VCS found
+  "   call sy#disable()
+  "   return
+  " endif
 
-  if do_register
+  if a:do_register
     " register file as active with found VCS
     let b:sy.stats = [0, 0, 0]
 
+    let dir = fnamemodify(b:sy.path, ':h')
     let dir = fnamemodify(b:sy.path, ':h')
     if !has_key(g:sy_cache, dir)
       let g:sy_cache[dir] = b:sy.type
     endif
 
-    if empty(diff)
+    if empty(a:diff)
       " no changes found
       return
     endif

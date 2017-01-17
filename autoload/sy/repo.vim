@@ -3,7 +3,7 @@
 scriptencoding utf-8
 
 " Function: #detect {{{1
-function! sy#repo#detect() abort
+function! sy#repo#detect(do_register) abort
   let vcs_list = s:vcs_list
   " Simple cache. If there is a registered VCS-controlled file in this
   " directory already, assume that this file is probably controlled by
@@ -16,7 +16,7 @@ function! sy#repo#detect() abort
   endif
 
   for type in vcs_list
-    call sy#repo#get_diff_{type}()
+    call sy#repo#get_diff_{type}(a:do_register)
   endfor
     " let [istype, diff] = sy#repo#get_diff_{type}()
     " if istype
@@ -40,25 +40,31 @@ endfunction
 
 " Function: s:callback_exit {{{1
 function! s:callback_exit(_job_id, exitcode, _event) dict abort
-  let [found_diff, diff] = a:exitcode ? [0, ''] : [1, diff]
-  call sy#update_signs(found_diff, diff)
+  let [found_diff, diff] = a:exitcode ? [0, ''] : [1, join(self.stdoutbuf, "\n")]
+  " echomsg 'DEBUG: '. diff
+  if found_diff
+    let b:sy.type = 'git'
+  endif
+  if !self.do_register
+    let b:sy.id_top = g:id_top
+  endif
+  call sy#update_signs(diff, self.do_register)
 endfunction
 
 " Function: #get_diff_git {{{1
-function! sy#repo#get_diff_git() abort
-  let cmd = (has('win32') && &shell =~ 'cmd')
-        \ ? g:signify_vcs_cmds.git
-        \ : ['sh', '-c', g:signify_vcs_cmds.git]
-  let cmd = s:expand_cmd(cmd, b:sy_info.file)
+function! sy#repo#get_diff_git(do_register) abort
+  let cmd = s:expand_cmd(g:signify_vcs_cmds.git, b:sy_info.file)
+  let cmd = (has('win32') && &shell =~ 'cmd')  ? cmd : ['sh', '-c', cmd]
   if exists('s:job_id_git')
     silent! call jobstop(s:job_id_git)
   endif
   execute b:sy_info.chdir fnameescape(b:sy_info.dir)
   try
     let s:job_id_git = jobstart(cmd, {
-          \ 'stdoutbuf': [],
-          \ 'on_stdout': function('s:callback_stdout_nvim'),
-          \ 'on_exit':   function('s:callback_exit'),
+          \ 'stdoutbuf':   [],
+          \ 'do_register': a:do_register,
+          \ 'on_stdout':   function('s:callback_stdout_nvim'),
+          \ 'on_exit':     function('s:callback_exit'),
           \ })
   finally
     execute b:sy_info.chdir b:sy_info.cwd
