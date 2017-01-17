@@ -40,19 +40,20 @@ endfunction
 
 " Function: s:callback_exit {{{1
 function! s:callback_exit(_job_id, exitcode, _event) dict abort
+  call sy#verbose('Running callback_exit(). Exit code: '. a:exitcode)
   let [found_diff, diff] = a:exitcode ? [0, ''] : [1, join(self.stdoutbuf, "\n")]
-  " echomsg 'DEBUG: '. diff
   if found_diff
     let b:sy.type = 'git'
   endif
   if !self.do_register
     let b:sy.id_top = g:id_top
   endif
-  call sy#update_signs(diff, self.do_register)
+  call sy#set_signs(diff, self.do_register)
 endfunction
 
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git(do_register) abort
+  call sy#verbose('Running get_diff_git().')
   let cmd = s:expand_cmd(g:signify_vcs_cmds.git, b:sy_info.file)
   let cmd = (has('win32') && &shell =~ 'cmd')  ? cmd : ['sh', '-c', cmd]
   if exists('s:job_id_git')

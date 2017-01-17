@@ -18,12 +18,14 @@ endfunction
 " Function: #start {{{1
 function! sy#start() abort
   if g:signify_locked
+    call sy#verbose('Locked.')
     return
   endif
 
   let sy_path = resolve(expand('%:p'))
 
   if s:skip(sy_path)
+    call sy#verbose('Skip file.')
     if exists('b:sy')
       call sy#sign#remove_all_signs(bufnr(''))
       unlet! b:sy b:sy_info
@@ -47,7 +49,7 @@ function! sy#start() abort
         \ }
 
   if !exists('b:sy') || b:sy.path != sy_path
-    call sy#verbose('Register new file: '. sy_path)
+    call sy#verbose('Register new file.')
     let b:sy = {
           \ 'path'  : sy_path,
           \ 'buffer': bufnr(''),
@@ -57,42 +59,39 @@ function! sy#start() abort
           \ 'id_top': g:id_top,
           \ 'stats' : [-1, -1, -1] }
     if get(g:, 'signify_disable_by_default')
+      call sy#verbose('Disabled by default.')
       return
     endif
     let b:sy.active = 1
     call sy#repo#detect(1)
   elseif !b:sy.active
-    call sy#verbose('Inactive buffer: '. sy_path)
+    call sy#verbose('Inactive buffer.')
     return
   elseif b:sy.type == 'unknown'
-    call sy#verbose('Retry detecting VCS: '. sy_path)
+    call sy#verbose('Retry detecting VCS.')
     call sy#repo#detect(0)
   else
-    call sy#verbose('Update signs: '. sy_path)
+    call sy#verbose('Updating signs.')
     call sy#repo#get_diff_{b:sy.type}(0)
   endif
 endfunction
 
-function! sy#update_signs(diff, do_register) abort
-  " if b:sy.type == 'unknown'
-  "   echomsg 'DEBUG: type unknown'
-  "   " no VCS found
-  "   call sy#disable()
-  "   return
-  " endif
+function! sy#set_signs(diff, do_register) abort
+  if b:sy.type == 'unknown'
+    call sy#verbose('No VCS found. Disabling.')
+    call sy#disable()
+    return
+  endif
 
   if a:do_register
     " register file as active with found VCS
     let b:sy.stats = [0, 0, 0]
-
-    let dir = fnamemodify(b:sy.path, ':h')
     let dir = fnamemodify(b:sy.path, ':h')
     if !has_key(g:sy_cache, dir)
       let g:sy_cache[dir] = b:sy.type
     endif
-
     if empty(a:diff)
-      " no changes found
+      call sy#verbose('No changes found.')
       return
     endif
   endif
@@ -104,7 +103,6 @@ function! sy#update_signs(diff, do_register) abort
   endif
 
   call sy#sign#process_diff(a:diff)
-
   let b:sy.id_top = (g:id_top - 1)
 
   if exists('#User#Signify')
