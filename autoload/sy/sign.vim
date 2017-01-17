@@ -58,7 +58,7 @@ function! sy#sign#process_diff(diff) abort
   call sy#sign#get_current_signs()
 
   " Determine where we have to put our signs.
-  for line in filter(split(a:diff, '\n'), 'v:val =~ "^@@ "')
+  for line in filter(a:diff, 'v:val =~ "^@@ "')
     let b:sy.lines = []
     let ids        = []
 
