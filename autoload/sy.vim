@@ -150,9 +150,9 @@ function! sy#buffer_is_active()
 endfunction
 
 " Function: #verbose {{{1
-function! sy#verbose(msg) abort
+function! sy#verbose(msg, ...) abort
   if &verbose
-    echomsg printf('[sy] %s', a:msg)
+    echomsg printf('[sy%s] %s', (a:0 ? ':'.a:1 : ''), a:msg)
   endif
 endfunction
 
