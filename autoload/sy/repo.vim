@@ -48,20 +48,11 @@ endfunction
 function! sy#repo#get_diff_start(vcs, do_register) abort
   call sy#verbose('s:get_diff_start()', a:vcs)
 
-  let options = {
-        \ 'stdoutbuf':   [],
-        \ 'vcs':         a:vcs,
-        \ 'do_register': a:do_register,
-        \ 'winid':       win_getid(),
-        \ }
-
-  let cmd = s:expand_cmd(a:vcs)
-  let cmd = (has('win32') && &shell =~ 'cmd')  ? cmd : ['sh', '-c', cmd]
-
   if has('nvim')
     if exists('b:job_id_'.a:vcs)
       silent! call jobstop(b:job_id_{a:vcs})
     endif
+    let [cmd, options] = s:initialize_job(a:vcs, a:do_register)
     execute b:sy_info.chdir fnameescape(b:sy_info.dir)
     try
       let b:job_id_{a:vcs} = jobstart(cmd, extend(options, {
@@ -76,6 +67,7 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
     if exists('b:job_id_'.a:vcs)
       silent! call job_stop(b:job_id_{a:vcs})
     endif
+    let [cmd, options] = s:initialize_job(a:vcs, a:do_register)
     execute b:sy_info.chdir fnameescape(b:sy_info.dir)
     try
       let b:job_id_{a:vcs} = job_start(cmd, {
@@ -217,6 +209,19 @@ function! sy#repo#debug_detection()
     endif
     echo "\n"
   endfor
+endfunction
+
+" Function: s:initialize_job {{{1
+function! s:initialize_job(vcs, do_register) abort
+  let cmd = s:expand_cmd(a:vcs)
+  let cmd = (has('win32') && &shell =~ 'cmd')  ? cmd : ['sh', '-c', cmd]
+  let options = {
+        \ 'stdoutbuf':   [],
+        \ 'vcs':         a:vcs,
+        \ 'do_register': a:do_register,
+        \ 'winid':       win_getid(),
+        \ }
+  return [cmd, options]
 endfunction
 
 " Function: s:get_vcs_path {{{1
