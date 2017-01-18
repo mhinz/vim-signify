@@ -69,7 +69,10 @@ function! sy#start() abort
   endif
 endfunction
 
+" Function: #set_signs {{{1
 function! sy#set_signs(diff, do_register) abort
+  call sy#verbose('s:set_signs()', b:sy.vcs)
+
   if b:sy.vcs == 'unknown'
     call sy#verbose('No VCS found. Disabling.')
     call sy#disable()
@@ -84,7 +87,7 @@ function! sy#set_signs(diff, do_register) abort
       let g:sy_cache[dir] = b:sy.vcs
     endif
     if empty(a:diff)
-      call sy#verbose('No changes found.')
+      call sy#verbose('No changes found.', b:sy.vcs)
       return
     endif
   endif
