@@ -25,16 +25,8 @@ function! sy#start() abort
     return
   endif
 
-  function! s:chdir()
-    return haslocaldir()
-          \ ? 'lcd'
-          \ : (exists(':tcd') && haslocaldir(-1, 0)) ? 'tcd' : 'cd'
-  endfunction
-
   " sy_info is used in autoload/sy/repo
   let b:sy_info = {
-        \ 'chdir': s:chdir(),
-        \ 'cwd':   fnameescape(getcwd()),
         \ 'dir':   fnamemodify(sy_path, ':p:h'),
         \ 'path':  sy#util#escape(sy_path),
         \ 'file':  sy#util#escape(fnamemodify(sy_path, ':t')),

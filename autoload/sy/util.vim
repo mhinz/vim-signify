@@ -79,3 +79,11 @@ function! sy#util#shell_redirect(path) abort
     return &shellredir .' '. a:path
   endif
 endfunction
+
+" Function: #chdir {{{1
+function! sy#util#chdir() abort
+  let chdir = haslocaldir()
+        \ ? 'lcd'
+        \ : (exists(':tcd') && haslocaldir(-1, 0)) ? 'tcd' : 'cd'
+  return [getcwd(), chdir]
+endfunction

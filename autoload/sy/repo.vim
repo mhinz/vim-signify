@@ -48,37 +48,46 @@ endfunction
 function! sy#repo#get_diff_start(vcs, do_register) abort
   call sy#verbose('s:get_diff_start()', a:vcs)
 
+  " Neovim
   if has('nvim')
     if exists('b:job_id_'.a:vcs)
       silent! call jobstop(b:job_id_{a:vcs})
     endif
+
     let [cmd, options] = s:initialize_job(a:vcs, a:do_register)
-    execute b:sy_info.chdir fnameescape(b:sy_info.dir)
+    let [cwd, chdir] = sy#util#chdir()
+
     try
+      execute chdir fnameescape(b:sy_info.dir)
       let b:job_id_{a:vcs} = jobstart(cmd, extend(options, {
             \ 'on_stdout': function('s:callback_stdout_nvim'),
             \ 'on_exit':   function('s:callback_exit'),
             \ }))
-      call sy#verbose('job_start()', a:vcs)
     finally
-      execute b:sy_info.chdir b:sy_info.cwd
+      execute chdir fnameescape(cwd)
     endtry
+
+  " Newer Vim
   elseif v:version > 704 || v:version == 704 && has('patch1967')
     if exists('b:job_id_'.a:vcs)
       silent! call job_stop(b:job_id_{a:vcs})
     endif
+
     let [cmd, options] = s:initialize_job(a:vcs, a:do_register)
-    execute b:sy_info.chdir fnameescape(b:sy_info.dir)
+    let [cwd, chdir] = sy#util#chdir()
+
     try
+      execute chdir fnameescape(b:sy_info.dir)
       let b:job_id_{a:vcs} = job_start(cmd, {
             \ 'in_io':   'null',
             \ 'out_cb':  function('s:callback_stdout_vim', options),
             \ 'exit_cb': function('s:callback_exit', options),
             \ })
-      call sy#verbose('job_start()', a:vcs)
     finally
-      execute b:sy_info.chdir b:sy_info.cwd
+      execute chdir fnameescape(cwd)
     endtry
+
+  " Older Vim
   else
     let diff = split(s:run(a:vcs), '\n')
     call sy#repo#get_diff_{a:vcs}(v:shell_error, diff, a:do_register)
@@ -238,15 +247,16 @@ endfunction
 
 " Function: s:run {{{1
 function! s:run(vcs)
-  execute b:sy_info.chdir fnameescape(b:sy_info.dir)
+  let [cwd, chdir] = sy#util#chdir()
   try
+    execute chdir fnameescape(b:sy_info.dir)
     let ret = system(s:expand_cmd(a:vcs))
   catch
     " This exception message can be seen via :SignifyDebugUnknown.
     " E.g. unquoted VCS programs in vcd_cmds can lead to E484.
     let ret = v:exception .' at '. v:throwpoint
   finally
-    execute b:sy_info.chdir b:sy_info.cwd
+    execute chdir fnameescape(cwd)
     return ret
   endtry
 endfunction
