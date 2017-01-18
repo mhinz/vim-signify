@@ -39,6 +39,7 @@ endfunction
 " Function: s:callback_exit {{{1
 function! s:callback_exit(job_id, exitval) dict abort
   call sy#verbose('s:callback_exit()', self.vcs)
+  call win_gotoid(self.winid)
   call sy#repo#get_diff_{self.vcs}(a:exitval, self.stdoutbuf, self.do_register)
   silent! unlet b:job_id_{self.vcs}
 endfunction
@@ -51,6 +52,7 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
         \ 'stdoutbuf':   [],
         \ 'vcs':         a:vcs,
         \ 'do_register': a:do_register,
+        \ 'winid':       win_getid(),
         \ }
 
   let cmd = s:expand_cmd(a:vcs)
