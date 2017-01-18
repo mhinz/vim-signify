@@ -38,7 +38,7 @@ endfunction
 
 " Function: s:callback_exit {{{1
 function! s:callback_exit(job_id, exitval) dict abort
-  call sy#verbose('s:callback_exit()', self.vcs)
+  call sy#verbose('callback_exit()', self.vcs)
   call win_gotoid(self.winid)
   call sy#repo#get_diff_{self.vcs}(a:exitval, self.stdoutbuf, self.do_register)
   silent! unlet b:job_id_{self.vcs}
@@ -46,7 +46,7 @@ endfunction
 
 " Function: sy#get_diff_start {{{1
 function! sy#repo#get_diff_start(vcs, do_register) abort
-  call sy#verbose('s:get_diff_start()', a:vcs)
+  call sy#verbose('get_diff_start()', a:vcs)
 
   " Neovim
   if has('nvim')
@@ -96,7 +96,7 @@ endfunction
 
 " Function: s:get_diff_end {{{1
 function! s:get_diff_end(found_diff, vcs, diff, do_register) abort
-  call sy#verbose('s:get_diff_end()', a:vcs)
+  call sy#verbose('get_diff_end()', a:vcs)
   if a:found_diff
     let b:sy.vcs = a:vcs
     call sy#set_signs(a:diff, a:do_register)

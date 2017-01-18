@@ -62,7 +62,7 @@ endfunction
 
 " Function: #set_signs {{{1
 function! sy#set_signs(diff, do_register) abort
-  call sy#verbose('s:set_signs()', b:sy.vcs)
+  call sy#verbose('set_signs()', b:sy.vcs)
 
   if a:do_register
     let b:sy.stats = [0, 0, 0]
