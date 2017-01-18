@@ -80,7 +80,7 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
       execute b:sy_info.chdir b:sy_info.cwd
     endtry
   else
-    let diff = split(s:run(g:signify_vcs_cmds[a:vcs], b:sy_info.path), '\n')
+    let diff = split(s:run(a:vcs), '\n')
     call sy#repo#get_diff_{a:vcs}(v:shell_error, diff, a:do_register)
   endif
 endfunction
@@ -88,9 +88,6 @@ endfunction
 " Function: s:get_diff_end {{{1
 function! s:get_diff_end(found_diff, vcs, diff, do_register) abort
   call sy#verbose('s:get_diff_end()', a:vcs)
-  if !a:do_register
-    let b:sy.id_top = g:id_top
-  endif
   if a:found_diff
     let b:sy.vcs = a:vcs
     call sy#set_signs(a:diff, a:do_register)

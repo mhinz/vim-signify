@@ -3,7 +3,6 @@
 scriptencoding utf-8
 
 " Init: values {{{1
-let g:id_top = 0x100
 let g:sy_cache = {}
 
 let s:has_doau_modeline = v:version > 703 || v:version == 703 && has('patch442')
@@ -49,7 +48,7 @@ function! sy#start() abort
           \ 'active': 0,
           \ 'vcs'   : 'unknown',
           \ 'hunks' : [],
-          \ 'id_top': g:id_top,
+          \ 'signid': 0x100,
           \ 'stats' : [-1, -1, -1] }
     if get(g:, 'signify_disable_by_default')
       call sy#verbose('Disabled by default.')
@@ -92,7 +91,6 @@ function! sy#set_signs(diff, do_register) abort
   endif
 
   call sy#sign#process_diff(a:diff)
-  let b:sy.id_top = (g:id_top - 1)
 
   if exists('#User#Signify')
     execute 'doautocmd' (s:has_doau_modeline ? '<nomodeline>' : '') 'User Signify'

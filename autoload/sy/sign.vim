@@ -12,11 +12,11 @@ else
 endif
 let s:delete_highlight = ['', 'SignifyLineDelete']
 
-" Function: #get_next_id {{{1
-function! sy#sign#get_next_id() abort
-  let tmp = g:id_top
-  let g:id_top += 1
-  return tmp
+" Function: #id_next {{{1
+function! sy#sign#id_next() abort
+  let id = b:sy.signid
+  let b:sy.signid += 1
+  return id
 endfunction
 
 " Function: #get_current_signs {{{1
@@ -196,7 +196,7 @@ function! sy#sign#remove_all_signs(bufnr) abort
 
   for hunk in sy.hunks
     for id in hunk.ids
-      execute 'sign unplace' id
+      execute 'sign unplace' id 'buffer='.a:bufnr
     endfor
   endfor
 
@@ -220,7 +220,7 @@ function! s:add_sign(line, type, ...) abort
   endif
 
   if !exists('id')
-    let id = sy#sign#get_next_id()
+    let id = sy#sign#id_next()
   endif
 
   if a:type =~# 'SignifyDelete'
