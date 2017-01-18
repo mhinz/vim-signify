@@ -61,8 +61,8 @@ function! sy#start() abort
     call sy#verbose('Inactive buffer.')
     return
   elseif b:sy.vcs == 'unknown'
-    call sy#verbose('Retry detecting VCS.')
-    call sy#repo#detect(0)
+    call sy#verbose('No VCS found. Disabling.')
+    call sy#disable()
   else
     call sy#verbose('Updating signs.')
     call sy#repo#get_diff_start(b:sy.vcs, 0)
@@ -73,14 +73,7 @@ endfunction
 function! sy#set_signs(diff, do_register) abort
   call sy#verbose('s:set_signs()', b:sy.vcs)
 
-  if b:sy.vcs == 'unknown'
-    call sy#verbose('No VCS found. Disabling.')
-    call sy#disable()
-    return
-  endif
-
   if a:do_register
-    " register file as active with found VCS
     let b:sy.stats = [0, 0, 0]
     let dir = fnamemodify(b:sy.path, ':h')
     if !has_key(g:sy_cache, dir)
@@ -118,15 +111,8 @@ endfunction
 
 " Function: #enable {{{1
 function! sy#enable() abort
-  if !exists('b:sy')
-    call sy#start()
-    return
-  endif
-
-  if !b:sy.active
-    let b:sy.active = 1
-    call sy#start()
-  endif
+  silent! unlet b:sy b:sy_info
+  call sy#start()
 endfunction
 
 " Function: #disable {{{1
