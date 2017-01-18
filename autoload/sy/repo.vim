@@ -15,8 +15,8 @@ function! sy#repo#detect(do_register) abort
           \        g:sy_cache[b:sy_info.dir] .'"')
   endif
 
-  for type in vcs_list
-    call sy#repo#get_diff_start(type, a:do_register)
+  for vcs in vcs_list
+    call sy#repo#get_diff_start(vcs, a:do_register)
   endfor
 endfunction
 
@@ -55,7 +55,7 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
         \ 'do_register': a:do_register,
         \ }
 
-  let cmd = s:expand_cmd(g:signify_vcs_cmds[a:vcs], b:sy_info.file)
+  let cmd = s:expand_cmd(a:vcs)
   let cmd = (has('win32') && &shell =~ 'cmd')  ? cmd : ['sh', '-c', cmd]
 
   if has('nvim')
@@ -94,10 +94,10 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
 endfunction
 
 " Function: s:get_diff_end {{{1
-function! s:get_diff_end(found_diff, type, diff, do_register) abort
-  call sy#verbose('s:get_diff_end()', a:type)
+function! s:get_diff_end(found_diff, vcs, diff, do_register) abort
+  call sy#verbose('s:get_diff_end()', a:vcs)
   if a:found_diff
-    let b:sy.type = a:type
+    let b:sy.vcs = a:vcs
   endif
   if !a:do_register
     let b:sy.id_top = g:id_top
@@ -202,28 +202,14 @@ function! sy#repo#debug_detection()
     return
   endif
 
-  let vcs_args = {
-        \ 'git':      [g:signify_vcs_cmds.git,      b:sy_info.file],
-        \ 'hg':       [g:signify_vcs_cmds.hg,       b:sy_info.path],
-        \ 'svn':      [g:signify_vcs_cmds.svn,      b:sy_info.path],
-        \ 'darcs':    [g:signify_vcs_cmds.darcs,    b:sy_info.path],
-        \ 'bzr':      [g:signify_vcs_cmds.bzr,      b:sy_info.path],
-        \ 'fossil':   [g:signify_vcs_cmds.fossil,   b:sy_info.path],
-        \ 'cvs':      [g:signify_vcs_cmds.cvs,      b:sy_info.file],
-        \ 'rcs':      [g:signify_vcs_cmds.rcs,      b:sy_info.path],
-        \ 'accurev':  [g:signify_vcs_cmds.accurev,  b:sy_info.file],
-        \ 'perforce': [g:signify_vcs_cmds.perforce, b:sy_info.path],
-        \ 'tfs':      [g:signify_vcs_cmds.tfs,      b:sy_info.file],
-        \ }
-
   for vcs in s:vcs_list
-    let cmd = s:expand_cmd(vcs_args[vcs][0], vcs_args[vcs][1])
+    let cmd = s:expand_cmd(vcs)
     echohl Statement
     echo cmd
     echo repeat('=', len(cmd))
     echohl NONE
 
-    let diff = call('s:run', vcs_args[vcs])
+    let diff = s:run(vcs)
     if v:shell_error
       echohl ErrorMsg
       echo diff
@@ -235,20 +221,26 @@ function! sy#repo#debug_detection()
   endfor
 endfunction
 
+" Function: s:get_vcs_path {{{1
+function! s:get_vcs_path(vcs) abort
+  return (a:vcs =~# '\v(git|cvs|accurev|tfs)') ? b:sy_info.file : b:sy_info.path
+endfunction
+
 " Function: s:expand_cmd {{{1
-function! s:expand_cmd(cmd, path) abort
-  let cmd = s:replace(a:cmd, '%f', a:path)
-  let cmd = s:replace(cmd,   '%d', s:difftool)
-  let cmd = s:replace(cmd,   '%n', s:devnull)
+function! s:expand_cmd(vcs) abort
+  let cmd = g:signify_vcs_cmds[a:vcs]
+  let cmd = s:replace(cmd, '%f', s:get_vcs_path(a:vcs))
+  let cmd = s:replace(cmd, '%d', s:difftool)
+  let cmd = s:replace(cmd, '%n', s:devnull)
   let b:sy_info.cmd = cmd
   return cmd
 endfunction
 
 " Function: s:run {{{1
-function! s:run(cmd, path)
+function! s:run(vcs)
   execute b:sy_info.chdir fnameescape(b:sy_info.dir)
   try
-    let ret = system(s:expand_cmd(a:cmd, a:path))
+    let ret = system(s:expand_cmd(a:vcs))
   catch
     " This exception message can be seen via :SignifyDebugUnknown.
     " E.g. unquoted VCS programs in vcd_cmds can lead to E484.

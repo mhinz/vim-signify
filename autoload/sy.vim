@@ -47,7 +47,7 @@ function! sy#start() abort
           \ 'path'  : sy_path,
           \ 'buffer': bufnr(''),
           \ 'active': 0,
-          \ 'type'  : 'unknown',
+          \ 'vcs'   : 'unknown',
           \ 'hunks' : [],
           \ 'id_top': g:id_top,
           \ 'stats' : [-1, -1, -1] }
@@ -60,17 +60,17 @@ function! sy#start() abort
   elseif !b:sy.active
     call sy#verbose('Inactive buffer.')
     return
-  elseif b:sy.type == 'unknown'
+  elseif b:sy.vcs == 'unknown'
     call sy#verbose('Retry detecting VCS.')
     call sy#repo#detect(0)
   else
     call sy#verbose('Updating signs.')
-    call sy#repo#get_diff_start(b:sy.type, 0)
+    call sy#repo#get_diff_start(b:sy.vcs, 0)
   endif
 endfunction
 
 function! sy#set_signs(diff, do_register) abort
-  if b:sy.type == 'unknown'
+  if b:sy.vcs == 'unknown'
     call sy#verbose('No VCS found. Disabling.')
     call sy#disable()
     return
@@ -81,7 +81,7 @@ function! sy#set_signs(diff, do_register) abort
     let b:sy.stats = [0, 0, 0]
     let dir = fnamemodify(b:sy.path, ':h')
     if !has_key(g:sy_cache, dir)
-      let g:sy_cache[dir] = b:sy.type
+      let g:sy_cache[dir] = b:sy.vcs
     endif
     if empty(a:diff)
       call sy#verbose('No changes found.')
