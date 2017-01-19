@@ -59,6 +59,7 @@ function! sy#sign#process_diff(diff) abort
 
   " Determine where we have to put our signs.
   for line in filter(split(a:diff, '\n'), 'v:val =~ "^@@ "')
+    let l:change_type = ''
     let b:sy.lines = []
     let ids        = []
 
@@ -83,6 +84,7 @@ function! sy#sign#process_diff(diff) abort
         let offset += 1
         if s:external_sign_present(line) | continue | endif
         call add(ids, s:add_sign(line, 'SignifyAdd'))
+        let l:change_type = 'SignifyAdd'
       endwhile
 
     " 2 lines removed:
@@ -95,6 +97,7 @@ function! sy#sign#process_diff(diff) abort
       let deleted += old_count
       if new_line == 0
         call add(ids, s:add_sign(1, 'SignifyRemoveFirstLine'))
+        let l:change_type = 'SignifyRemoveFirstLine'
       elseif s:sign_show_count
         if old_count <= 99
           let text = substitute(s:sign_delete . old_count, '.*\ze..$', '', '')
@@ -102,8 +105,10 @@ function! sy#sign#process_diff(diff) abort
           let text = s:sign_delete .'>'
         endif
         call add(ids, s:add_sign(new_line, 'SignifyDelete'. old_count, text))
+        let l:change_type = 'SignifyDelete' . old_count
       else
         call add(ids, s:add_sign(new_line, 'SignifyDeleteMore', s:sign_delete))
+        let l:change_type = 'SignifyDeleteMore'
       endif
 
     " 2 lines changed:
@@ -122,6 +127,7 @@ function! sy#sign#process_diff(diff) abort
         if s:external_sign_present(line) | continue | endif
         call add(ids, s:add_sign(line, 'SignifyChange'))
       endwhile
+      let l:change_type = 'SignifyChange'
     else
 
       " 2 lines changed; 2 lines removed:
@@ -147,6 +153,7 @@ function! sy#sign#process_diff(diff) abort
         let line = new_line + offset
         if s:external_sign_present(line) | continue | endif
         call add(ids, s:add_sign(line, (removed > 9) ? 'SignifyChangeDeleteMore' : 'SignifyChangeDelete'. removed))
+        let l:change_type = (removed > 9) ? 'SignifyChangeDeleteMore' : 'SignifyChangeDelete'. removed
 
       " lines changed and added:
 
@@ -164,12 +171,14 @@ function! sy#sign#process_diff(diff) abort
           if s:external_sign_present(line) | continue | endif
           call add(ids, s:add_sign(line, 'SignifyChange'))
           let added += 1
+          let l:change_type = 'SignifyChange'
         endwhile
         while offset < new_count
           let line    = new_line + offset
           let offset += 1
           if s:external_sign_present(line) | continue | endif
           call add(ids, s:add_sign(line, 'SignifyAdd'))
+          let l:change_type = 'SignifyAdd'
         endwhile
       endif
     endif
@@ -178,7 +187,8 @@ function! sy#sign#process_diff(diff) abort
       call add(b:sy.hunks, {
             \ 'ids'  : ids,
             \ 'start': b:sy.lines[0],
-            \ 'end'  : b:sy.lines[-1] })
+            \ 'end'  : b:sy.lines[-1],
+            \ 'type' : l:change_type })
     endif
   endfor
 
