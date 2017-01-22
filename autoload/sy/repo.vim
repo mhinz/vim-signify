@@ -37,7 +37,7 @@ function! s:callback_stdout_vim(_job_id, data) dict abort
 endfunction
 
 " Function: s:callback_exit {{{1
-function! s:callback_exit(job_id, exitval) dict abort
+function! s:callback_exit(job_id, exitval, ...) dict abort
   call sy#verbose('callback_exit()', self.vcs)
   call win_gotoid(self.winid)
   call sy#repo#get_diff_{self.vcs}(a:exitval, self.stdoutbuf, self.do_register)
