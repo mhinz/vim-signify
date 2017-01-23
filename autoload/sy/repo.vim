@@ -155,28 +155,28 @@ function! sy#repo#get_diff_cvs(exitval, diff, do_register) abort
 endfunction
 
 " Function: #get_diff_rcs {{{1
-function! sy#repo#get_diff_rcs() abort
+function! sy#repo#get_diff_rcs(exitval, diff, do_register) abort
   call sy#verbose('get_diff_rcs()', 'rcs')
   let [found_diff, diff] = a:exitval ? [0, ''] : [1, a:diff]
   call s:get_diff_end(found_diff, 'rcs', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_accurev {{{1
-function! sy#repo#get_diff_accurev() abort
+function! sy#repo#get_diff_accurev(exitval, diff, do_register) abort
   call sy#verbose('get_diff_accurev()', 'accurev')
   let [found_diff, diff] = (a:exitval >= 2) ? [0, ''] : [1, a:diff]
   call s:get_diff_end(found_diff, 'accurev', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_perforce {{{1
-function! sy#repo#get_diff_perforce() abort
+function! sy#repo#get_diff_perforce(exitval, diff, do_register) abort
   call sy#verbose('get_diff_perforce()', 'perforce')
   let [found_diff, diff] = a:exitval ? [0, ''] : [1, a:diff]
   call s:get_diff_end(found_diff, 'perforce', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_tfs {{{1
-function! sy#repo#get_diff_tfs() abort
+function! sy#repo#get_diff_tfs(exitval, diff, do_register) abort
   call sy#verbose('get_diff_tfs()', 'tfs')
   let [found_diff, diff] = a:exitval ? [0, ''] : [1, s:strip_context(a:diff)]
   call s:get_diff_end(found_diff, 'tfs', diff, a:do_register)
