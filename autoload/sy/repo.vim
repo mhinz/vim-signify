@@ -40,6 +40,9 @@ endfunction
 function! s:callback_exit(job_id, exitval, ...) dict abort
   call sy#verbose('callback_exit()', self.vcs)
   call win_gotoid(self.winid)
+  if self.bufnr != bufnr('%')
+    return
+  endif
   call sy#repo#get_diff_{self.vcs}(a:exitval, self.stdoutbuf, self.do_register)
   silent! unlet b:job_id_{self.vcs}
 endfunction
@@ -231,6 +234,7 @@ function! s:initialize_job(vcs, do_register) abort
         \ 'stdoutbuf':   [],
         \ 'vcs':         a:vcs,
         \ 'do_register': a:do_register,
+        \ 'bufnr':       bufnr('%'),
         \ 'winid':       win_getid(),
         \ }
   return [cmd, options]
