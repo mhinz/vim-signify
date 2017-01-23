@@ -148,9 +148,15 @@ endfunction
 " Function: #get_diff_cvs {{{1
 function! sy#repo#get_diff_cvs(exitval, diff, do_register) abort
   call sy#verbose('get_diff_cvs()', 'cvs')
-  let [found_diff, diff] = ((a:exitval == 1) && (a:diff =~ '+++'))
-        \ ? [1, diff]
-        \ : [0, '']
+  let [found_diff, diff] = [0, '']
+  if a:exitval == 1
+    for diffline in a:diff
+      if diffline =~ '+++'
+        let [found_diff, diff] = [1, a:diff]
+        break
+      endif
+    endfor
+  endif
   call s:get_diff_end(found_diff, 'cvs', diff, a:do_register)
 endfunction
 
