@@ -39,7 +39,7 @@ function! sy#sign#get_current_signs() abort
       " Removing line 3 would lead to the second sign to be shifted up
       " to line 3. Now there are still 2 signs, both one line 3.
       if has_key(b:sy.internal, line)
-        execute 'sign unplace' b:sy.internal[line].id
+        execute 'sign unplace' b:sy.internal[line].id 'buffer='.b:sy.buffer
       endif
       let b:sy.internal[line] = { 'type': type, 'id': id }
     else
@@ -184,7 +184,7 @@ function! sy#sign#process_diff(diff) abort
 
   " Remove obsoleted signs.
   for line in filter(keys(b:sy.internal), '!has_key(b:sy.signtable, v:val)')
-    execute 'sign unplace' b:sy.internal[line].id
+    execute 'sign unplace' b:sy.internal[line].id 'buffer='.b:sy.buffer
   endfor
 
   let b:sy.stats = [added, modified, deleted]
@@ -243,7 +243,7 @@ function! s:external_sign_present(line) abort
   if has_key(b:sy.external, a:line)
     if has_key(b:sy.internal, a:line)
       " Remove Sy signs from lines with other signs.
-      execute 'sign unplace' b:sy.internal[a:line].id
+      execute 'sign unplace' b:sy.internal[a:line].id 'buffer='.b:sy.buffer
     endif
     return 1
   endif
