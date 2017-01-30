@@ -13,19 +13,19 @@ endif
 let s:delete_highlight = ['', 'SignifyLineDelete']
 
 " Function: #id_next {{{1
-function! sy#sign#id_next() abort
-  let id = b:sy.signid
-  let b:sy.signid += 1
+function! sy#sign#id_next(sy) abort
+  let id = a:sy.signid
+  let a:sy.signid += 1
   return id
 endfunction
 
 " Function: #get_current_signs {{{1
-function! sy#sign#get_current_signs() abort
-  let b:sy.internal = {}
-  let b:sy.external = {}
+function! sy#sign#get_current_signs(sy) abort
+  let a:sy.internal = {}
+  let a:sy.external = {}
 
   redir => signlist
-    silent! execute 'sign place buffer='. b:sy.buffer
+    silent! execute 'sign place buffer='. a:sy.buffer
   redir END
 
   for signline in split(signlist, '\n')[2:]
@@ -38,28 +38,28 @@ function! sy#sign#get_current_signs() abort
       " Handle ambiguous signs. Assume you have signs on line 3 and 4.
       " Removing line 3 would lead to the second sign to be shifted up
       " to line 3. Now there are still 2 signs, both one line 3.
-      if has_key(b:sy.internal, line)
-        execute 'sign unplace' b:sy.internal[line].id 'buffer='.b:sy.buffer
+      if has_key(a:sy.internal, line)
+        execute 'sign unplace' a:sy.internal[line].id 'buffer='.a:sy.buffer
       endif
-      let b:sy.internal[line] = { 'type': type, 'id': id }
+      let a:sy.internal[line] = { 'type': type, 'id': id }
     else
-      let b:sy.external[line] = id
+      let a:sy.external[line] = id
     endif
   endfor
 endfunction
 
 
 " Function: #process_diff {{{1
-function! sy#sign#process_diff(diff) abort
-  let b:sy.signtable             = {}
-  let b:sy.hunks                 = []
+function! sy#sign#process_diff(sy, diff) abort
+  let a:sy.signtable             = {}
+  let a:sy.hunks                 = []
   let [added, modified, deleted] = [0, 0, 0]
 
-  call sy#sign#get_current_signs()
+  call sy#sign#get_current_signs(a:sy)
 
   " Determine where we have to put our signs.
   for line in filter(a:diff, 'v:val =~ "^@@ "')
-    let b:sy.lines = []
+    let a:sy.lines = []
     let ids        = []
 
     let tokens = matchlist(line, '^@@ -\v(\d+),?(\d*) \+(\d+),?(\d*)')
@@ -81,8 +81,8 @@ function! sy#sign#process_diff(diff) abort
       while offset < new_count
         let line    = new_line + offset
         let offset += 1
-        if s:external_sign_present(line) | continue | endif
-        call add(ids, s:add_sign(line, 'SignifyAdd'))
+        if s:external_sign_present(a:sy, line) | continue | endif
+        call add(ids, s:add_sign(a:sy, line, 'SignifyAdd'))
       endwhile
 
     " 2 lines removed:
@@ -91,19 +91,19 @@ function! sy#sign#process_diff(diff) abort
     " -this is line 6
     " -this is line 7
     elseif (old_count >= 1) && (new_count == 0)
-      if s:external_sign_present(new_line) | continue | endif
+      if s:external_sign_present(a:sy, new_line) | continue | endif
       let deleted += old_count
       if new_line == 0
-        call add(ids, s:add_sign(1, 'SignifyRemoveFirstLine'))
+        call add(ids, s:add_sign(a:sy, 1, 'SignifyRemoveFirstLine'))
       elseif s:sign_show_count
         if old_count <= 99
           let text = substitute(s:sign_delete . old_count, '.*\ze..$', '', '')
         else
           let text = s:sign_delete .'>'
         endif
-        call add(ids, s:add_sign(new_line, 'SignifyDelete'. old_count, text))
+        call add(ids, s:add_sign(a:sy, new_line, 'SignifyDelete'. old_count, text))
       else
-        call add(ids, s:add_sign(new_line, 'SignifyDeleteMore', s:sign_delete))
+        call add(ids, s:add_sign(a:sy, new_line, 'SignifyDeleteMore', s:sign_delete))
       endif
 
     " 2 lines changed:
@@ -119,8 +119,8 @@ function! sy#sign#process_diff(diff) abort
       while offset < new_count
         let line    = new_line + offset
         let offset += 1
-        if s:external_sign_present(line) | continue | endif
-        call add(ids, s:add_sign(line, 'SignifyChange'))
+        if s:external_sign_present(a:sy, line) | continue | endif
+        call add(ids, s:add_sign(a:sy, line, 'SignifyChange'))
       endwhile
     else
 
@@ -141,12 +141,14 @@ function! sy#sign#process_diff(diff) abort
         while offset < new_count - 1
           let line    = new_line + offset
           let offset += 1
-          if s:external_sign_present(line) | continue | endif
-          call add(ids, s:add_sign(line, 'SignifyChange'))
+          if s:external_sign_present(a:sy, line) | continue | endif
+          call add(ids, s:add_sign(a:sy, line, 'SignifyChange'))
         endwhile
         let line = new_line + offset
-        if s:external_sign_present(line) | continue | endif
-        call add(ids, s:add_sign(line, (removed > 9) ? 'SignifyChangeDeleteMore' : 'SignifyChangeDelete'. removed))
+        if s:external_sign_present(a:sy, line) | continue | endif
+        call add(ids, s:add_sign(a:sy, line, (removed > 9)
+              \ ? 'SignifyChangeDeleteMore'
+              \ : 'SignifyChangeDelete'. removed))
 
       " lines changed and added:
 
@@ -161,33 +163,33 @@ function! sy#sign#process_diff(diff) abort
         while offset < old_count
           let line    = new_line + offset
           let offset += 1
-          if s:external_sign_present(line) | continue | endif
-          call add(ids, s:add_sign(line, 'SignifyChange'))
+          if s:external_sign_present(a:sy, line) | continue | endif
+          call add(ids, s:add_sign(a:sy, line, 'SignifyChange'))
           let added += 1
         endwhile
         while offset < new_count
           let line    = new_line + offset
           let offset += 1
-          if s:external_sign_present(line) | continue | endif
-          call add(ids, s:add_sign(line, 'SignifyAdd'))
+          if s:external_sign_present(a:sy, line) | continue | endif
+          call add(ids, s:add_sign(a:sy, line, 'SignifyAdd'))
         endwhile
       endif
     endif
 
     if !empty(ids)
-      call add(b:sy.hunks, {
+      call add(a:sy.hunks, {
             \ 'ids'  : ids,
-            \ 'start': b:sy.lines[0],
-            \ 'end'  : b:sy.lines[-1] })
+            \ 'start': a:sy.lines[0],
+            \ 'end'  : a:sy.lines[-1] })
     endif
   endfor
 
   " Remove obsoleted signs.
-  for line in filter(keys(b:sy.internal), '!has_key(b:sy.signtable, v:val)')
-    execute 'sign unplace' b:sy.internal[line].id 'buffer='.b:sy.buffer
+  for line in filter(keys(a:sy.internal), '!has_key(a:sy.signtable, v:val)')
+    execute 'sign unplace' a:sy.internal[line].id 'buffer='.a:sy.buffer
   endfor
 
-  let b:sy.stats = [added, modified, deleted]
+  let a:sy.stats = [added, modified, deleted]
 endfunction
 
 " Function: #remove_all_signs {{{1
@@ -204,23 +206,23 @@ function! sy#sign#remove_all_signs(bufnr) abort
 endfunction
 
 " Function: s:add_sign {{{1
-function! s:add_sign(line, type, ...) abort
-  call add(b:sy.lines, a:line)
-  let b:sy.signtable[a:line] = 1
+function! s:add_sign(sy, line, type, ...) abort
+  call add(a:sy.lines, a:line)
+  let a:sy.signtable[a:line] = 1
 
-  if has_key(b:sy.internal, a:line)
+  if has_key(a:sy.internal, a:line)
     " There is a sign on this line already.
-    if a:type == b:sy.internal[a:line].type
+    if a:type == a:sy.internal[a:line].type
       " Keep current sign since the new one is of the same type.
-      return b:sy.internal[a:line].id
+      return a:sy.internal[a:line].id
     else
       " Update sign by overwriting the ID of the current sign.
-      let id = b:sy.internal[a:line].id
+      let id = a:sy.internal[a:line].id
     endif
   endif
 
   if !exists('id')
-    let id = sy#sign#id_next()
+    let id = sy#sign#id_next(a:sy)
   endif
 
   if a:type =~# 'SignifyDelete'
@@ -233,17 +235,17 @@ function! s:add_sign(line, type, ...) abort
         \ id,
         \ a:line,
         \ a:type,
-        \ b:sy.buffer)
+        \ a:sy.buffer)
 
   return id
 endfunction
 
 " Function: s:external_sign_present {{{1
-function! s:external_sign_present(line) abort
-  if has_key(b:sy.external, a:line)
-    if has_key(b:sy.internal, a:line)
+function! s:external_sign_present(sy, line) abort
+  if has_key(a:sy.external, a:line)
+    if has_key(a:sy.internal, a:line)
       " Remove Sy signs from lines with other signs.
-      execute 'sign unplace' b:sy.internal[a:line].id 'buffer='.b:sy.buffer
+      execute 'sign unplace' a:sy.internal[a:line].id 'buffer='.a:sy.buffer
     endif
     return 1
   endif

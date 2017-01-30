@@ -61,17 +61,17 @@ function! sy#start() abort
 endfunction
 
 " Function: #set_signs {{{1
-function! sy#set_signs(diff, do_register) abort
-  call sy#verbose('set_signs()', b:sy.vcs)
+function! sy#set_signs(sy, diff, do_register) abort
+  call sy#verbose('set_signs()', a:sy.vcs)
 
   if a:do_register
-    let b:sy.stats = [0, 0, 0]
-    let dir = fnamemodify(b:sy.path, ':h')
+    let a:sy.stats = [0, 0, 0]
+    let dir = fnamemodify(a:sy.path, ':h')
     if !has_key(g:sy_cache, dir)
-      let g:sy_cache[dir] = b:sy.vcs
+      let g:sy_cache[dir] = a:sy.vcs
     endif
     if empty(a:diff)
-      call sy#verbose('No changes found.', b:sy.vcs)
+      call sy#verbose('No changes found.', a:sy.vcs)
       return
     endif
   endif
@@ -82,7 +82,7 @@ function! sy#set_signs(diff, do_register) abort
     call sy#highlight#line_disable()
   endif
 
-  call sy#sign#process_diff(a:diff)
+  call sy#sign#process_diff(a:sy, a:diff)
 
   if exists('#User#Signify')
     execute 'doautocmd' (s:has_doau_modeline ? '<nomodeline>' : '') 'User Signify'
