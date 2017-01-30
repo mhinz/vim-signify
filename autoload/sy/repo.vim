@@ -54,8 +54,9 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
 
   " Neovim
   if has('nvim')
-    if exists('b:sy_job_id_'.a:vcs) && b:sy_job_id_{a:vcs}
-      silent! call jobstop(b:sy_job_id_{a:vcs})
+    let job_id = get(b:, 'sy_job_id_'.a:vcs)
+    if job_id
+      silent! call jobstop(job_id)
     endif
 
     let [cmd, options] = s:initialize_job(a:vcs, a:do_register)
@@ -73,8 +74,9 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
 
   " Newer Vim
   elseif v:version > 704 || v:version == 704 && has('patch1967')
-    if exists('b:sy_job_id_'.a:vcs) && b:sy_job_id_{a:vcs}
-      silent! call job_stop(b:sy_job_id_{a:vcs})
+    let job_id = get(b:, 'sy_job_id_'.a:vcs)
+    if job_id
+      silent! call job_stop(job_id)
     endif
 
     let [cmd, options] = s:initialize_job(a:vcs, a:do_register)
