@@ -95,7 +95,7 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
   " Older Vim
   else
     let diff = split(s:run(a:vcs), '\n')
-    call sy#repo#get_diff_{a:vcs}(v:shell_error, diff, a:do_register)
+    call sy#repo#get_diff_{a:vcs}(b:sy, v:shell_error, diff, a:do_register)
   endif
 endfunction
 
