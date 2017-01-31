@@ -283,7 +283,7 @@ function! s:strip_context(context)
   let diff = []
   let hunk = []
   let state = 0
-  let lines = split(a:context,"\n",1)
+  let lines = a:context
   let linenr = 0
 
   while linenr < len(lines)
@@ -356,7 +356,7 @@ function! s:strip_context(context)
     let diff = diff + hunk
     let hunk = []
   endif
-  return join(diff,"\n")."\n"
+  return diff
 endfunction
 
 " Variables {{{1
