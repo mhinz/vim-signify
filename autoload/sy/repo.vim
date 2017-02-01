@@ -230,8 +230,8 @@ endfunction
 
 " Function: s:initialize_job {{{1
 function! s:initialize_job(vcs, do_register) abort
-  let cmd = s:expand_cmd(a:vcs)
-  let cmd = (has('win32') && &shell =~ 'cmd')  ? cmd : ['sh', '-c', cmd]
+  let vcs_cmd = s:expand_cmd(a:vcs)
+  let cmd = (has('win32') && &shell =~ 'cmd')  ? vcs_cmd : ['sh', '-c', vcs_cmd]
   let options = {
         \ 'stdoutbuf':   [],
         \ 'vcs':         a:vcs,
