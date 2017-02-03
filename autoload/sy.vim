@@ -48,6 +48,9 @@ function! sy#start() abort
     endif
     let b:sy.active = 1
     call sy#repo#detect(1)
+  elseif has('vim_starting')
+    call sy#verbose("Don't run Sy more than once during startup.")
+    return
   elseif !b:sy.active
     call sy#verbose('Inactive buffer.')
     return
