@@ -52,8 +52,14 @@ function! sy#start() abort
     call sy#verbose('Inactive buffer.')
     return
   elseif b:sy.vcs == 'unknown'
-    call sy#verbose('No VCS found. Disabling.')
-    call sy#disable()
+    if get(b:sy, 'retry')
+      let b:sy.retry = 0
+      call sy#verbose('Redetecting VCS.')
+      call sy#repo#detect(1)
+    else
+      call sy#verbose('No VCS found. Disabling.')
+      call sy#disable()
+    endif
   else
     call sy#verbose('Updating signs.')
     call sy#repo#get_diff_start(b:sy.vcs, 0)
@@ -101,8 +107,16 @@ endfunction
 
 " Function: #enable {{{1
 function! sy#enable() abort
-  silent! unlet b:sy b:sy_info
-  call sy#start()
+  if !exists('b:sy')
+    call sy#start()
+    return
+  endif
+
+  if !b:sy.active
+    let b:sy.active = 1
+    let b:sy.retry  = 1
+    call sy#start()
+  endif
 endfunction
 
 " Function: #disable {{{1
