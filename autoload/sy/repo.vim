@@ -111,49 +111,49 @@ endfunction
 " Function: #get_diff_git {{{1
 function! sy#repo#get_diff_git(sy, exitval, diff, do_register) abort
   call sy#verbose('get_diff_git()', 'git')
-  let [found_diff, diff] = a:exitval ? [0, ''] : [1, a:diff]
+  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
   call s:get_diff_end(a:sy, found_diff, 'git', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_hg {{{1
 function! sy#repo#get_diff_hg(sy, exitval, diff, do_register) abort
   call sy#verbose('get_diff_hg()', 'hg')
-  let [found_diff, diff] = a:exitval ? [0, ''] : [1, a:diff]
+  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
   call s:get_diff_end(a:sy, found_diff, 'hg', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_svn {{{1
 function! sy#repo#get_diff_svn(sy, exitval, diff, do_register) abort
   call sy#verbose('get_diff_svn()', 'svn')
-  let [found_diff, diff] = a:exitval ? [0, ''] : [1, a:diff]
+  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
   call s:get_diff_end(a:sy, found_diff, 'svn', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_bzr {{{1
 function! sy#repo#get_diff_bzr(sy, exitval, diff, do_register) abort
   call sy#verbose('get_diff_bzr()', 'bzr')
-  let [found_diff, diff] = (a:exitval =~ '[012]') ? [1, a:diff] : [0, '']
+  let [found_diff, diff] = (a:exitval =~ '[012]') ? [1, a:diff] : [0, []]
   call s:get_diff_end(a:sy, found_diff, 'bzr', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_darcs {{{1
 function! sy#repo#get_diff_darcs(sy, exitval, diff, do_register) abort
   call sy#verbose('get_diff_darcs()', 'darcs')
-  let [found_diff, diff] = a:exitval ? [0, ''] : [1, a:diff]
+  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
   call s:get_diff_end(a:sy, found_diff, 'darcs', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_fossil {{{1
 function! sy#repo#get_diff_fossil(sy, exitval, diff, do_register) abort
   call sy#verbose('get_diff_fossil()', 'fossil')
-  let [found_diff, diff] = a:exitval ? [0, ''] : [1, a:diff]
+  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
   call s:get_diff_end(a:sy, found_diff, 'fossil', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_cvs {{{1
 function! sy#repo#get_diff_cvs(sy, exitval, diff, do_register) abort
   call sy#verbose('get_diff_cvs()', 'cvs')
-  let [found_diff, diff] = [0, '']
+  let [found_diff, diff] = [0, []]
   if a:exitval == 1
     for diffline in a:diff
       if diffline =~ '+++'
@@ -168,28 +168,28 @@ endfunction
 " Function: #get_diff_rcs {{{1
 function! sy#repo#get_diff_rcs(sy, exitval, diff, do_register) abort
   call sy#verbose('get_diff_rcs()', 'rcs')
-  let [found_diff, diff] = a:exitval ? [0, ''] : [1, a:diff]
+  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
   call s:get_diff_end(a:sy, found_diff, 'rcs', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_accurev {{{1
 function! sy#repo#get_diff_accurev(sy, exitval, diff, do_register) abort
   call sy#verbose('get_diff_accurev()', 'accurev')
-  let [found_diff, diff] = (a:exitval >= 2) ? [0, ''] : [1, a:diff]
+  let [found_diff, diff] = (a:exitval >= 2) ? [0, []] : [1, a:diff]
   call s:get_diff_end(a:sy, found_diff, 'accurev', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_perforce {{{1
 function! sy#repo#get_diff_perforce(sy, exitval, diff, do_register) abort
   call sy#verbose('get_diff_perforce()', 'perforce')
-  let [found_diff, diff] = a:exitval ? [0, ''] : [1, a:diff]
+  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
   call s:get_diff_end(a:sy, found_diff, 'perforce', diff, a:do_register)
 endfunction
 
 " Function: #get_diff_tfs {{{1
 function! sy#repo#get_diff_tfs(sy, exitval, diff, do_register) abort
   call sy#verbose('get_diff_tfs()', 'tfs')
-  let [found_diff, diff] = a:exitval ? [0, ''] : [1, s:strip_context(a:diff)]
+  let [found_diff, diff] = a:exitval ? [0, []] : [1, s:strip_context(a:diff)]
   call s:get_diff_end(a:sy, found_diff, 'tfs', diff, a:do_register)
 endfunction
 
