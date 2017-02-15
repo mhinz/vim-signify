@@ -25,7 +25,7 @@ function! s:callback_stdout_nvim(_job_id, data, _event) dict abort
   if empty(self.stdoutbuf) || empty(self.stdoutbuf[-1])
     let self.stdoutbuf += a:data
   else
-    let self.stdoutbuf = self.stdoutbuf[:2]
+    let self.stdoutbuf = self.stdoutbuf[:-2]
           \ + [self.stdoutbuf[-1] . get(a:data, 0, '')]
           \ + a:data[1:]
   endif
