@@ -514,6 +514,7 @@ FAQ                                                                *signify-faq*
 
     |signify-faq-01|  What about vim-flagship support?
     |signify-faq-02|  The plugin is slow!
+    |signify-faq-03|  Line highlighting without showing signs?
 
 ------------------------------------------------------------------------------
                                                                 *signify-faq-01*
@@ -560,6 +561,15 @@ The plugin is slow!~
   * Vim its sign handling code is known to be slow. If the delay is very long,
     chances are the diff is just huge. This often happens after adding (or
     removing) a huge file to the repo.
+
+------------------------------------------------------------------------------
+                                                                *signify-faq-03*
+Line highlighting without showing signs?~
+
+The line highlighting relies on signs being placed. The sign column is being
+shown automatically when there are placed signs.
+
+With a recent Vim, you can change that behaviour using 'signcolumn'.
 
 ==============================================================================
 EXAMPLE                                                        *signify-example*
