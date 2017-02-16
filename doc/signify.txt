@@ -567,7 +567,7 @@ The plugin is slow!~
 Line highlighting without showing signs?~
 
 The line highlighting relies on signs being placed. The sign column is being
-shown automatically when there are placed signs.
+shown automatically if there are placed signs.
 
 With a recent Vim, you can change that behaviour using 'signcolumn'.
 

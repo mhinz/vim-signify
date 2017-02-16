@@ -36,6 +36,14 @@ function! s:callback_stdout_vim(_job_id, data) dict abort
   let self.stdoutbuf += [a:data]
 endfunction
 
+" Function: s:callback_close {{{1
+function! s:callback_close(channel) dict abort
+  try
+    silent! call job_status(ch_getjob(a:channel))
+  catch
+  endtry
+endfunction
+
 " Function: s:callback_exit {{{1
 function! s:callback_exit(_job_id, exitval, ...) dict abort
   call sy#verbose('callback_exit()', self.vcs)
@@ -83,11 +91,15 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
 
     try
       execute chdir fnameescape(b:sy_info.dir)
-      let b:sy_job_id_{a:vcs} = job_start(cmd, {
+      let opts = {
             \ 'in_io':   'null',
             \ 'out_cb':  function('s:callback_stdout_vim', options),
             \ 'exit_cb': function('s:callback_exit', options),
-            \ })
+            \ }
+      if !has('patch-8.0.50')
+        let opts.close_cb = function('s:callback_close')
+      endif
+      let b:sy_job_id_{a:vcs} = job_start(cmd, opts)
     finally
       execute chdir fnameescape(cwd)
     endtry
