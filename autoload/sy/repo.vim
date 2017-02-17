@@ -97,7 +97,7 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
             \ 'exit_cb': function('s:callback_exit', options),
             \ }
       if !has('patch-8.0.50')
-        let opts.close_cb = function('s:callback_close')
+        let opts.close_cb = function('s:callback_close', options)
       endif
       let b:sy_job_id_{a:vcs} = job_start(cmd, opts)
     finally
