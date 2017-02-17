@@ -1,5 +1,6 @@
 *signify.txt* Indicate changed lines within a file using a VCS.
 *signify*
+>
                                               ___
                     __                  __  /'___\
                ____/\_\     __     ___ /\_\/\ \__/  __  __
@@ -9,27 +10,16 @@
               \/___/  \/_/\/___L\ \/_/\/_/\/_/\/_/   `/___/> \
                             /\____/                     /\___/
                             \_/__/                      \/__/
-
+<
   by Marco Hinz~
 
-  Twitter: https://twitter.com/_mhinz_
-  Github:  http://github.com/mhinz
-  IRC:     mhi^ (Freenode)
->
-  If you use any of my plugins, please star them on github. It's a great way
-  of getting feedback and gives me the kick to put more time into their
-  development.
-
-  If you encounter any bugs or have feature requests, just open an issue
-  report on Github.
-
-  Thank you for flying mhi^ airlines. Get the Vim on!
-<
 ==============================================================================
 TOC                                                           *signify-contents*
 
   INTRO .......................... |signify-intro|
-  USAGE .......................... |signify-usage|
+  MODUS OPERANDI ................. |signify-modus-operandi|
+  DEBUG .......................... |signify-debug|
+  SIGNS .......................... |signify-signs|
   OPTIONS ........................ |signify-options|
   COMMANDS ....................... |signify-commands|
   AUTOCOMMAND .................... |signify-autocommand|
@@ -41,16 +31,8 @@ TOC                                                           *signify-contents*
 ==============================================================================
 INTRO                                                            *signify-intro*
 
-Signify (or just Sy) is a quite unobtrusive plugin. It uses signs to indicate
-added, modified and removed lines based on data of an underlying version
-control system.
-
-==============================================================================
-USAGE                                                            *signify-usage*
-
-The usage is pretty straight-forward. By default you should only notice a
-difference, if you're working in a directory that is managed by a supported
-version control system and the current file was changed since the last commit.
+Signify uses the sign column to indicate added, modified and removed lines
+based on the data of an underlying version control system.
 
 Supported VCS:~
 >
@@ -65,8 +47,53 @@ Supported VCS:~
     accurev
     perforce
     tfs
-<
-Sign explanation:~
+
+==============================================================================
+MODUS OPERANDI                                          *signify-modus-operandi*
+
+When you open a new buffer, Sy registers it as `active` and tries to figure
+out whether the underlying file is controlled by a VCS (version control
+system) or not.
+
+For that, it asynchronously tries all the `diff` subcommands of all the VCS
+tools that are supported and executable. It's recommended to set
+|g:signify_vcs_list| to limit the VCS to test for.
+
+If one of the checks produces a proper diff, that VCS will automatically be
+used for all successive calls to Sy.
+
+If none of the checks produces a proper diff, the VCS will be set to
+`unknown`. The next time Sy gets run, the buffer will be marked as `inactive`,
+so it won't look for changes anymore.
+
+Set |g:signify_disable_by_default| to mark all new buffers as `inactive` by
+default and enable them later on demand using |signify-:SignifyToggle|.
+
+Use |signify-:SignifyList| to list all buffers managed by Sy and their current
+state.
+
+==============================================================================
+DEBUG                                                            *signify-debug*
+
+If signs aren't showing up as expected, see if |signify-:SignifyDebug| shows
+anything suspicious. It will try all VCS and shows either errors or a diff for
+each VCS.
+
+If the output looks fine though, create an issue on Github:
+
+    https://github.com/mhinz/vim-signify/issues/new
+
+Make sure to mention your Vim version and which Sy version you use (latest
+release or master).
+
+Additionally, include the output of |:messages| after executing one of the
+following:
+
+    - opening the buffer via `vim -V1 <file>`
+    - or running `:verb w` in the buffer
+
+==============================================================================
+SIGNS                                                            *signify-signs*
 
     `+`     This line was added.
 
@@ -81,6 +108,8 @@ Sign explanation:~
           `!>` will be shown instead.
 
     `‾`     The first line was removed. It's a special case of the `_` sign.
+
+See |g:signify_sign_add| on how to use different signs.
 
 ==============================================================================
 OPTIONS                                                        *signify-options*
@@ -112,8 +141,7 @@ All available options:~
     |g:signify_fold_context|
 
 ------------------------------------------------------------------------------
-                                                            *g:signify_vcs_list*
->
+                                                            *g:signify_vcs_list*  >
     let g:signify_vcs_list = [ 'git', 'hg' ]
 <
 Default: empty
@@ -131,28 +159,26 @@ Possible values: 'accurev'
 
 NOTE: This is the most important option, so read closely.
 
-It determines the VCS to check for and in what order. If you only use git and
-mercurial, you can shorten the list to the shown example. If you use mostly
-mercurial and only sometimes git, put 'hg' in the front of the list. It's
-basically a priority list.
+This option determines what VCS to check for.
 
-This can improve buffer loading time since by default all supported and
-installed VCS will be checked for, so you are advised to change this option to
-your needs. (This only happens once at the first time the signs get updated.
-Afterwards, the VCS will be remembered anyway.)
+This can improve buffer loading time, since by default all supported and
+installed VCS will be checked for. This only happens once, when signs get set
+the first time. Afterwards, the VCS will either be remembered or registered as
+inactive when no VCS was found.
+
+If your Vim is recent enough, these checks will happen asynchronously.
+
+NOTE: If you don't set this option, updating signs for a non-VCS file can lead
+to a significant delay since all supported and installed VCS will be tested
+for. (But this also happens only once, afterwards the buffer is registered as
+inactive.)
 
 NOTE: Some VCS rely on a an external diff tool to work properly (svn, darcs,
 bzr, fossil), thus you have to make sure that Vim can find a valid diff tool.
 So either the one you set through |g:signify_difftool| or "diff" by default.
 
-NOTE: If you don't set this option and Sy is activated, updating signs for a
-non-VCS file can lead to significant delay since all supported and installed
-VCS will be tested for. (But this also happens only once, afterwards the
-buffer is registered as inactive.)
-
 ------------------------------------------------------------------------------
-                                                            *g:signify_vcs_cmds*
->
+                                                            *g:signify_vcs_cmds*  >
     let g:signify_vcs_cmds = {
         \ 'cvs': 'cvs -d '. $CVSROOT .' diff -U0 -- %f' }
 <
@@ -195,12 +221,11 @@ Default:
       \ }
 <
 ------------------------------------------------------------------------------
-                                                  *g:signify_disable_by_default*
->
+                                                  *g:signify_disable_by_default*  >
     let g:signify_disable_by_default = 0
 <
-This loads Sy, but it won't look for changes. You can toggle it anytime via
-:SignifyToggle.
+This makes Sy not looking for changes for each new buffer. You can easily
+enable it later using |signify-:SignifyToggle|.
 
 ------------------------------------------------------------------------------
                                                *g:signify_skip_filename_pattern*
@@ -222,8 +247,7 @@ Don't activate the plugin for filenames matching these patterns.
 Default: <none>
 
 ------------------------------------------------------------------------------
-                                                  *g:signify_update_on_bufenter*
->
+                                                  *g:signify_update_on_bufenter*  >
     let g:signify_update_on_bufenter = 0
 <
 Update signs when entering a buffer that was modified.
@@ -231,15 +255,13 @@ Update signs when entering a buffer that was modified.
 NOTE: This also saves the buffer to disk!
 
 ------------------------------------------------------------------------------
-                                               *g:signify_update_on_focusgained*
->
+                                               *g:signify_update_on_focusgained*  >
     let g:signify_update_on_focusgained = 0
 <
 Update signs when Vim gains focus.
 
 ------------------------------------------------------------------------------
-                                                      *g:signify_line_highlight*
->
+                                                      *g:signify_line_highlight*  >
     let g:signify_line_highlight = 0
 <
 Enable line highlighting in addition to using signs by default.
@@ -272,8 +294,7 @@ NOTE: You can use up to 2 characters for the signs with two exceptions that
    necessary.
 
 ------------------------------------------------------------------------------
-                                                     *g:signify_sign_show_count*
->
+                                                     *g:signify_sign_show_count*  >
     let g:signify_sign_show_count = 1
 <
 Add the number of deleted lines to |g:signify_sign_delete| (up to 99) and
@@ -281,8 +302,7 @@ Add the number of deleted lines to |g:signify_sign_delete| (up to 99) and
 be shown.
 
 ------------------------------------------------------------------------------
-                                                      *g:signify_sign_show_text*
->
+                                                      *g:signify_sign_show_text*  >
     let g:signify_sign_show_text = 1
 <
 Don't show any text in the sign column. (Actually it will show a non-breaking
@@ -296,8 +316,7 @@ If you want no sign column at all and use Vim 7.4.2201+, use |'signcolumn'|.
 
 ------------------------------------------------------------------------------
                                                    *g:signify_cursorhold_normal*
-                                                   *g:signify_cursorhold_insert*
->
+                                                   *g:signify_cursorhold_insert*  >
     let g:signify_cursorhold_normal = 0
     let g:signify_cursorhold_insert = 0
 <
@@ -308,8 +327,7 @@ thus not every 'updatetime' miliseconds.
 NOTE: This also saves the buffer to disk!
 
 ------------------------------------------------------------------------------
-                                                            *g:signify_difftool*
->
+                                                            *g:signify_difftool*  >
     let g:signify_difftool = 'gnudiff'
 <
 This will avoid the attempt to find the proper diff tool for version control
@@ -319,8 +337,7 @@ are: svn, bzr, darcs, fossil.
 Default: "diff"
 
 ------------------------------------------------------------------------------
-                                                        *g:signify_fold_context*
->
+                                                        *g:signify_fold_context*  >
     let g:signify_fold_context = [0, 3]
 <
 This changes the number of lines of context that |signify-:SignifyFold| should
@@ -337,8 +354,7 @@ Default: [3, 8]
 
 ==============================================================================
 COMMAND                                                       *signify-commands*
-                                                        *signify-:SignifyEnable*
->
+                                                        *signify-:SignifyEnable*  >
     :SignifyEnable
 <
 Enable the plugin for the current buffer only.
@@ -347,36 +363,31 @@ Can also be used to when a repository was initialized while Sy was already
 loaded.
 
 ------------------------------------------------------------------------------
-                                                       *signify-:SignifyDisable*
->
+                                                       *signify-:SignifyDisable*  >
     :SignifyDisable
 <
 Disable the plugin for the current buffer only.
 
 ------------------------------------------------------------------------------
-                                                        *signify-:SignifyToggle*
->
+                                                        *signify-:SignifyToggle*  >
     :SignifyToggle
 <
 Toggle the plugin for the current buffer only.
 
 ------------------------------------------------------------------------------
-                                               *signify-:SignifyToggleHighlight*
->
+                                               *signify-:SignifyToggleHighlight*  >
     :SignifyToggleHighlight
 <
 Toggle line highlighting for lines containing changes.
 
 ------------------------------------------------------------------------------
-                                                       *signify-:SignifyRefresh*
->
+                                                       *signify-:SignifyRefresh*  >
     :SignifyRefresh
 <
 Refresh signs in all windows.
 
 ------------------------------------------------------------------------------
-                                                          *signify-:SignifyFold*
->
+                                                          *signify-:SignifyFold*  >
     :SignifyFold[!]
 <
 Open the current buffer in a new tabpage and set |'foldexpr'| so that only
@@ -394,29 +405,20 @@ If [!] is given, Sy will do the same without opening an extra tabpage. Another
 See |folds| to learn more about folding.
 
 ------------------------------------------------------------------------------
-                                                         *signify-:SignifyDebug*
->
-    :SignifyDebug
+                                                          *signify-:SignifyList*  >
+    :SignifyList
 <
 Outputs debug info for all managed buffers.
 
 ------------------------------------------------------------------------------
-                                                     *signify-:SignifyDebugDiff*
->
-    :SignifyDebugDiff
-<
-Print the diff command for the current buffer and its output.
-
-------------------------------------------------------------------------------
-                                                  *signify-:SignifyDebugUnknown*
->
-    :SignifyDebugUnknown
+                                                         *signify-:SignifyDebug*  >
+    :SignifyDebug
 <
 In case no signs are shown, although the buffer contains a file controlled by
 a supported VCS, use this command.
 
-It will show all tried commands and its output. Errors will be highlighted via
-|hl-ErrorMsg|.
+It will show all tried commands and their output. Errors will be highlighted
+via |hl-ErrorMsg|.
 
 ==============================================================================
 AUTOCOMMAND                                                *signify-autocommand*
