@@ -82,7 +82,7 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
 
   " Newer Vim
   elseif v:version > 704 || v:version == 704 && has('patch1967')
-    if job_id is v:t_job
+    if type(job_id) != type(0)
       silent! call job_stop(job_id)
     endif
 
