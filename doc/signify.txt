@@ -189,27 +189,24 @@ So either the one you set through |g:signify_difftool| or "diff" by default.
                                                             *g:signify_realtime*  >
     let g:signify_realtime = 0
 <
-By default, Sy only updates signs on:
+By default, signs only update on:
 
     |BufRead|       (opening a buffer)
     |BufWritePost|  (saving a buffer)
 
-If that seems too conservative to you and you want more aggressive sign
-updates, enable this option.
-
-This will update signs on:
+With this option enabled, signs update on:
 
     |BufEnter|      (opening or switching to another buffer)
     |WinEnter|      (opening or switching to another window)
     |BufWritePost|  (saving a buffer)
-    |CursorHold|    (cursor in normal mode wasn't moved for 'updatetime')
-    |CursorHoldI|   (cursor in insert mode wasn't moved for 'updatetime')
-    |FocusGained|   (when the OS window containing Vim got focus)
+    |CursorHold|    (cursor in normal mode wasn't moved; also saves file)
+    |CursorHoldI|   (cursor in insert mode wasn't moved; also saves file)
+    |FocusGained|   (OS window containing Vim got focus)
 
 NOTE: Running Sy on all these events would block too often for older Vim
 versions, thus this option requires Vim 7.4.1967+, which is the minimum
-version Sy needs for asynchronous execution. Older Vim versions silently
-ignore this option.
+version needed for asynchronous execution. Older Vim versions silently ignore
+this option.
 
 ------------------------------------------------------------------------------
                                                             *g:signify_vcs_cmds*  >
