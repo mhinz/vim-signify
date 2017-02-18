@@ -2,34 +2,29 @@
 
 ---
 
-Signify (or just Sy) is a quite unobtrusive plugin. It uses signs to indicate
-added, modified and removed lines based on data of an underlying version control
-system.
-
-It's __fast__, __easy to use__ and __well documented__.
+_Signify (or just Sy) uses the sign column to indicate added, modified and
+removed lines in a file that is managed by a version control system._
 
 ---
 
-- supports git, mercurial, darcs, bazaar, subversion, cvs, rcs, fossil, accurev,
-  perforce, tfs
-- quick jumping between blocks of changed lines ("hunks")
-- apart from signs there is also optional line highlighting
-- preserves signs from other plugins
-- you can toggle the plugin per buffer
-- good documentation
-- skip certain filetypes and filenames
-- depending on your usual workflow you can disable it per default and enable on
-  demand later
-- fully configurable through global variables (options and mappings)
+- Supports **git**, **mercurial**, **darcs**, **bazaar**, **subversion**,
+  **cvs**, **rcs**, **fossil**, **accurev**, **perforce**, **tfs**.
+- VCS tools are executed **asynchronously** for Vim 7.4.1967+ or Neovim.
+- Mappings for **navigation of hunks** ("blocks of changed lines").
+- An **operator that acts on hunks**, e.g. for editing or deleting.
+- Optional **line highlighting** for lines with signs.
+- **Preserve signs** from other plugins.
+- Define lists for **skipping certain filetypes or filenames**.
+- Depending on your workflow you can also **disable the plugin by default** and
+  **toggle it per buffer** later.
+- Great documentation and handsome maintainers!
 
 ---
 
 _If git is the only version control system you use, I suggest having a look at
-[vim-gitgutter](https://github.com/airblade/vim-gitgutter). It provides more
-git-specific features that would be unfeasible for Sy, since it only implements
-features that work for all supported VCS._
+[vim-gitgutter](https://github.com/airblade/vim-gitgutter)._
 
-## Installation and Documentation
+## Installation
 
 Use your favorite [plugin
 manager](https://github.com/mhinz/vim-galore#managing-plugins), e.g. using
@@ -37,13 +32,11 @@ manager](https://github.com/mhinz/vim-galore#managing-plugins), e.g. using
 
     Plug 'mhinz/vim-signify'
 
-It works without any configuration, but you might want to look into the
-documentation for further customization:
+## Documentation
 
-    :h signify
-
-_The single most important option by far is `g:signify_vcs_list`. Please read
-`:h g:signify_vcs_list`._
+1. Understand how the plugin works by reading this short intro:
+   [`:h signify-modus-operandi`](https://github.com/mhinz/vim-signify/blob/master/doc/signify.txt#L52)
+1. The single most important option by far: `:h g:signify_vcs_list`
 
 ## Demo
 

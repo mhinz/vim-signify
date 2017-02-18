@@ -66,8 +66,12 @@ If none of the checks produces a proper diff, the VCS will be set to
 `unknown`. The next time Sy gets run, the buffer will be marked as `inactive`,
 so it won't look for changes anymore.
 
-Set |g:signify_disable_by_default| to mark all new buffers as `inactive` by
-default and enable them later on demand using |signify-:SignifyToggle|.
+Or you set |g:signify_disable_by_default|, which registers all new buffers as
+`inactive`, and enable Sy on demand using |signify-:SignifyToggle|.
+
+By default, Sy is rather conservative and only updates signs when opening a
+new buffer or writing it. If you want more agressive sign updating, have a
+look at |g:signify_realtime|.
 
 Use |signify-:SignifyList| to list all buffers managed by Sy and their current
 state.
