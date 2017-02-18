@@ -16,23 +16,28 @@ let g:signify_locked = 0
 augroup signify
   autocmd!
 
-  autocmd BufRead,BufWritePost * call sy#start()
-
   autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
   autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
 
-  if get(g:, 'signify_update_on_bufenter')
-    autocmd BufEnter * nested call s:save()
-  endif
-  if get(g:, 'signify_cursorhold_normal')
-    autocmd CursorHold * nested call s:save()
-  endif
-  if get(g:, 'signify_cursorhold_insert')
-    autocmd CursorHoldI * nested call s:save()
-  endif
+  if get(g:, 'signify_realtime') && has('patch-7.4.1967')
+    autocmd BufEnter,BufWritePost,WinEnter * call sy#start()
+    autocmd CursorHold,CursorHoldI         * nested call s:save()
+    autocmd FocusGained                    * SignifyRefresh
+  else
+    autocmd BufRead,BufWritePost * call sy#start()
 
-  if get(g:, 'signify_update_on_focusgained') && !has('gui_win32')
-    autocmd FocusGained * SignifyRefresh
+    if get(g:, 'signify_update_on_bufenter')
+      autocmd BufEnter * nested call s:save()
+    endif
+    if get(g:, 'signify_cursorhold_normal')
+      autocmd CursorHold * nested call s:save()
+    endif
+    if get(g:, 'signify_cursorhold_insert')
+      autocmd CursorHoldI * nested call s:save()
+    endif
+    if get(g:, 'signify_update_on_focusgained') && !has('gui_win32')
+      autocmd FocusGained * SignifyRefresh
+    endif
   endif
 augroup END
 
