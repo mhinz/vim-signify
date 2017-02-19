@@ -72,6 +72,7 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
 
     try
       execute chdir fnameescape(b:sy_info.dir)
+      call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), cwd), a:vcs)
       let b:sy_job_id_{a:vcs} = jobstart(cmd, extend(options, {
             \ 'on_stdout': function('s:callback_stdout_nvim'),
             \ 'on_exit':   function('s:callback_exit'),
@@ -91,6 +92,7 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
 
     try
       execute chdir fnameescape(b:sy_info.dir)
+      call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), cwd), a:vcs)
       let opts = {
             \ 'in_io':   'null',
             \ 'out_cb':  function('s:callback_stdout_vim', options),
@@ -243,7 +245,7 @@ endfunction
 " Function: s:initialize_job {{{1
 function! s:initialize_job(vcs, do_register) abort
   let vcs_cmd = s:expand_cmd(a:vcs)
-  let cmd = (has('win32') && &shell =~ 'cmd')  ? vcs_cmd : ['sh', '-c', vcs_cmd]
+  let cmd = (has('win32') && &shell =~ 'cmd') ? vcs_cmd : ['sh', '-c', vcs_cmd]
   let options = {
         \ 'stdoutbuf':   [],
         \ 'vcs':         a:vcs,
