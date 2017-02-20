@@ -51,9 +51,9 @@ Supported VCS:~
 ==============================================================================
 MODUS OPERANDI                                          *signify-modus-operandi*
 
-When you open a new buffer, Sy registers it as `active` and tries to figure
-out whether the underlying file is controlled by a VCS (version control
-system) or not.
+When you open a new buffer, Sy registers it as `active` and tries to figure out
+whether the underlying file is controlled by a VCS (version control system) or
+not.
 
 For that, it asynchronously tries all the `diff` subcommands of all the VCS
 tools that are supported and executable. It's recommended to set
@@ -62,9 +62,9 @@ tools that are supported and executable. It's recommended to set
 If one of the checks produces a proper diff, that VCS will automatically be
 used for all successive calls to Sy.
 
-If none of the checks produces a proper diff, the VCS will be set to
-`unknown`. The next time Sy gets run, the buffer will be marked as `inactive`,
-so it won't look for changes anymore.
+If none of the checks produces a proper diff, the VCS will be set to `unknown`.
+The next time Sy gets run, the buffer will be marked as `inactive`, so it won't
+look for changes anymore.
 
 Or you set |g:signify_disable_by_default|, which registers all new buffers as
 `inactive`, and enable Sy on demand using |signify-:SignifyToggle|.
@@ -72,6 +72,9 @@ Or you set |g:signify_disable_by_default|, which registers all new buffers as
 By default, Sy is rather conservative and only updates signs when opening a
 new buffer or writing it. If you want more agressive sign updating, have a
 look at |g:signify_realtime|.
+
+Moreover, if you want to update signs after 'updatetime' (using the |CursorHold|
+and |CursorHoldI| events), set 'autowrite'.
 
 Use |signify-:SignifyList| to list all buffers managed by Sy and their current
 state.
@@ -143,8 +146,6 @@ Other options:~
     |g:signify_sign_changedelete|
     |g:signify_sign_show_count|
     |g:signify_sign_show_text|
-    |g:signify_cursorhold_normal|
-    |g:signify_cursorhold_insert|
     |g:signify_difftool|
     |g:signify_fold_context|
 
@@ -199,8 +200,6 @@ With this option enabled, signs update on:
     |BufEnter|      (opening or switching to another buffer)
     |WinEnter|      (opening or switching to another window)
     |BufWritePost|  (saving a buffer)
-    |CursorHold|    (cursor in normal mode wasn't moved; also saves file)
-    |CursorHoldI|   (cursor in insert mode wasn't moved; also saves file)
     |FocusGained|   (OS window containing Vim got focus)
 
 NOTE: Running Sy on all these events would block too often for older Vim
@@ -344,18 +343,6 @@ doesn't do it for you, you can set the background color of a particular sign
 yourself: |signify-colors|.
 
 If you want no sign column at all and use Vim 7.4.2201+, use |'signcolumn'|.
-
-------------------------------------------------------------------------------
-                                                   *g:signify_cursorhold_normal*
-                                                   *g:signify_cursorhold_insert*  >
-    let g:signify_cursorhold_normal = 0
-    let g:signify_cursorhold_insert = 0
-<
-Additionally trigger sign updates in normal or insert mode after 'updatetime'
-miliseconds without any keypresses. This fires only once between keypresses,
-thus not every 'updatetime' miliseconds.
-
-NOTE: This also saves the buffer to disk!
 
 ------------------------------------------------------------------------------
                                                             *g:signify_difftool*  >
@@ -610,10 +597,11 @@ EXAMPLE                                                        *signify-example*
 An example configuration for Sy:
 >
     let g:signify_vcs_list              = [ 'git', 'hg' ]
-    let g:signify_cursorhold_insert     = 1
-    let g:signify_cursorhold_normal     = 1
     let g:signify_update_on_bufenter    = 0
     let g:signify_update_on_focusgained = 1
+
+    " update signs after 'updatetime'
+    set autowrite
 
     nnoremap <leader>gt SignifyToggle
     nnoremap <leader>gh SignifyToggleHighlight

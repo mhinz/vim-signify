@@ -20,7 +20,8 @@ augroup signify
   autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
   autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
 
-  autocmd BufWritePost * call sy#start()
+  autocmd BufWritePost           * call sy#start()
+  autocmd CursorHold,CursorHoldI * nested if &autowrite | call s:save() | endif
 
   if s:realtime
     autocmd BufEnter,WinEnter * call sy#start()
@@ -30,12 +31,6 @@ augroup signify
 
   if get(g:, 'signify_update_on_bufenter')
     autocmd BufEnter * nested call s:save()
-  endif
-  if s:realtime || get(g:, 'signify_cursorhold_normal')
-    autocmd CursorHold * nested call s:save()
-  endif
-  if s:realtime || get(g:, 'signify_cursorhold_insert')
-    autocmd CursorHoldI * nested call s:save()
   endif
   if (s:realtime || get(g:, 'signify_update_on_focusgained')) && !has('gui_win32')
     autocmd FocusGained * SignifyRefresh
