@@ -12,6 +12,8 @@ let g:loaded_signify = 1
 let g:signify_locked = 0
 let s:realtime       = get(g:, 'signify_realtime') && has('patch-7.4.1967')
 
+let s:has_doau_modeline = v:version > 703 || v:version == 703 && has('patch442')
+
 " Init: autocmds {{{1
 
 augroup signify
@@ -80,3 +82,7 @@ function! s:save()
     write
   endif
 endfunction
+
+if exists('#User#SignifySetup')
+  execute 'doautocmd' (s:has_doau_modeline ? '<nomodeline>' : '') 'User SignifySetup'
+endif

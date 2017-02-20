@@ -441,17 +441,19 @@ via |hl-ErrorMsg|.
 ==============================================================================
 AUTOCOMMAND                                                *signify-autocommand*
 
-If Sy detects changes to a version-controlled file, it will trigger the |User|
-autocommand |{event}| with "Signify" as the autocommand |{pat}|.  This allows
-you to perform actions in response to Sy detecting differences.
+User SignifySetup~
 
-For example,
+  This event fires at the end of `plugin/signify.vim`, in case you want to
+  change any of the default autocmds, commands, or mappings.
+
+  Example: If 'autowrite' is set, Sy runs on |CursorHold| and |CursorHoldI|.
+  If you don't want to run it in insert mode, remove the autocmd for it:
 >
-    autocmd User Signify call sy#sign#remove_all_signs(bufnr(''))
+    autocmd User SignifySetup autocmd! signify CursorHoldI
 <
-removes all the signs that Sy placed in the current buffer.  This may be
-useful if your want to use the values from `sy#repo#get_stats()` but do not
-want to see the signs.
+User Signify~
+
+  This event fires when Sy detects changes in a version-controlled file.
 
 NOTE: Autocmds don't nest by default. If you use any command that triggers new
 events, make sure to add "nested": |autocmd-nested|.
