@@ -80,16 +80,12 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
     let [cmd, options] = s:initialize_job(a:vcs, a:do_register)
     let [cwd, chdir] = sy#util#chdir()
 
-    try
-      execute chdir fnameescape(b:sy_info.dir)
-      call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), getcwd()), a:vcs)
-      let b:sy_job_id_{a:vcs} = jobstart(cmd, extend(options, {
-            \ 'on_stdout': function('s:callback_nvim_stdout'),
-            \ 'on_exit':   function('s:callback_nvim_exit'),
-            \ }))
-    finally
-      execute chdir fnameescape(cwd)
-    endtry
+    call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), b:sy_info.dir), a:vcs)
+    let b:sy_job_id_{a:vcs} = jobstart(cmd, extend(options, {
+          \ 'cwd':       b:sy_info.dir,
+          \ 'on_stdout': function('s:callback_nvim_stdout'),
+          \ 'on_exit':   function('s:callback_nvim_exit'),
+          \ }))
 
   " Newer Vim
   elseif has('patch-7.4.1967')
