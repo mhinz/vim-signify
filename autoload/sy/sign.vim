@@ -192,7 +192,11 @@ function! sy#sign#process_diff(sy, diff) abort
   if has('gui_running') && has('patch-7.4.1967')
     " Some GUIs need this extra kick in the butt, when setting signs from the
     " exit handler. :redraw would trigger a "hanging cursor bug" in MacVim.
-    call feedkeys("\<c-l>")
+    if has('gui_macvim')
+      call feedkeys("\<c-l>")
+    else
+      redraw
+    endif
   endif
 
   let a:sy.stats = [added, modified, deleted]
