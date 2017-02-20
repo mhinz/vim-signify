@@ -72,7 +72,7 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
 
     try
       execute chdir fnameescape(b:sy_info.dir)
-      call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), cwd), a:vcs)
+      call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), getcwd()), a:vcs)
       let b:sy_job_id_{a:vcs} = jobstart(cmd, extend(options, {
             \ 'on_stdout': function('s:callback_stdout_nvim'),
             \ 'on_exit':   function('s:callback_exit'),
@@ -92,7 +92,7 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
 
     try
       execute chdir fnameescape(b:sy_info.dir)
-      call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), cwd), a:vcs)
+      call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), getcwd()), a:vcs)
       let opts = {
             \ 'in_io':   'null',
             \ 'out_cb':  function('s:callback_stdout_vim', options),
