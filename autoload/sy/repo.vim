@@ -20,8 +20,8 @@ function! sy#repo#detect(do_register) abort
   endfor
 endfunction
 
-" Function: s:callback_stdout_nvim {{{1
-function! s:callback_stdout_nvim(_job_id, data, _event) dict abort
+" Function: s:callback_nvim_stdout{{{1
+function! s:callback_nvim_stdout(_job_id, data, _event) dict abort
   if empty(self.stdoutbuf) || empty(self.stdoutbuf[-1])
     let self.stdoutbuf += a:data
   else
@@ -31,13 +31,18 @@ function! s:callback_stdout_nvim(_job_id, data, _event) dict abort
   endif
 endfunction
 
-" Function: s:callback_stdout_vim {{{1
-function! s:callback_stdout_vim(_job_id, data) dict abort
+" Function: s:callback_nvim_exit {{{1
+function! s:callback_nvim_exit(_job_id, exitval, _event) dict abort
+  call s:job_exit(self.bufnr, self.vcs, a:exitval, self.stdoutbuf, self.do_register)
+endfunction
+
+" Function: s:callback_vim_stdout {{{1
+function! s:callback_vim_stdout(_job_id, data) dict abort
   let self.stdoutbuf += [a:data]
 endfunction
 
-" Function: s:callback_close {{{1
-function! s:callback_close(channel) dict abort
+" Function: s:callback_vim_close {{{1
+function! s:callback_vim_close(channel) dict abort
   let job = ch_getjob(a:channel)
   while 1
     if job_status(job) == 'dead'
@@ -47,11 +52,6 @@ function! s:callback_close(channel) dict abort
     sleep 10m
   endwhile
   call s:job_exit(self.bufnr, self.vcs, exitval, self.stdoutbuf, self.do_register)
-endfunction
-
-" Function: s:callback_exit {{{1
-function! s:callback_exit(_job_id, exitval, _event) dict abort
-  call s:job_exit(self.bufnr, self.vcs, a:exitval, self.stdoutbuf, self.do_register)
 endfunction
 
 " Function: s:job_exit {{{1
@@ -84,8 +84,8 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
       execute chdir fnameescape(b:sy_info.dir)
       call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), getcwd()), a:vcs)
       let b:sy_job_id_{a:vcs} = jobstart(cmd, extend(options, {
-            \ 'on_stdout': function('s:callback_stdout_nvim'),
-            \ 'on_exit':   function('s:callback_exit'),
+            \ 'on_stdout': function('s:callback_nvim_stdout'),
+            \ 'on_exit':   function('s:callback_nvim_exit'),
             \ }))
     finally
       execute chdir fnameescape(cwd)
@@ -105,8 +105,8 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
       call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), getcwd()), a:vcs)
       let opts = {
             \ 'in_io':    'null',
-            \ 'out_cb':   function('s:callback_stdout_vim', options),
-            \ 'close_cb': function('s:callback_close', options),
+            \ 'out_cb':   function('s:callback_vim_stdout', options),
+            \ 'close_cb': function('s:callback_vim_close', options),
             \ }
       let b:sy_job_id_{a:vcs} = job_start(cmd, opts)
     finally
