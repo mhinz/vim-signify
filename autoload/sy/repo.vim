@@ -38,22 +38,32 @@ endfunction
 
 " Function: s:callback_close {{{1
 function! s:callback_close(channel) dict abort
-  try
-    silent! call job_status(ch_getjob(a:channel))
-  catch
-  endtry
+  let job = ch_getjob(a:channel)
+  while 1
+    if job_status(job) == 'dead'
+      let exitval = job_info(job).exitval
+      break
+    endif
+    sleep 10m
+  endwhile
+  call s:job_exit(self.bufnr, self.vcs, exitval, self.stdoutbuf, self.do_register)
 endfunction
 
 " Function: s:callback_exit {{{1
-function! s:callback_exit(_job_id, exitval, ...) dict abort
-  call sy#verbose('callback_exit()', self.vcs)
-  let sy = getbufvar(self.bufnr, 'sy')
+function! s:callback_exit(_job_id, exitval, _event) dict abort
+  call s:job_exit(self.bufnr, self.vcs, a:exitval, self.stdoutbuf, self.do_register)
+endfunction
+
+" Function: s:job_exit {{{1
+function! s:job_exit(bufnr, vcs, exitval, diff, do_register) abort
+  call sy#verbose('job_exit()', a:vcs)
+  let sy = getbufvar(a:bufnr, 'sy')
   if empty(sy)
-    call sy#verbose(printf('No b:sy found for %s', bufname(self.bufnr)), self.vcs)
+    call sy#verbose(printf('No b:sy found for %s', bufname(a:bufnr)), a:vcs)
     return
   endif
-  call sy#repo#get_diff_{self.vcs}(sy, a:exitval, self.stdoutbuf, self.do_register)
-  call setbufvar(self.bufnr, 'sy_job_id_'.self.vcs, 0)
+  call sy#repo#get_diff_{a:vcs}(sy, a:exitval, a:diff, a:do_register)
+  call setbufvar(a:bufnr, 'sy_job_id_'.a:vcs, 0)
 endfunction
 
 " Function: sy#get_diff_start {{{1
@@ -94,13 +104,10 @@ function! sy#repo#get_diff_start(vcs, do_register) abort
       execute chdir fnameescape(b:sy_info.dir)
       call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), getcwd()), a:vcs)
       let opts = {
-            \ 'in_io':   'null',
-            \ 'out_cb':  function('s:callback_stdout_vim', options),
-            \ 'exit_cb': function('s:callback_exit', options),
+            \ 'in_io':    'null',
+            \ 'out_cb':   function('s:callback_stdout_vim', options),
+            \ 'close_cb': function('s:callback_close', options),
             \ }
-      if !has('patch-8.0.50')
-        let opts.close_cb = function('s:callback_close', options)
-      endif
       let b:sy_job_id_{a:vcs} = job_start(cmd, opts)
     finally
       execute chdir fnameescape(cwd)
