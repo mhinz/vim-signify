@@ -37,6 +37,11 @@ augroup signify
   if (s:realtime || get(g:, 'signify_update_on_focusgained')) && !has('gui_win32')
     autocmd FocusGained * SignifyRefresh
   endif
+
+  if has('gui_running') && has('win32')
+    " Fix 'no signs at start' race.
+    autocmd GUIEnter * redraw
+  endif
 augroup END
 
 " Init: commands {{{1
