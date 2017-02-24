@@ -8,9 +8,10 @@ endif
 
 " Init: values {{{1
 
-let g:loaded_signify = 1
-let g:signify_locked = 0
-let s:realtime       = get(g:, 'signify_realtime') && has('patch-7.4.1967')
+let g:loaded_signify   = 1
+let g:signify_locked   = 0
+let s:realtime         = get(g:, 'signify_realtime') && has('patch-7.4.1967')
+let s:save_on_bufenter = get(g:, 'signify_update_on_bufenter')
 
 let s:has_doau_modeline = v:version > 703 || v:version == 703 && has('patch442')
 
@@ -26,12 +27,15 @@ augroup signify
   autocmd CursorHold,CursorHoldI * nested if &autowrite | call s:save() | endif
 
   if s:realtime
-    autocmd BufEnter,WinEnter * call sy#start()
+    if !s:save_on_bufenter
+      autocmd BufEnter * call sy#start()
+    endif
+    autocmd WinEnter * call sy#start()
   else
     autocmd BufRead * call sy#start()
   endif
 
-  if get(g:, 'signify_update_on_bufenter')
+  if s:save_on_bufenter
     autocmd BufEnter * nested call s:save()
   endif
 
