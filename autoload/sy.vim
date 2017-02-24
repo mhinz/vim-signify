@@ -64,8 +64,13 @@ function! sy#start() abort
       call sy#disable()
     endif
   else
-    call sy#verbose('Updating signs.')
-    call sy#repo#get_diff_start(b:sy.vcs, 0)
+    let job_id = get(b:, 'sy_job_id_'.b:sy.vcs)
+    if type(job_id) != type(0) || job_id > 0
+      call sy#verbose('Update is already in progress.', b:sy.vcs)
+    else
+      call sy#verbose('Updating signs.', b:sy.vcs)
+      call sy#repo#get_diff_start(b:sy.vcs, 0)
+    endif
   endif
 endfunction
 
