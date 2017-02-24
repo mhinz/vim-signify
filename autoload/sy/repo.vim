@@ -16,6 +16,7 @@ function! sy#repo#detect(do_register) abort
   endif
 
   for vcs in vcs_list
+    let b:sy.detecting += 1
     call sy#repo#get_diff_start(vcs, a:do_register)
   endfor
 endfunction
@@ -61,6 +62,8 @@ function! s:job_exit(bufnr, vcs, exitval, diff, do_register) abort
   if empty(sy)
     call sy#verbose(printf('No b:sy found for %s', bufname(a:bufnr)), a:vcs)
     return
+  elseif sy.vcs == 'unknown' && sy.active
+    let sy.detecting -= 1
   endif
   call sy#repo#get_diff_{a:vcs}(sy, a:exitval, a:diff, a:do_register)
   call setbufvar(a:bufnr, 'sy_job_id_'.a:vcs, 0)
