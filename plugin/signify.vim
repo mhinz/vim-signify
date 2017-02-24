@@ -34,7 +34,8 @@ augroup signify
   if get(g:, 'signify_update_on_bufenter')
     autocmd BufEnter * nested call s:save()
   endif
-  if (s:realtime || get(g:, 'signify_update_on_focusgained')) && !has('gui_win32')
+
+  if s:realtime || get(g:, 'signify_update_on_focusgained')
     autocmd FocusGained * SignifyRefresh
   endif
 
