@@ -7,40 +7,49 @@ if exists('g:loaded_signify') || !has('signs') || &compatible
 endif
 
 " Init: values {{{1
-
-let g:loaded_signify   = 1
-let g:signify_locked   = 0
-let s:realtime         = get(g:, 'signify_realtime') && has('patch-7.4.1967')
-let s:save_on_bufenter = get(g:, 'signify_update_on_bufenter')
-
+let g:loaded_signify = 1
+let g:signify_locked = 0
 let s:has_doau_modeline = v:version > 703 || v:version == 703 && has('patch442')
 
 " Init: autocmds {{{1
-
 augroup signify
   autocmd!
 
   autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
   autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
 
-  autocmd BufWritePost           * call sy#start()
-  autocmd CursorHold,CursorHoldI * nested if &autowrite | call s:save() | endif
+  autocmd BufWritePost * call sy#start()
 
-  if s:realtime
-    if !s:save_on_bufenter
+  if get(g:, 'signify_realtime') && has('patch-7.4.1967')
+    autocmd WinEnter * call sy#start()
+    if get(g:, 'signify_update_on_bufenter')
+      autocmd BufEnter * nested call s:save()
+    else
       autocmd BufEnter * call sy#start()
     endif
-    autocmd WinEnter * call sy#start()
+    if get(g:, 'signify_cursorhold_normal', 1)
+      autocmd CursorHold * nested call s:save()
+    endif
+    if get(g:, 'signify_cursorhold_insert', 1)
+      autocmd CursorHoldI * nested call s:save()
+    endif
+    if get(g:, 'signify_update_on_focusgained', 1)
+      autocmd FocusGained * SignifyRefresh
+    endif
   else
     autocmd BufRead * call sy#start()
-  endif
-
-  if s:save_on_bufenter
-    autocmd BufEnter * nested call s:save()
-  endif
-
-  if s:realtime || get(g:, 'signify_update_on_focusgained')
-    autocmd FocusGained * SignifyRefresh
+    if get(g:, 'signify_update_on_bufenter')
+      autocmd BufEnter * nested call s:save()
+    endif
+    if get(g:, 'signify_cursorhold_normal')
+      autocmd CursorHold * nested call s:save()
+    endif
+    if get(g:, 'signify_cursorhold_insert')
+      autocmd CursorHoldI * nested call s:save()
+    endif
+    if get(g:, 'signify_update_on_focusgained')
+      autocmd FocusGained * SignifyRefresh
+    endif
   endif
 
   if has('gui_running') && has('win32')
