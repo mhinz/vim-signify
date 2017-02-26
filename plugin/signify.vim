@@ -52,7 +52,7 @@ augroup signify
     endif
   endif
 
-  if has('gui_running') && has('win32')
+  if has('gui_running') && has('win32') && argc()
     " Fix 'no signs at start' race.
     autocmd GUIEnter * redraw
   endif
