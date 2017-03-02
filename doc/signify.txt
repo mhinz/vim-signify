@@ -291,9 +291,12 @@ NOTE: This also saves the buffer to disk!
                                                *g:signify_update_on_focusgained*  >
     let g:signify_update_on_focusgained = 0
 <
-Update signs when the window holding Vim gains focus.
+Update the signs on |FocusGained|, thus when the window holding Vim gains focus.
+It does so by executing |signify-:SignifyRefresh|.
 
-NOTE: This works for all GUIs and even a few terminal emulators.
+NOTE: The |FocusGained| event is fired for all GUIs and even a few terminal
+emulators. If you use tmux, put `set-option -g focus-events on` in your
+tmux.conf.
 
 ------------------------------------------------------------------------------
                                                       *g:signify_line_highlight*  >
@@ -420,6 +423,8 @@ Toggle line highlighting for lines containing changes.
     :SignifyRefresh
 <
 Refresh signs in all windows.
+
+NOTE: Nothing will happen, if :SignifyRefresh is used from the |cmdline-window|.
 
 ------------------------------------------------------------------------------
                                                           *signify-:SignifyFold*  >

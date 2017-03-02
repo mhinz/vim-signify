@@ -18,6 +18,9 @@ augroup signify
   autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
   autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
 
+  autocmd CmdwinEnter * let g:signify_cmdwin_active = 1
+  autocmd CmdwinLeave * let g:signify_cmdwin_active = 0
+
   autocmd BufWritePost * call sy#start()
 
   if get(g:, 'signify_realtime') && has('patch-7.4.1967')

@@ -30,7 +30,9 @@ function! sy#util#refresh_windows() abort
     let winnr = winnr()
   endif
 
-  windo if exists('b:sy') | call sy#start() | endif
+  if !get(g:, 'signify_cmdwin_active')
+    windo if exists('b:sy') | call sy#start() | endif
+  endif
 
   if exists('winid')
     call win_gotoid(winid)
