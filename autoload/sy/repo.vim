@@ -438,7 +438,7 @@ let s:vcs_cmds = {
 if exists('g:signify_vcs_cmds')
   call extend(g:signify_vcs_cmds, s:vcs_cmds, 'keep')
 else
-    let g:signify_vcs_cmds = s:vcs_cmds
+  let g:signify_vcs_cmds = s:vcs_cmds
 endif
 
 let s:difftool = sy#util#escape(s:difftool)

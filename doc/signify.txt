@@ -221,21 +221,21 @@ this option.
         \ 'cvs': 'cvs -d '. $CVSROOT .' diff -U0 -- %f' }
 <
 This is a |dict|. They key is any version control system from |g:signify_vcs_list|
-and the value is the corresponding command line.
+and the value is the corresponding command-line.
 
 Modifiers:~
 
     %f       actual filepath
     %d       |g:signify_difftool|
-    %n       Unix: "/dev/null", Windows: "NUL"
+    %n       Unix: `/dev/null`, Windows: `NUL`
 
-Redirection: Instead of ">foo" use "sy#util#shell_redirect('foo')". This
-helper function takes |'shellredir'| into account.
+Redirection: Instead of `>foo` use `sy#util#shell_redirect('foo')`. This
+helper function takes 'shellredir' into account.
 
 The output format mustn't change, otherwise Sy won't give any reasonable
 results. It's probably wise to start with the respective default values.
 
-If your VCS program is not in $PATH and you have to specify an absolute path,
+If your VCS program is not in `$PATH` and you have to specify an absolute path,
 escape spaces by quoting, e.g.:
 >
     let g:signify_vcs_cmds = {
@@ -355,7 +355,7 @@ This is useful if you only want to see colors instead. If your colorscheme
 doesn't do it for you, you can set the background color of a particular sign
 yourself: |signify-colors|.
 
-If you want no sign column at all and use Vim 7.4.2201+, use |'signcolumn'|.
+If you want no sign column at all and use Vim 7.4.2201+, use 'signcolumn'.
 
 ------------------------------------------------------------------------------
                                                    *g:signify_cursorhold_normal*
@@ -435,7 +435,7 @@ NOTE: Nothing will happen, if :SignifyRefresh is used from the |cmdline-window|.
                                                           *signify-:SignifyFold*  >
     :SignifyFold[!]
 <
-Open the current buffer in a new tabpage and set |'foldexpr'| so that only
+Open the current buffer in a new tabpage and set 'foldexpr' so that only
 changed lines with their surrounding context are unfolded.
 
 The number of lines per context can be changed via |g:signify_fold_context|.
