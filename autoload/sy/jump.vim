@@ -14,7 +14,7 @@ function! sy#jump#next_hunk(count)
   let hunk = get(hunks, a:count - 1, get(hunks, -1, {}))
 
   if !empty(hunk)
-    execute 'sign jump '. hunk.ids[0] .' buffer='. b:sy.buffer
+    call cursor(hunk.start, 0)
   endif
 endfunction
 
@@ -30,6 +30,6 @@ function! sy#jump#prev_hunk(count)
   let hunk = get(hunks, 0 - a:count, get(hunks, 0, {}))
 
   if !empty(hunk)
-    execute 'sign jump '. hunk.ids[0] .' buffer='. b:sy.buffer
+    call cursor(hunk.start, 0)
   endif
 endfunction
