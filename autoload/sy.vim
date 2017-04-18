@@ -47,7 +47,7 @@ function! sy#start() abort
       return
     endif
     let b:sy.active = 1
-    call sy#repo#detect(1)
+    call sy#repo#detect()
   elseif has('vim_starting')
     call sy#verbose("Don't run Sy more than once during startup.")
     return
@@ -58,7 +58,7 @@ function! sy#start() abort
     if get(b:sy, 'retry')
       let b:sy.retry = 0
       call sy#verbose('Redetecting VCS.')
-      call sy#repo#detect(1)
+      call sy#repo#detect()
     else
       if get(b:sy, 'detecting')
         call sy#verbose('Detection is already in progress.')
@@ -75,20 +75,18 @@ function! sy#start() abort
         call sy#verbose('Update is already in progress.', vcs)
       else
         call sy#verbose('Updating signs.', vcs)
-        call sy#repo#get_diff_start(vcs, 0)
+        call sy#repo#get_diff_start(vcs)
       endif
     endfor
   endif
 endfunction
 
 " Function: #set_signs {{{1
-function! sy#set_signs(sy, vcs, diff, do_register) abort
+function! sy#set_signs(sy, vcs, diff) abort
   call sy#verbose('set_signs()', a:vcs)
 
-  if a:do_register
-    if a:sy.stats == [-1, -1, -1]
-      let a:sy.stats = [0, 0, 0]
-    endif
+  if a:sy.stats == [-1, -1, -1]
+    let a:sy.stats = [0, 0, 0]
   endif
 
   if empty(a:diff)
