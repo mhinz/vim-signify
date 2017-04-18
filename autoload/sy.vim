@@ -91,6 +91,7 @@ function! sy#set_signs(sy, vcs, diff) abort
 
   if empty(a:diff)
     call sy#verbose('No changes found.', a:vcs)
+    call sy#sign#remove_all_signs(a:sy.buffer)
     return
   endif
 
