@@ -4,17 +4,6 @@ scriptencoding utf-8
 
 " Function: #detect {{{1
 function! sy#repo#detect(do_register) abort
-  " let vcs_list = s:vcs_list
-  " " Simple cache. If there is a registered VCS-controlled file in this
-  " " directory already, assume that this file is probably controlled by
-  " " the same VCS. Thus we shuffle that VCS to the top of our copy of
-  " " s:vcs_list, so we don't affect the preference order of s:vcs_list.
-  " if has_key(g:sy_cache, b:sy_info.dir)
-  "   let vcs_list = [g:sy_cache[b:sy_info.dir]] +
-  "         \ filter(copy(s:vcs_list), 'v:val != "'.
-  "         \        g:sy_cache[b:sy_info.dir] .'"')
-  " endif
-
   for vcs in s:vcs_list
     let b:sy.detecting += 1
     call sy#repo#get_diff_start(vcs, a:do_register)

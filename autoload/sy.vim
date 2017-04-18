@@ -3,8 +3,6 @@
 scriptencoding utf-8
 
 " Init: values {{{1
-let g:sy_cache = {}
-
 let s:has_doau_modeline = v:version > 703 || v:version == 703 && has('patch442')
 
 " Function: #start {{{1
@@ -91,10 +89,6 @@ function! sy#set_signs(sy, vcs, diff, do_register) abort
     if a:sy.stats == [-1, -1, -1]
       let a:sy.stats = [0, 0, 0]
     endif
-    " let dir = fnamemodify(a:sy.path, ':h')
-    " if !has_key(g:sy_cache, dir)
-    "   let g:sy_cache[dir] = a:sy.vcs
-    " endif
   endif
 
   if empty(a:diff)
