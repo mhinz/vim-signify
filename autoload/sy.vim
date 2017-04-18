@@ -35,14 +35,15 @@ function! sy#start() abort
   if !exists('b:sy') || b:sy.path != sy_path
     call sy#verbose('Register new file.')
     let b:sy = {
-          \ 'path'  :    sy_path,
-          \ 'buffer':    bufnr(''),
-          \ 'active':    0,
-          \ 'detecting': 0,
-          \ 'vcs'   :    'unknown',
-          \ 'hunks' :    [],
-          \ 'signid':    0x100,
-          \ 'stats' :    [-1, -1, -1] }
+          \ 'path':       sy_path,
+          \ 'buffer':     bufnr(''),
+          \ 'active':     0,
+          \ 'detecting':  0,
+          \ 'vcs':        [],
+          \ 'hunks':      [],
+          \ 'signid':     0x100,
+          \ 'updated_by': '',
+          \ 'stats':      [-1, -1, -1] }
     if get(g:, 'signify_disable_by_default')
       call sy#verbose('Disabled by default.')
       return
@@ -55,7 +56,7 @@ function! sy#start() abort
   elseif !b:sy.active
     call sy#verbose('Inactive buffer.')
     return
-  elseif b:sy.vcs == 'unknown'
+  elseif empty(b:sy.vcs)
     if get(b:sy, 'retry')
       let b:sy.retry = 0
       call sy#verbose('Redetecting VCS.')
@@ -69,30 +70,36 @@ function! sy#start() abort
       endif
     endif
   else
-    let job_id = get(b:, 'sy_job_id_'.b:sy.vcs)
-    if type(job_id) != type(0) || job_id > 0
-      call sy#verbose('Update is already in progress.', b:sy.vcs)
-    else
-      call sy#verbose('Updating signs.', b:sy.vcs)
-      call sy#repo#get_diff_start(b:sy.vcs, 0)
-    endif
+    let b:sy.updated_by = ''
+    for vcs in b:sy.vcs
+      let job_id = get(b:, 'sy_job_id_'. vcs)
+      if type(job_id) != type(0) || job_id > 0
+        call sy#verbose('Update is already in progress.', vcs)
+      else
+        call sy#verbose('Updating signs.', vcs)
+        call sy#repo#get_diff_start(vcs, 0)
+      endif
+    endfor
   endif
 endfunction
 
 " Function: #set_signs {{{1
-function! sy#set_signs(sy, diff, do_register) abort
-  call sy#verbose('set_signs()', a:sy.vcs)
+function! sy#set_signs(sy, vcs, diff, do_register) abort
+  call sy#verbose('set_signs()', a:vcs)
 
   if a:do_register
-    let a:sy.stats = [0, 0, 0]
-    let dir = fnamemodify(a:sy.path, ':h')
-    if !has_key(g:sy_cache, dir)
-      let g:sy_cache[dir] = a:sy.vcs
+    if a:sy.stats == [-1, -1, -1]
+      let a:sy.stats = [0, 0, 0]
     endif
-    if empty(a:diff)
-      call sy#verbose('No changes found.', a:sy.vcs)
-      return
-    endif
+    " let dir = fnamemodify(a:sy.path, ':h')
+    " if !has_key(g:sy_cache, dir)
+    "   let g:sy_cache[dir] = a:sy.vcs
+    " endif
+  endif
+
+  if empty(a:diff)
+    call sy#verbose('No changes found.', a:vcs)
+    return
   endif
 
   if get(g:, 'signify_line_highlight')
@@ -101,7 +108,7 @@ function! sy#set_signs(sy, diff, do_register) abort
     call sy#highlight#line_disable()
   endif
 
-  call sy#sign#process_diff(a:sy, a:diff)
+  call sy#sign#process_diff(a:sy, a:vcs, a:diff)
 
   if exists('#User#Signify')
     execute 'doautocmd' (s:has_doau_modeline ? '<nomodeline>' : '') 'User Signify'

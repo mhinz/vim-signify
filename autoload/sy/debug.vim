@@ -22,7 +22,7 @@ function! sy#debug#list_active_buffers() abort
               \ sy.stats[1],
               \ sy.stats[2])
       else
-        echo printf("%10s  =  %s\n", k, sy[k])
+        echo printf("%10s  =  %s\n", k, string(sy[k]))
       endif
     endfor
 

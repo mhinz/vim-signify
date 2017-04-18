@@ -50,7 +50,7 @@ endfunction
 
 
 " Function: #process_diff {{{1
-function! sy#sign#process_diff(sy, diff) abort
+function! sy#sign#process_diff(sy, vcs, diff) abort
   let a:sy.signtable             = {}
   let a:sy.hunks                 = []
   let [added, modified, deleted] = [0, 0, 0]
@@ -195,6 +195,9 @@ function! sy#sign#process_diff(sy, diff) abort
     call feedkeys("\<c-l>")
   endif
 
+  call sy#verbose('Signs updated. Disable other VCS.', a:vcs)
+  let a:sy.vcs = [a:vcs]
+  let a:sy.updated_by = a:vcs
   let a:sy.stats = [added, modified, deleted]
 endfunction
 

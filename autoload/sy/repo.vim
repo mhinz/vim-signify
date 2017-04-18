@@ -4,18 +4,18 @@ scriptencoding utf-8
 
 " Function: #detect {{{1
 function! sy#repo#detect(do_register) abort
-  let vcs_list = s:vcs_list
-  " Simple cache. If there is a registered VCS-controlled file in this
-  " directory already, assume that this file is probably controlled by
-  " the same VCS. Thus we shuffle that VCS to the top of our copy of
-  " s:vcs_list, so we don't affect the preference order of s:vcs_list.
-  if has_key(g:sy_cache, b:sy_info.dir)
-    let vcs_list = [g:sy_cache[b:sy_info.dir]] +
-          \ filter(copy(s:vcs_list), 'v:val != "'.
-          \        g:sy_cache[b:sy_info.dir] .'"')
-  endif
+  " let vcs_list = s:vcs_list
+  " " Simple cache. If there is a registered VCS-controlled file in this
+  " " directory already, assume that this file is probably controlled by
+  " " the same VCS. Thus we shuffle that VCS to the top of our copy of
+  " " s:vcs_list, so we don't affect the preference order of s:vcs_list.
+  " if has_key(g:sy_cache, b:sy_info.dir)
+  "   let vcs_list = [g:sy_cache[b:sy_info.dir]] +
+  "         \ filter(copy(s:vcs_list), 'v:val != "'.
+  "         \        g:sy_cache[b:sy_info.dir] .'"')
+  " endif
 
-  for vcs in vcs_list
+  for vcs in s:vcs_list
     let b:sy.detecting += 1
     call sy#repo#get_diff_start(vcs, a:do_register)
   endfor
@@ -62,7 +62,10 @@ function! s:job_exit(bufnr, vcs, exitval, diff, do_register) abort
   if empty(sy)
     call sy#verbose(printf('No b:sy found for %s', bufname(a:bufnr)), a:vcs)
     return
-  elseif sy.vcs == 'unknown' && sy.active
+  elseif !empty(sy.updated_by)
+    call sy#verbose(printf('Signs already got updated by %s.', sy.updated_by), a:vcs)
+    return
+  elseif empty(sy.vcs) && sy.active
     let sy.detecting -= 1
   endif
   call sy#repo#get_diff_{a:vcs}(sy, a:exitval, a:diff, a:do_register)
@@ -123,8 +126,12 @@ endfunction
 function! s:get_diff_end(sy, found_diff, vcs, diff, do_register) abort
   call sy#verbose('get_diff_end()', a:vcs)
   if a:found_diff
-    let a:sy.vcs = a:vcs
-    call sy#set_signs(a:sy, a:diff, a:do_register)
+    if index(a:sy.vcs, a:vcs) == -1
+      let a:sy.vcs += [a:vcs]
+    endif
+    call sy#set_signs(a:sy, a:vcs, a:diff, a:do_register)
+  else
+    call sy#verbose('No valid diff found. Disabling this VCS.', a:vcs)
   endif
 endfunction
 
