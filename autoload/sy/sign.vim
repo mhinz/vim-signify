@@ -195,9 +195,13 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
     call feedkeys("\<c-l>")
   endif
 
-  call sy#verbose('Signs updated. Disable other VCS.', a:vcs)
-  let a:sy.vcs = [a:vcs]
-  let a:sy.updated_by = a:vcs
+  call sy#verbose('Signs updated.', a:vcs)
+  if len(a:sy.vcs) > 1
+    call sy#verbose('Disable all other VCS.', a:vcs)
+    let a:sy.vcs = [a:vcs]
+    let a:sy.updated_by = a:vcs
+  endif
+
   let a:sy.stats = [added, modified, deleted]
 endfunction
 
