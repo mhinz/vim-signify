@@ -3,21 +3,24 @@
 ---
 
 _Signify (or just Sy) uses the sign column to indicate added, modified and
-removed lines in a file that is managed by a version control system._
+removed lines in a file that is managed by a version control system (VCS)._
 
 ---
 
 - Supports **git**, **mercurial**, **darcs**, **bazaar**, **subversion**,
   **cvs**, **rcs**, **fossil**, **accurev**, **perforce**, **tfs**.
-- VCS tools are executed **asynchronously** for Vim 7.4.1967+ or Neovim.
-- Mappings for **navigation of hunks** ("blocks of changed lines").
-- An **operator that acts on hunks**, e.g. for editing or deleting.
-- Optional **line highlighting** for lines with signs.
-- **Preserve signs** from other plugins.
-- Define lists for **skipping certain filetypes or filenames**.
-- Depending on your workflow you can also **disable the plugin by default** and
-  **toggle it per buffer** later.
-- Great documentation and handsome maintainers!
+- **Asynchronous** execution of VCS tools for Vim 7.4.1967+ and Neovim.
+- **Preserves signs** from other plugins.
+- Handles **nested repositories** controlled by different VCS.
+- Provides mappings for **navigating hunks** ("blocks of changed lines").
+- Provides an **operator** that acts on hunks.
+- Alternative workflow: Disable the plugin by default and **toggle it per
+  buffer** on demand.
+- Optional **line highlighting**.
+- Optional **skipping of filetypes/filenames**.
+- Optional **stats in the statusline**.
+- **Works out of the box**, but allows fine-grained configuration.
+- **Great documentation** and **handsome maintainers**!
 
 ---
 
@@ -34,9 +37,9 @@ manager](https://github.com/mhinz/vim-galore#managing-plugins), e.g. using
 
 ## Documentation
 
-1. Understand how the plugin works by reading this short intro:
+1. Understand how the plugin works:
    [`:h signify-modus-operandi`](https://github.com/mhinz/vim-signify/blob/master/doc/signify.txt#L52)
-1. The single most important option by far: `:h g:signify_vcs_list`
+1. Spare the plugin some work and read: `:h g:signify_vcs_list`
 
 ## Demo
 
