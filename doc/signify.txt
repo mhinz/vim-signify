@@ -626,10 +626,10 @@ An example configuration for Sy:
     let g:signify_update_on_bufenter    = 0
     let g:signify_update_on_focusgained = 1
 
-    nnoremap <leader>gt SignifyToggle
-    nnoremap <leader>gh SignifyToggleHighlight
-    nnoremap <leader>gr SignifyRefresh
-    nnoremap <leader>gd SignifyDebug
+    nnoremap <leader>gt :SignifyToggle<CR>
+    nnoremap <leader>gh :SignifyToggleHighlight<CR>
+    nnoremap <leader>gr :SignifyRefresh<CR>
+    nnoremap <leader>gd :SignifyDebug<CR>
 
     " hunk jumping
     nmap <leader>gj <plug>(signify-next-hunk)
