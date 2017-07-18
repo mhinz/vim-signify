@@ -96,11 +96,10 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
       if new_line == 0
         call add(ids, s:add_sign(a:sy, 1, 'SignifyRemoveFirstLine'))
       elseif s:sign_show_count
-        if old_count <= 99
-          let text = substitute(s:sign_delete . old_count, '.*\ze..$', '', '')
-        else
-          let text = s:sign_delete .'>'
-        endif
+        let text = s:sign_delete . (old_count <= 99 ? old_count : '>')
+        while strwidth(text) > 2
+          let text = substitute(text, '.', '', '')
+        endwhile
         call add(ids, s:add_sign(a:sy, new_line, 'SignifyDelete'. old_count, text))
       else
         call add(ids, s:add_sign(a:sy, new_line, 'SignifyDeleteMore', s:sign_delete))
