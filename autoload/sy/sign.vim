@@ -4,12 +4,12 @@ scriptencoding utf-8
 
 " Init: values {{{1
 if get(g:, 'signify_sign_show_text', 1)
-  let s:sign_delete      = get(g:, 'signify_sign_delete', '_')
-  let s:sign_show_count  = get(g:, 'signify_sign_show_count', 1)
+  let s:sign_delete = get(g:, 'signify_sign_delete', '_')
 else
-  let s:sign_delete     = ' '
-  let s:sign_show_count = 0
+  let s:sign_delete = ' '
 endif
+
+let s:sign_show_count  = get(g:, 'signify_sign_show_count', 1)
 let s:delete_highlight = ['', 'SignifyLineDelete']
 
 " Function: #id_next {{{1
