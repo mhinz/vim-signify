@@ -325,16 +325,11 @@ Enable line highlighting in addition to using signs by default.
 The sign to use if a line was added, deleted or changed or a combination of
 these.
 
-NOTE: You can use unicode characters.
+You can use unicode characters, but signs must not take up more than two
+cells. Otherwise |E239| is thrown.
 
-NOTE: You can use up to 2 characters for the signs with two exceptions that
-      happen in combination with |g:signify_sign_show_count| set:
-
-1) |g:signify_sign_delete| uses only 1 character and truncates while the count
-   increases.
-
-2) |g:signify_sign_changedelete| uses only 1 character and truncates if
-   necessary.
+If |g:signify_sign_show_count| is set, |g:signify_sign_delete| and
+|g:signify_sign_changedelete| get truncated as needed.
 
 ------------------------------------------------------------------------------
                                                      *g:signify_sign_show_count*  >
