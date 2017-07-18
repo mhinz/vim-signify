@@ -14,7 +14,8 @@ else
   let s:sign_change            = ' '
   let s:sign_changedelete      = ' '
 endif
-let s:sign_show_count        = get(g:, 'signify_sign_show_count',        1)
+
+let s:sign_show_count = get(g:, 'signify_sign_show_count', 1)
 
 " Function: #setup {{{1
 function! sy#highlight#setup() abort
@@ -60,7 +61,9 @@ function! sy#highlight#line_disable() abort
   execute 'sign define SignifyRemoveFirstLine text='. s:sign_delete_first_line 'texthl=SignifySignDeleteFirstLine linehl='
 
   if s:sign_show_count
-    let s:sign_changedelete = substitute(s:sign_changedelete, '^.\zs.*', '', '')
+    while strwidth(s:sign_changedelete) > 1
+      let s:sign_changedelete = substitute(s:sign_changedelete, '.', '', '')
+    endwhile
     for n in range(1, 9)
       execute 'sign define SignifyChangeDelete'. n 'text='. s:sign_changedelete . n 'texthl=SignifySignChangeDelete linehl='
     endfor
