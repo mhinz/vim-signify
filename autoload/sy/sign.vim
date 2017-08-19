@@ -191,7 +191,7 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
   if has('gui_macvim') && has('gui_running') && mode() == 'n'
     " MacVim needs an extra kick in the butt, when setting signs from the
     " exit handler. :redraw would trigger a "hanging cursor" issue.
-    call feedkeys("\<c-l>")
+    call feedkeys("\<c-l>", 'n')
   endif
 
   call sy#verbose('Signs updated.', a:vcs)
