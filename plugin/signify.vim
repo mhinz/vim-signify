@@ -97,6 +97,8 @@ xnoremap <silent> <plug>(signify-motion-inner-visual)  :<c-u>call sy#util#hunk_t
 onoremap <silent> <plug>(signify-motion-outer-pending) :<c-u>call sy#util#hunk_text_object(1)<cr>
 xnoremap <silent> <plug>(signify-motion-outer-visual)  :<c-u>call sy#util#hunk_text_object(1)<cr>
 
+nnoremap <silent> <plug>(signify-toggle-fold)  :<c-u>call sy#fold#toggle()<cr>
+
 " Function: save {{{1
 
 function! s:save()
