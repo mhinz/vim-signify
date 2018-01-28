@@ -100,7 +100,7 @@ xnoremap <silent> <plug>(signify-motion-outer-visual)  :<c-u>call sy#util#hunk_t
 " Function: save {{{1
 
 function! s:save()
-  if exists('b:sy') && b:sy.active && &modified
+  if exists('b:sy') && b:sy.active && &modified && &modifiable && ! &readonly
     write
   endif
 endfunction
