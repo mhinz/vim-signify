@@ -31,7 +31,7 @@ function! sy#start() abort
         \ }
 
   if !exists('b:sy') || b:sy.path != sy_path
-    call sy#verbose('Register new file.')
+    call sy#verbose('Register new file: '. sy_path)
     let b:sy = {
           \ 'path':       sy_path,
           \ 'buffer':     bufnr(''),
