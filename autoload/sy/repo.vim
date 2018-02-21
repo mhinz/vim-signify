@@ -184,7 +184,7 @@ endfunction
 " Function: #get_diff_rcs {{{1
 function! sy#repo#get_diff_rcs(sy, exitval, diff) abort
   call sy#verbose('get_diff_rcs()', 'rcs')
-  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
+  let [found_diff, diff] = a:exitval == 2 ? [0, []] : [1, a:diff]
   call s:get_diff_end(a:sy, found_diff, 'rcs', diff)
 endfunction
 
