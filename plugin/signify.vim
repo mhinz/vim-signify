@@ -6,6 +6,9 @@ if exists('g:loaded_signify') || !has('signs') || &compatible
   finish
 endif
 
+let s:save_cpo = &cpo
+set cpo+=B
+
 " Init: values {{{1
 let g:loaded_signify = 1
 let g:signify_locked = 0
@@ -113,3 +116,6 @@ endfunction
 if exists('#User#SignifySetup')
   execute 'doautocmd' (s:has_doau_modeline ? '<nomodeline>' : '') 'User SignifySetup'
 endif
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
