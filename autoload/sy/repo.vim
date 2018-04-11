@@ -452,7 +452,7 @@ if empty(s:vcs_list)
   let s:vcs_list = keys(filter(s:vcs_dict, 'executable(v:val)'))
 endif
 
-let s:vcs_cmds = {
+let s:default_vcs_cmds = {
       \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
       \ 'hg':       'hg diff --config extensions.color=! --config defaults.diff= --nodates -U0 -- %f',
       \ 'svn':      'svn diff --diff-cmd %d -x -U0 -- %f',
@@ -466,15 +466,20 @@ let s:vcs_cmds = {
       \ 'tfs':      'tf diff -version:W -noprompt -format:Unified %f'
       \ }
 
-if exists('g:signify_vcs_cmds')
-  call extend(g:signify_vcs_cmds, s:vcs_cmds, 'keep')
-else
-  let g:signify_vcs_cmds = s:vcs_cmds
-endif
-
-let g:signify_vcs_cmds_diffmode = {
+let s:default_vcs_cmds_diffmode = {
       \ 'git': 'git show HEAD:./%f',
       \ }
+
+if exists('g:signify_vcs_cmds')
+  call extend(g:signify_vcs_cmds, s:default_vcs_cmds, 'keep')
+else
+  let g:signify_vcs_cmds = s:default_vcs_cmds
+endif
+if exists('g:signify_vcs_cmds_diffmode')
+  call extend(g:signify_vcs_cmds_diffmode, s:default_vcs_cmds_diffmode, 'keep')
+else
+  let g:signify_vcs_cmds_diffmode = s:default_vcs_cmds_diffmode
+endif
 
 let s:difftool = sy#util#escape(s:difftool)
 let s:devnull  = has('win32') || has ('win64') ? 'NUL' : '/dev/null'
