@@ -244,6 +244,33 @@ function! sy#repo#debug_detection()
   endfor
 endfunction
 
+" Function: #diffmode {{{1
+function! sy#repo#diffmode() abort
+  if !exists('b:sy')
+    echomsg 'signify: I cannot detect any changes!'
+    return
+  endif
+  let vcs = b:sy.updated_by
+  if !has_key(g:signify_vcs_cmds_diffmode, vcs)
+    echomsg 'SignifyDiff has no support for: '. vcs
+    echomsg 'Open an issue for it at: https://github.com/mhinz/vim-signify/issues'
+    return
+  endif
+  let cmd = s:expand_cmd_diffmode(vcs)
+  let ft = &filetype
+  tabedit %
+  diffthis
+  leftabove vnew
+  silent put =system(cmd)
+  silent 1delete
+  diffthis
+  set buftype=nofile bufhidden=wipe nomodified
+  let &filetype = ft
+  wincmd p
+  silent! %foldopen!
+  normal! ]czt
+endfunction
+
 " Function: s:initialize_job {{{1
 function! s:initialize_job(vcs) abort
   let vcs_cmd = s:expand_cmd(a:vcs)
@@ -276,6 +303,15 @@ function! s:expand_cmd(vcs) abort
   let cmd = s:replace(cmd, '%d', s:difftool)
   let cmd = s:replace(cmd, '%n', s:devnull)
   let b:sy_info.cmd = cmd
+  return cmd
+endfunction
+
+" Function: s:expand_cmd_diffmode {{{1
+function! s:expand_cmd_diffmode(vcs) abort
+  let cmd = g:signify_vcs_cmds_diffmode[a:vcs]
+  let cmd = s:replace(cmd, '%f', s:get_vcs_path(a:vcs))
+  let cmd = s:replace(cmd, '%d', s:difftool)
+  let cmd = s:replace(cmd, '%n', s:devnull)
   return cmd
 endfunction
 
@@ -435,6 +471,10 @@ if exists('g:signify_vcs_cmds')
 else
   let g:signify_vcs_cmds = s:vcs_cmds
 endif
+
+let g:signify_vcs_cmds_diffmode = {
+      \ 'git': 'git show HEAD:./%f',
+      \ }
 
 let s:difftool = sy#util#escape(s:difftool)
 let s:devnull  = has('win32') || has ('win64') ? 'NUL' : '/dev/null'
