@@ -225,7 +225,7 @@ function! sy#repo#debug_detection()
   endif
 
   for vcs in s:vcs_list
-    let cmd = s:expand_cmd(vcs)
+    let cmd = s:expand_cmd(vcs, g:signify_vcs_cmds)
     echohl Statement
     echo cmd
     echo repeat('=', len(cmd))
@@ -255,7 +255,7 @@ function! sy#repo#diffmode() abort
     echomsg 'Open an issue for it at: https://github.com/mhinz/vim-signify/issues'
     return
   endif
-  let cmd = s:expand_cmd_diffmode(vcs)
+  let cmd = s:expand_cmd(vcs, g:signify_vcs_cmds_diffmode)
   call sy#verbose('SignifyDiff: '. cmd, vcs)
   let ft = &filetype
   tabedit %
@@ -279,7 +279,7 @@ endfunction
 
 " Function: s:initialize_job {{{1
 function! s:initialize_job(vcs) abort
-  let vcs_cmd = s:expand_cmd(a:vcs)
+  let vcs_cmd = s:expand_cmd(a:vcs, g:signify_vcs_cmds)
   if has('win32')
     if has('nvim')
       let cmd = &shell =~ 'cmd' ? vcs_cmd : ['sh', '-c', vcs_cmd]
@@ -303,17 +303,8 @@ function! s:get_vcs_path(vcs) abort
 endfunction
 
 " Function: s:expand_cmd {{{1
-function! s:expand_cmd(vcs) abort
-  let cmd = g:signify_vcs_cmds[a:vcs]
-  let cmd = s:replace(cmd, '%f', s:get_vcs_path(a:vcs))
-  let cmd = s:replace(cmd, '%d', s:difftool)
-  let cmd = s:replace(cmd, '%n', s:devnull)
-  return cmd
-endfunction
-
-" Function: s:expand_cmd_diffmode {{{1
-function! s:expand_cmd_diffmode(vcs) abort
-  let cmd = g:signify_vcs_cmds_diffmode[a:vcs]
+function! s:expand_cmd(vcs, vcs_cmds) abort
+  let cmd = a:vcs_cmds[a:vcs]
   let cmd = s:replace(cmd, '%f', s:get_vcs_path(a:vcs))
   let cmd = s:replace(cmd, '%d', s:difftool)
   let cmd = s:replace(cmd, '%n', s:devnull)
@@ -325,7 +316,7 @@ function! s:run(vcs)
   let [cwd, chdir] = sy#util#chdir()
   try
     execute chdir fnameescape(b:sy.info.dir)
-    let ret = system(s:expand_cmd(a:vcs))
+    let ret = system(s:expand_cmd(a:vcs, g:signify_vcs_cmds))
   catch
     " This exception message can be seen via :SignifyDebugUnknown.
     " E.g. unquoted VCS programs in vcd_cmds can lead to E484.
