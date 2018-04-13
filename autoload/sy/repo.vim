@@ -73,7 +73,6 @@ function! sy#repo#get_diff_start(vcs) abort
     endif
 
     let [cmd, options] = s:initialize_job(a:vcs)
-    let [cwd, chdir] = sy#util#chdir()
 
     call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), b:sy_info.dir), a:vcs)
     let b:sy_job_id_{a:vcs} = jobstart(cmd, extend(options, {
