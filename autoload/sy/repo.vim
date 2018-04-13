@@ -260,8 +260,14 @@ function! sy#repo#diffmode() abort
   let ft = &filetype
   tabedit %
   diffthis
-  leftabove vnew
-  silent put =system(cmd)
+  let [cwd, chdir] = sy#util#chdir()
+  try
+    execute chdir fnameescape(b:sy_info.dir)
+    leftabove vnew
+    silent put =system(cmd)
+  finally
+    execute chdir fnameescape(cwd)
+  endtry
   silent 1delete
   diffthis
   set buftype=nofile bufhidden=wipe nomodified
