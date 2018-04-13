@@ -308,7 +308,6 @@ function! s:expand_cmd(vcs) abort
   let cmd = s:replace(cmd, '%f', s:get_vcs_path(a:vcs))
   let cmd = s:replace(cmd, '%d', s:difftool)
   let cmd = s:replace(cmd, '%n', s:devnull)
-  let b:sy.info.cmd = cmd
   return cmd
 endfunction
 
