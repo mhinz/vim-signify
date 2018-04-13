@@ -15,7 +15,7 @@ function! sy#start() abort
   let sy_path = resolve(expand('%:p'))
 
   if s:skip(sy_path)
-    call sy#verbose('Skip file.')
+    call sy#verbose('Skip file: '. sy_path)
     if exists('b:sy')
       call sy#sign#remove_all_signs(bufnr(''))
       unlet! b:sy b:sy_info
