@@ -18,17 +18,10 @@ function! sy#start() abort
     call sy#verbose('Skip file: '. sy_path)
     if exists('b:sy')
       call sy#sign#remove_all_signs(bufnr(''))
-      unlet! b:sy b:sy_info
+      unlet! b:sy
     endif
     return
   endif
-
-  " sy_info is used in autoload/sy/repo
-  let b:sy_info = {
-        \ 'dir':   fnamemodify(sy_path, ':p:h'),
-        \ 'path':  sy#util#escape(sy_path),
-        \ 'file':  sy#util#escape(fnamemodify(sy_path, ':t')),
-        \ }
 
   if !exists('b:sy') || b:sy.path != sy_path
     call sy#verbose('Register new file: '. sy_path)
@@ -41,7 +34,12 @@ function! sy#start() abort
           \ 'hunks':      [],
           \ 'signid':     0x100,
           \ 'updated_by': '',
-          \ 'stats':      [-1, -1, -1] }
+          \ 'stats':      [-1, -1, -1],
+          \ 'info':       {
+          \    'dir':  fnamemodify(sy_path, ':p:h'),
+          \    'path': sy#util#escape(sy_path),
+          \    'file': sy#util#escape(fnamemodify(sy_path, ':t'))
+          \ }}
     if get(g:, 'signify_disable_by_default')
       call sy#verbose('Disabled by default.')
       return

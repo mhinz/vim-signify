@@ -74,9 +74,9 @@ function! sy#repo#get_diff_start(vcs) abort
 
     let [cmd, options] = s:initialize_job(a:vcs)
 
-    call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), b:sy_info.dir), a:vcs)
+    call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), b:sy.info.dir), a:vcs)
     let b:sy_job_id_{a:vcs} = jobstart(cmd, extend(options, {
-          \ 'cwd':       b:sy_info.dir,
+          \ 'cwd':       b:sy.info.dir,
           \ 'on_stdout': function('s:callback_nvim_stdout'),
           \ 'on_exit':   function('s:callback_nvim_exit'),
           \ }))
@@ -91,7 +91,7 @@ function! sy#repo#get_diff_start(vcs) abort
     let [cwd, chdir] = sy#util#chdir()
 
     try
-      execute chdir fnameescape(b:sy_info.dir)
+      execute chdir fnameescape(b:sy.info.dir)
       call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), getcwd()), a:vcs)
       let opts = {
             \ 'in_io':    'null',
@@ -262,7 +262,7 @@ function! sy#repo#diffmode() abort
   diffthis
   let [cwd, chdir] = sy#util#chdir()
   try
-    execute chdir fnameescape(b:sy_info.dir)
+    execute chdir fnameescape(b:sy.info.dir)
     leftabove vnew
     silent put =system(cmd)
   finally
@@ -299,7 +299,7 @@ endfunction
 
 " Function: s:get_vcs_path {{{1
 function! s:get_vcs_path(vcs) abort
-  return (a:vcs =~# '\v(git|cvs|accurev|tfs)') ? b:sy_info.file : b:sy_info.path
+  return (a:vcs =~# '\v(git|cvs|accurev|tfs)') ? b:sy.info.file : b:sy.info.path
 endfunction
 
 " Function: s:expand_cmd {{{1
@@ -308,7 +308,7 @@ function! s:expand_cmd(vcs) abort
   let cmd = s:replace(cmd, '%f', s:get_vcs_path(a:vcs))
   let cmd = s:replace(cmd, '%d', s:difftool)
   let cmd = s:replace(cmd, '%n', s:devnull)
-  let b:sy_info.cmd = cmd
+  let b:sy.info.cmd = cmd
   return cmd
 endfunction
 
@@ -325,7 +325,7 @@ endfunction
 function! s:run(vcs)
   let [cwd, chdir] = sy#util#chdir()
   try
-    execute chdir fnameescape(b:sy_info.dir)
+    execute chdir fnameescape(b:sy.info.dir)
     let ret = system(s:expand_cmd(a:vcs))
   catch
     " This exception message can be seen via :SignifyDebugUnknown.
