@@ -256,6 +256,7 @@ function! sy#repo#diffmode() abort
     return
   endif
   let cmd = s:expand_cmd_diffmode(vcs)
+  call sy#verbose('SignifyDiff: '. cmd, vcs)
   let ft = &filetype
   tabedit %
   diffthis
