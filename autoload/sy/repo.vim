@@ -466,6 +466,7 @@ let s:default_vcs_cmds_diffmode = {
       \ 'git': 'git show HEAD:./%f',
       \ 'hg':  'hg cat %f',
       \ 'svn': 'svn cat %f',
+      \ 'bzr': 'bzr cat %f',
       \ }
 
 if exists('g:signify_vcs_cmds')
