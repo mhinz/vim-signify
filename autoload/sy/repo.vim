@@ -210,11 +210,7 @@ endfunction
 
 " Function: #get_stats {{{1
 function! sy#repo#get_stats() abort
-  if !exists('b:sy') || !has_key(b:sy, 'stats')
-    return [-1, -1, -1]
-  endif
-
-  return b:sy.stats
+  return exists('b:sy') ? b:sy.stats : [-1, -1, -1]
 endfunction
 
 " Function: #debug_detection {{{1
@@ -245,10 +241,8 @@ endfunction
 
 " Function: #diffmode {{{1
 function! sy#repo#diffmode() abort
-  if !exists('b:sy')
-    echomsg 'signify: I cannot detect any changes!'
-    return
-  endif
+  execute sy#util#return_if_no_changes()
+
   let vcs = b:sy.updated_by
   if !has_key(g:signify_vcs_cmds_diffmode, vcs)
     echomsg 'SignifyDiff has no support for: '. vcs

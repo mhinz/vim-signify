@@ -42,10 +42,7 @@ endfunction
 
 " Function: #enable {{{1
 function! sy#fold#enable(do_tab) abort
-  if !exists('b:sy')
-    echomsg 'signify: I cannot detect any changes!'
-    return
-  endif
+  execute sy#util#return_if_no_changes()
 
   if a:do_tab
     tabedit %

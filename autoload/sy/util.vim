@@ -43,14 +43,13 @@ endfunction
 
 " Function: #hunk_text_object {{{1
 function! sy#util#hunk_text_object(emptylines) abort
-  if !exists('b:sy')
-    return
-  endif
+  execute sy#util#return_if_no_changes()
 
   let lnum  = line('.')
   let hunks = filter(copy(b:sy.hunks), 'v:val.start <= lnum && v:val.end >= lnum')
 
   if empty(hunks)
+    echomsg 'signify: Here is no hunk.'
     return
   endif
 
@@ -88,4 +87,13 @@ function! sy#util#chdir() abort
         \ ? 'lcd'
         \ : (exists(':tcd') && haslocaldir(-1, 0)) ? 'tcd' : 'cd'
   return [getcwd(), chdir]
+endfunction
+
+" Function: #has_changes {{{1
+function! sy#util#return_if_no_changes() abort
+  if !exists('b:sy') || empty(b:sy.hunks)
+    echomsg 'signify: There are no changes.'
+    return 'return'
+  endif
+  return ''
 endfunction

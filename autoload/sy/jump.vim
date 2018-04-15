@@ -4,10 +4,7 @@ scriptencoding utf-8
 
 " Function: #next_hunk {{{1
 function! sy#jump#next_hunk(count)
-  if !exists('b:sy')
-    echomsg 'signify: I cannot detect any changes!'
-    return
-  endif
+  execute sy#util#return_if_no_changes()
 
   let lnum = line('.')
   let hunks = filter(copy(b:sy.hunks), 'v:val.start > lnum')
@@ -20,10 +17,7 @@ endfunction
 
 " Function: #prev_hunk {{{1
 function! sy#jump#prev_hunk(count)
-  if !exists('b:sy')
-    echomsg 'signify: I cannot detect any changes!'
-    return
-  endif
+  execute sy#util#return_if_no_changes()
 
   let lnum = line('.')
   let hunks = filter(copy(b:sy.hunks), 'v:val.start < lnum')
