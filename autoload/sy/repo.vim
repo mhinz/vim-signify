@@ -171,7 +171,7 @@ function! sy#repo#get_diff_cvs(sy, exitval, diff) abort
   let [found_diff, diff] = [0, []]
   if a:exitval == 1
     for diffline in a:diff
-      if diffline =~ '+++'
+      if diffline =~ '^+++'
         let [found_diff, diff] = [1, a:diff]
         break
       endif
