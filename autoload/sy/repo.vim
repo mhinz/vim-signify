@@ -463,10 +463,11 @@ let s:default_vcs_cmds = {
       \ }
 
 let s:default_vcs_cmds_diffmode = {
-      \ 'git': 'git show HEAD:./%f',
-      \ 'hg':  'hg cat %f',
-      \ 'svn': 'svn cat %f',
-      \ 'bzr': 'bzr cat %f',
+      \ 'git':   'git show HEAD:./%f',
+      \ 'hg':    'hg cat %f',
+      \ 'svn':   'svn cat %f',
+      \ 'bzr':   'bzr cat %f',
+      \ 'darcs': 'darcs show contents -- %f',
       \ }
 
 if exists('g:signify_vcs_cmds')
