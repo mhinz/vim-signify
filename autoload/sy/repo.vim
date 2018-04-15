@@ -468,6 +468,7 @@ let s:default_vcs_cmds_diffmode = {
       \ 'svn':   'svn cat %f',
       \ 'bzr':   'bzr cat %f',
       \ 'darcs': 'darcs show contents -- %f',
+      \ 'cvs':   'cvs up -p -- %f 2>%n',
       \ }
 
 if exists('g:signify_vcs_cmds')
