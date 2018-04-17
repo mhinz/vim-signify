@@ -51,7 +51,7 @@ function! s:job_exit(bufnr, vcs, exitval, diff) abort
   if empty(sy)
     call sy#verbose(printf('No b:sy found for %s', bufname(a:bufnr)), a:vcs)
     return
-  elseif !empty(sy.updated_by)
+  elseif !empty(sy.updated_by) && sy.updated_by != a:vcs
     call sy#verbose(printf('Signs already got updated by %s.', sy.updated_by), a:vcs)
     return
   elseif empty(sy.vcs) && sy.active

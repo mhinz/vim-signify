@@ -66,7 +66,6 @@ function! sy#start() abort
       endif
     endif
   else
-    let b:sy.updated_by = ''
     for vcs in b:sy.vcs
       let job_id = get(b:, 'sy_job_id_'. vcs)
       if type(job_id) != type(0) || job_id > 0

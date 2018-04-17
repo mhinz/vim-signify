@@ -194,6 +194,11 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
     call feedkeys("\<c-l>", 'n')
   endif
 
+  if empty(a:sy.updated_by) && empty(a:sy.hunks)
+    call sy#verbose('Successful exit value, but no diff. Keep VCS for time being.', a:vcs)
+    return
+  endif
+
   call sy#verbose('Signs updated.', a:vcs)
   let a:sy.updated_by = a:vcs
   if len(a:sy.vcs) > 1
