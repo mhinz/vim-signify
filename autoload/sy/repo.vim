@@ -425,7 +425,7 @@ if executable(s:difftool)
         \ 'tfs':      'tf'
         \ }
 else
-  echomsg 'signify: No diff tool found -> no support for svn, darcs, bzr, fossil.'
+  call sy#verbose('No "diff" executable found. Disable support for svn, darcs, bzr, fossil.')
   let s:vcs_dict = {
         \ 'git':      'git',
         \ 'hg':       'hg',
