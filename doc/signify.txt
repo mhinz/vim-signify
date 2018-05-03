@@ -129,6 +129,7 @@ Most important options:~
 Other options:~
 
     |g:signify_vcs_cmds|
+    |g:signify_vcs_cmds_diffmode|
     |g:signify_disable_by_default|
     |g:signify_skip_filetype|
     |g:signify_skip_filename|
@@ -258,6 +259,21 @@ Default:
       \ 'tfs':      'tf diff -version:W -noprompt %f',
       \ }
 <
+------------------------------------------------------------------------------
+                                                   *g:signify_vcs_cmds_diffmode*  >
+    let g:signify_vcs_cmds_diffmode = {
+      \ 'git':      'git show HEAD:./%f',
+      \ 'hg':       'hg cat %f',
+      \ 'svn':      'svn cat %f',
+      \ 'bzr':      'bzr cat %f',
+      \ 'darcs':    'darcs show contents -- %f',
+      \ 'cvs':      'cvs up -p -- %f 2>%n',
+      \ 'perforce': 'p4 print %f',
+      \ }
+<
+The command to use for |:SignifyDiff|. This option takes the same format as
+|g:signify_vcs_cmds|.
+
 ------------------------------------------------------------------------------
                                                   *g:signify_disable_by_default*  >
     let g:signify_disable_by_default = 0
@@ -425,6 +441,15 @@ Toggle line highlighting for lines containing changes.
 Refresh signs in all windows.
 
 NOTE: Nothing will happen, if :SignifyRefresh is used from the |cmdline-window|.
+
+------------------------------------------------------------------------------
+                                                          *signify-:SignifyDiff*  >
+    :SignifyDiff
+<
+Open a new tab with two windows using |diff-mode| to show the differences
+between the current file and its version that was last checked in.
+
+Also see |g:signify_vcs_cmds_diffmode|.
 
 ------------------------------------------------------------------------------
                                                           *signify-:SignifyFold*  >
