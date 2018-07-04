@@ -13,6 +13,9 @@ function! sy#start() abort
   endif
 
   let sy_path = resolve(expand('%:p'))
+  if has('win32')
+    let sy_path = substitute(sy_path, '\v^(\w):\\\\', '\1:\\', '')
+  endif
 
   if s:skip(sy_path)
     call sy#verbose('Skip file: '. sy_path)
