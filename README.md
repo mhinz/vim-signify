@@ -24,8 +24,7 @@ removed lines in a file that is managed by a version control system (VCS)._
 
 ---
 
-_If git is the only version control system you use, I suggest having a look at
-[vim-gitgutter](https://github.com/airblade/vim-gitgutter)._
+_Similar plugin for git: [vim-gitgutter](https://github.com/airblade/vim-gitgutter)_
 
 ## Installation
 
