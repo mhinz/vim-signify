@@ -2,9 +2,6 @@
 
 scriptencoding utf-8
 
-" Init: values {{{1
-let s:has_doau_modeline = v:version > 703 || v:version == 703 && has('patch442')
-
 " Function: #start {{{1
 function! sy#start() abort
   if g:signify_locked
@@ -105,7 +102,7 @@ function! sy#set_signs(sy, vcs, diff) abort
   call sy#sign#process_diff(a:sy, a:vcs, a:diff)
 
   if exists('#User#Signify')
-    execute 'doautocmd' (s:has_doau_modeline ? '<nomodeline>' : '') 'User Signify'
+    doautocmd <nomodeline> User Signify
   endif
 endfunction
 

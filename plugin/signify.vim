@@ -4,12 +4,17 @@ scriptencoding utf-8
 
 if exists('g:loaded_signify') || !has('signs') || &compatible
   finish
+elseif v:version < 800
+  echomsg 'vim-signify requires at least Vim 8.'
+  echomsg 'Older versions are supported by checking out the git tag "for-old-versions".'
+  echomsg 'E.g. using vim-plug:'
+  echomsg "Plug 'mhinz/vim-signify', { 'tag': 'for-old-versions' }"
+  finish
 endif
 
 " Init: values {{{1
 let g:loaded_signify = 1
 let g:signify_locked = 0
-let s:has_doau_modeline = v:version > 703 || v:version == 703 && has('patch442')
 
 " Init: autocmds {{{1
 augroup signify
@@ -23,7 +28,7 @@ augroup signify
 
   autocmd BufWritePost * call sy#start()
 
-  if get(g:, 'signify_realtime') && has('patch-7.4.1967')
+  if get(g:, 'signify_realtime')
     autocmd WinEnter * call sy#start()
     if get(g:, 'signify_update_on_bufenter')
       autocmd BufEnter * nested call s:save()
@@ -112,5 +117,5 @@ function! s:save()
 endfunction
 
 if exists('#User#SignifySetup')
-  execute 'doautocmd' (s:has_doau_modeline ? '<nomodeline>' : '') 'User SignifySetup'
+  doautocmd <nomodeline> User SignifySetup
 endif

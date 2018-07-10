@@ -80,9 +80,8 @@ function! sy#repo#get_diff_start(vcs) abort
           \ 'on_stdout': function('s:callback_nvim_stdout'),
           \ 'on_exit':   function('s:callback_nvim_exit'),
           \ }))
-
-  " Newer Vim
-  elseif has('patch-7.4.1967')
+  " Vim
+  else
     if type(job_id) != type(0)
       silent! call job_stop(job_id)
     endif
@@ -102,11 +101,6 @@ function! sy#repo#get_diff_start(vcs) abort
     finally
       execute chdir fnameescape(cwd)
     endtry
-
-  " Older Vim
-  else
-    let diff = split(s:run(a:vcs), '\n')
-    call sy#repo#get_diff_{a:vcs}(b:sy, v:shell_error, diff)
   endif
 endfunction
 

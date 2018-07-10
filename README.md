@@ -9,7 +9,7 @@ removed lines in a file that is managed by a version control system (VCS)._
 
 - Supports **git**, **mercurial**, **darcs**, **bazaar**, **subversion**,
   **cvs**, **rcs**, **fossil**, **accurev**, **perforce**, **tfs**.
-- **Asynchronous** execution of VCS tools for Vim 7.4.1967+ and Neovim.
+- **Asynchronous** execution of VCS tools for Vim 8 and Neovim.
 - **Preserves signs** from other plugins.
 - Handles **nested repositories** controlled by different VCS.
 - Provides mappings for **navigating hunks** ("blocks of changed lines").
@@ -33,6 +33,10 @@ manager](https://github.com/mhinz/vim-galore#managing-plugins), e.g. using
 [vim-plug](https://github.com/junegunn/vim-plug):
 
     Plug 'mhinz/vim-signify'
+
+For versions older than Vim 8 use this instead:
+
+    Plug 'mhinz/vim-signify', { 'tag': 'for-old-versions' }
 
 ## Documentation
 
