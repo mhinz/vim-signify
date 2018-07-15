@@ -40,9 +40,8 @@ For versions older than Vim 8 use this instead:
 
 ## Documentation
 
-1. Understand how the plugin works:
-   [`:h signify-modus-operandi`](https://github.com/mhinz/vim-signify/blob/master/doc/signify.txt#L52)
-1. Spare the plugin some work and read: `:h g:signify_vcs_list`
+Understand how this plugin works:
+[`:h signify-modus-operandi`](https://github.com/mhinz/vim-signify/blob/master/doc/signify.txt#L52)
 
 ## Demo
 

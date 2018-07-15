@@ -56,8 +56,7 @@ whether the underlying file is controlled by a VCS (version control system) or
 not.
 
 For that, it asynchronously tries all the `diff` subcommands of all the VCS
-tools that are supported and executable. It's recommended to set
-|g:signify_vcs_list| to limit the VCS to test for.
+tools that are supported and executable.
 
 If one of the checks produces a proper diff, that VCS will automatically be
 used for all successive calls to Sy.
@@ -123,11 +122,7 @@ default values, as long as no "Default:" section is given.
 
 Most important options:~
 
-    |g:signify_vcs_list|
     |g:signify_realtime|
-
-Other options:~
-
     |g:signify_vcs_cmds|
     |g:signify_vcs_cmds_diffmode|
     |g:signify_disable_by_default|
@@ -148,43 +143,6 @@ Other options:~
     |g:signify_cursorhold_insert|
     |g:signify_difftool|
     |g:signify_fold_context|
-
-------------------------------------------------------------------------------
-                                                            *g:signify_vcs_list*  >
-    let g:signify_vcs_list = [ 'git', 'hg' ]
-<
-Default: empty
-Possible values: 'accurev'
-                 'bzr'
-                 'cvs'
-                 'darcs'
-                 'fossil'
-                 'git'
-                 'hg'
-                 'perforce'
-                 'rcs'
-                 'svn'
-                 'tfs'
-
-NOTE: This is the most important option, so read closely.
-
-This option determines what VCS to check for.
-
-This can improve buffer loading time, since by default all supported and
-installed VCS will be checked for. This only happens once, when signs get set
-the first time. Afterwards, the VCS will either be remembered or registered as
-inactive when no VCS was found.
-
-If your Vim is recent enough, these checks will happen asynchronously.
-
-NOTE: If you don't set this option, updating signs for a non-VCS file can lead
-to a significant delay since all supported and installed VCS will be tested
-for. (But this also happens only once, afterwards the buffer is registered as
-inactive.)
-
-NOTE: Some VCS rely on a an external diff tool to work properly (svn, darcs,
-bzr, fossil), thus you have to make sure that Vim can find a valid diff tool.
-So either the one you set through |g:signify_difftool| or "diff" by default.
 
 ------------------------------------------------------------------------------
                                                             *g:signify_realtime*  >
@@ -221,9 +179,25 @@ this option.
     let g:signify_vcs_cmds = {
         \ 'cvs': 'cvs -d '. $CVSROOT .' diff -U0 -- %f' }
 <
-This is a |dict|. They key is any version control system from |g:signify_vcs_list|
-and the value is the corresponding command-line.
+The commands to run for each VCS.
 
+This is a |dict|. The key is an VCS executable and the value is the command to
+run. Use this option to overwrite any of the defaults:
+>
+    let g:signify_vcs_cmds = {
+      \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
+      \ 'hg':       'hg diff --config extensions.color=! --config defaults.diff= --nodates -U0 -- %f',
+      \ 'svn':      'svn diff --diff-cmd %d -x -U0 -- %f',
+      \ 'bzr':      'bzr diff --using %d --diff-options=-U0 -- %f',
+      \ 'darcs':    'darcs diff --no-pause-for-gui --diff-command="%d -U0 %1 %2" -- %f',
+      \ 'fossil':   'fossil set diff-command "%d -U 0" && fossil diff --unified -c 0 -- %f',
+      \ 'cvs':      'cvs diff -U0 -- %f',
+      \ 'rcs':      'rcsdiff -U0 %f 2>%n',
+      \ 'accurev':  'accurev diff %f -- -U0',
+      \ 'perforce': 'p4 info '. sy#util#shell_redirect('%n') .' && env P4DIFF=%d p4 diff -dU0 %f'
+      \ 'tfs':      'tf diff -version:W -noprompt %f',
+      \ }
+<
 Modifiers:~
 
     %f       actual filepath
@@ -241,22 +215,6 @@ escape spaces by quoting, e.g.:
 >
     let g:signify_vcs_cmds = {
       \ 'git': '"C:\Program Files (x86)\Git\bin\git.exe" diff --no-color --no-ext-diff -U0 -- %f'
-      \ }
-<
-Default:
->
-    let g:signify_vcs_cmds = {
-      \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
-      \ 'hg':       'hg diff --config extensions.color=! --config defaults.diff= --nodates -U0 -- %f',
-      \ 'svn':      'svn diff --diff-cmd %d -x -U0 -- %f',
-      \ 'bzr':      'bzr diff --using %d --diff-options=-U0 -- %f',
-      \ 'darcs':    'darcs diff --no-pause-for-gui --diff-command="%d -U0 %1 %2" -- %f',
-      \ 'fossil':   'fossil set diff-command "%d -U 0" && fossil diff --unified -c 0 -- %f',
-      \ 'cvs':      'cvs diff -U0 -- %f',
-      \ 'rcs':      'rcsdiff -U0 %f 2>%n',
-      \ 'accurev':  'accurev diff %f -- -U0',
-      \ 'perforce': 'p4 info '. sy#util#shell_redirect('%n') .' && env P4DIFF=%d p4 diff -dU0 %f'
-      \ 'tfs':      'tf diff -version:W -noprompt %f',
       \ }
 <
 ------------------------------------------------------------------------------
@@ -612,8 +570,6 @@ removed lines. Create a wrapper function around it and return a string:
                                                                 *signify-faq-02*
 The plugin is slow!~
 
-  * Set |g:signify_vcs_list|. Always.
-
   * Sy relies on external tools. Check if these are the bottleneck.
 
     If you use a centralized VCS like Subversion, is the connection to the
@@ -640,7 +596,6 @@ EXAMPLE                                                        *signify-example*
 
 An example configuration for Sy:
 >
-    let g:signify_vcs_list              = [ 'git', 'hg' ]
     let g:signify_cursorhold_insert     = 1
     let g:signify_cursorhold_normal     = 1
     let g:signify_update_on_bufenter    = 0

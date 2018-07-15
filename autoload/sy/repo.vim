@@ -431,10 +431,7 @@ else
         \ }
 endif
 
-let s:vcs_list = get(g:, 'signify_vcs_list', [])
-if empty(s:vcs_list)
-  let s:vcs_list = keys(filter(s:vcs_dict, 'executable(v:val)'))
-endif
+let s:vcs_list = keys(filter(s:vcs_dict, 'executable(v:val)'))
 
 let s:default_vcs_cmds = {
       \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
