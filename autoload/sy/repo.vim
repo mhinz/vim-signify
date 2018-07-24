@@ -452,7 +452,7 @@ let s:default_vcs_cmds = {
       \ 'cvs':      'cvs diff -U0 -- %f',
       \ 'rcs':      'rcsdiff -U0 %f 2>%n',
       \ 'accurev':  'accurev diff %f -- -U0',
-      \ 'perforce': 'p4 info '. sy#util#shell_redirect('%n') .' && env P4DIFF=%d p4 diff -dU0 %f',
+      \ 'perforce': 'p4 info '. sy#util#shell_redirect('%n') .' && p4 diff -du0 %f',
       \ 'tfs':      'tf diff -version:W -noprompt -format:Unified %f'
       \ }
 
