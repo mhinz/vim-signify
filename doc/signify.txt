@@ -512,7 +512,13 @@ Hunk jumping:~
     ]C   Jump to last hunk.
     [C   Jump to first hunk.
 
-If you don't like these mappings, you can map them yourself:
+These keys only get mapped by default when:
+
+  - The keys are not mapped already (by you or another plugin).
+  - There are no other keys that are mapped to do the same (to avoid duplicate
+    mappings).
+
+Mapping other keys:
 >
     nmap <leader>gj <plug>(signify-next-hunk)
     nmap <leader>gk <plug>(signify-prev-hunk)

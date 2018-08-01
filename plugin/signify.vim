@@ -85,13 +85,17 @@ nnoremap <silent> <expr> <plug>(signify-prev-hunk) &diff
       \ ? '[c'
       \ : ":\<c-u>call sy#jump#prev_hunk(v:count1)\<cr>"
 
-if empty(maparg(']c', 'n'))
+if empty(maparg(']c', 'n')) && !hasmapto('<plug>(signify-next-hunk)', 'n')
   nmap ]c <plug>(signify-next-hunk)
-  nmap ]C 9999]c
+  if empty(maparg(']C', 'n')) && !hasmapto('9999]c', 'n')
+    nmap ]C 9999]c
+  endif
 endif
-if empty(maparg('[c', 'n'))
+if empty(maparg('[c', 'n')) && !hasmapto('<plug>(signify-prev-hunk)', 'n')
   nmap [c <plug>(signify-prev-hunk)
-  nmap [C 9999[c
+  if empty(maparg('[C', 'n')) && !hasmapto('9999[c', 'n')
+    nmap [C 9999[c
+  end
 endif
 
 " hunk text object
