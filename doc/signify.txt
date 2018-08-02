@@ -243,6 +243,10 @@ escape spaces by quoting, e.g.:
       \ 'git': '"C:\Program Files (x86)\Git\bin\git.exe" diff --no-color --no-ext-diff -U0 -- %f'
       \ }
 <
+NOTE: Always test these commands on the shell first and make sure that no
+colors are emitted. Our parser expects lines in the diff output to start with
+"@@", but with colors the line starts with escape sequences instead.
+
 Default:
 >
     let g:signify_vcs_cmds = {
