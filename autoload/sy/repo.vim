@@ -267,7 +267,6 @@ function! sy#repo#diffmode() abort
   set buftype=nofile bufhidden=wipe nomodified
   let &filetype = ft
   wincmd p
-  silent! %foldopen!
   normal! ]czt
 endfunction
 
