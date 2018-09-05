@@ -10,6 +10,7 @@ endif
 let g:loaded_signify = 1
 let g:signify_locked = 0
 let s:has_doau_modeline = v:version > 703 || v:version == 703 && has('patch442')
+let g:signify_newtab = get(g:, 'signify_newtab', 1)
 
 " Init: autocmds {{{1
 augroup signify
