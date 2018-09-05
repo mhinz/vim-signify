@@ -252,7 +252,8 @@ function! sy#repo#diffmode() abort
   let cmd = s:expand_cmd(vcs, g:signify_vcs_cmds_diffmode)
   call sy#verbose('SignifyDiff: '. cmd, vcs)
   let ft = &filetype
-  tabedit %
+  let newtab = exists('b:signify_newtab') ? b:signify_newtab : g:signify_newtab
+  if newtab | tabedit % | endif
   diffthis
   let [cwd, chdir] = sy#util#chdir()
   try
