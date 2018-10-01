@@ -583,6 +583,14 @@ For Unix people there is a small script, showcolors.bash, in the repo that
 shows all 256 colors available to the terminal. That makes picking the right
 numbers much easier.
 
+Default highlight groups:~
+
+The sign column (often mistakenly called "gutter") itself (all lines without
+signs) is highlighted by |hl-SignColumn|. Some colorschemes define no background
+color for |hl-Normal| but for |hl-SignColumn|. To avoid that visible difference:
+>
+    highlight SignColumn ctermbg=NONE cterm=NONE guibg=NONE gui=NONE
+<
 ==============================================================================
 FAQ                                                                *signify-faq*
 
