@@ -448,10 +448,12 @@ NOTE: Nothing will happen, if :SignifyRefresh is used from the |cmdline-window|.
 
 ------------------------------------------------------------------------------
                                                           *signify-:SignifyDiff*  >
-    :SignifyDiff
+    :SignifyDiff[!]
 <
 Open a new tab with two windows using |diff-mode| to show the differences
 between the current file and its version that was last checked in.
+
+With [!], no new tab will be opened.
 
 Also see |g:signify_vcs_cmds_diffmode|.
 

@@ -240,7 +240,7 @@ function! sy#repo#debug_detection()
 endfunction
 
 " Function: #diffmode {{{1
-function! sy#repo#diffmode() abort
+function! sy#repo#diffmode(do_tab) abort
   execute sy#util#return_if_no_changes()
 
   let vcs = b:sy.updated_by
@@ -252,7 +252,9 @@ function! sy#repo#diffmode() abort
   let cmd = s:expand_cmd(vcs, g:signify_vcs_cmds_diffmode)
   call sy#verbose('SignifyDiff: '. cmd, vcs)
   let ft = &filetype
-  tabedit %
+  if a:do_tab
+    tabedit %
+  endif
   diffthis
   let [cwd, chdir] = sy#util#chdir()
   try
