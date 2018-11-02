@@ -547,7 +547,7 @@ COLORS                                                          *signify-colors*
 
 This plugin defines highlighting groups for two different places: for lines
 and signs. Per default these don't really exist but are linked to the standard
-highlighting groups: DiffAdd, DiffChange, DiffDelete:
+highlighting groups: |hl-DiffAdd|, |hl-DiffChange|, |hl-DiffDelete|:
 >
     highlight link SignifyLineAdd             DiffAdd
     highlight link SignifyLineChange          DiffChange
@@ -562,9 +562,13 @@ highlighting groups: DiffAdd, DiffChange, DiffDelete:
     highlight link SignifySignDeleteFirstLine SignifySignDelete
 <
 Thus if you do not want to change the standard highlighting groups, but want
-different colors for either your signs or lines, you can define one of these 6
-Signify groups yourself in your vimrc.
+different colors for either your signs or lines, you can overwrite these
+highlighting groups in your vimrc.
 
+Assuming you prefer |hl-DiffText| over |hl-DiffChange| for changed lines:
+>
+    highlight link SignifyLineChange DiffText
+<
 Personally I use (256 colors terminal):
 >
     " highlight lines in Sy and vimdiff etc.)
