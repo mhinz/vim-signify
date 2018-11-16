@@ -252,6 +252,7 @@ function! sy#repo#diffmode(do_tab) abort
   let cmd = s:expand_cmd(vcs, g:signify_vcs_cmds_diffmode)
   call sy#verbose('SignifyDiff: '. cmd, vcs)
   let ft = &filetype
+  let fenc = &fenc
   if a:do_tab
     tabedit %
   endif
@@ -260,7 +261,11 @@ function! sy#repo#diffmode(do_tab) abort
   try
     execute chdir fnameescape(b:sy.info.dir)
     leftabove vnew
-    silent put =system(cmd)
+    if has('iconv')
+      silent put =iconv(system(cmd), fenc, &enc)
+    else
+      silent put =system(cmd)
+    endif
   finally
     execute chdir fnameescape(cwd)
   endtry
