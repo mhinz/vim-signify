@@ -99,6 +99,7 @@ function! sy#repo#get_diff_start(vcs) abort
             \ 'close_cb': function('s:callback_vim_close', options),
             \ }
       let b:sy_job_id_{a:vcs} = job_start(cmd, opts)
+    catch
     finally
       execute chdir fnameescape(cwd)
     endtry
