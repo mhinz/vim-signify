@@ -73,13 +73,23 @@ function! sy#repo#get_diff_start(vcs) abort
     endif
 
     let [cmd, options] = s:initialize_job(a:vcs)
+    let [cwd, chdir] = sy#util#chdir()
 
     call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), b:sy.info.dir), a:vcs)
+
+    try
+      execute chdir fnameescape(b:sy.info.dir)
+    catch
+      echohl ErrorMsg
+      echomsg 'signify: Switching Changing failed: '. b:sy.info.dir
+      echohl NONE
+      return
+    endtry
     let b:sy_job_id_{a:vcs} = jobstart(cmd, extend(options, {
-          \ 'cwd':       b:sy.info.dir,
           \ 'on_stdout': function('s:callback_nvim_stdout'),
           \ 'on_exit':   function('s:callback_nvim_exit'),
           \ }))
+    execute chdir fnameescape(cwd)
 
   " Newer Vim
   elseif has('patch-7.4.1967')
@@ -90,19 +100,23 @@ function! sy#repo#get_diff_start(vcs) abort
     let [cmd, options] = s:initialize_job(a:vcs)
     let [cwd, chdir] = sy#util#chdir()
 
+    call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), getcwd()), a:vcs)
+
     try
       execute chdir fnameescape(b:sy.info.dir)
-      call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), getcwd()), a:vcs)
-      let opts = {
-            \ 'in_io':    'null',
-            \ 'out_cb':   function('s:callback_vim_stdout', options),
-            \ 'close_cb': function('s:callback_vim_close', options),
-            \ }
-      let b:sy_job_id_{a:vcs} = job_start(cmd, opts)
     catch
-    finally
-      execute chdir fnameescape(cwd)
+      echohl ErrorMsg
+      echomsg 'signify: Changing directory failed: '. b:sy.info.dir
+      echohl NONE
+      return
     endtry
+    let opts = {
+          \ 'in_io':    'null',
+          \ 'out_cb':   function('s:callback_vim_stdout', options),
+          \ 'close_cb': function('s:callback_vim_close', options),
+          \ }
+    let b:sy_job_id_{a:vcs} = job_start(cmd, opts)
+    execute chdir fnameescape(cwd)
 
   " Older Vim
   else
