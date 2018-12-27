@@ -75,7 +75,7 @@ function! sy#repo#get_diff_start(vcs) abort
     let [cmd, options] = s:initialize_job(a:vcs)
     let [cwd, chdir] = sy#util#chdir()
 
-    call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), b:sy.info.dir), a:vcs)
+    call sy#verbose(['CMD: '. string(cmd), 'CMD DIR:  '. b:sy.info.dir, 'ORIG DIR: '. cwd], a:vcs)
 
     try
       execute chdir fnameescape(b:sy.info.dir)
@@ -100,7 +100,7 @@ function! sy#repo#get_diff_start(vcs) abort
     let [cmd, options] = s:initialize_job(a:vcs)
     let [cwd, chdir] = sy#util#chdir()
 
-    call sy#verbose(printf('CMD: %s | CWD: %s', string(cmd), getcwd()), a:vcs)
+    call sy#verbose(['CMD: '. string(cmd), 'CMD DIR:  '. b:sy.info.dir, 'ORIG DIR: '. cwd], a:vcs)
 
     try
       execute chdir fnameescape(b:sy.info.dir)

@@ -159,7 +159,13 @@ endfunction
 " Function: #verbose {{{1
 function! sy#verbose(msg, ...) abort
   if &verbose
-    echomsg printf('[sy%s] %s', (a:0 ? ':'.a:1 : ''), a:msg)
+    if type(a:msg) == type([])
+      for msg in a:msg
+        echomsg printf('[sy%s] %s', (a:0 ? ':'.a:1 : ''), msg)
+      endfor
+    else
+      echomsg printf('[sy%s] %s', (a:0 ? ':'.a:1 : ''), a:msg)
+    endif
   endif
 endfunction
 
