@@ -81,7 +81,7 @@ function! sy#repo#get_diff_start(vcs) abort
       execute chdir fnameescape(b:sy.info.dir)
     catch
       echohl ErrorMsg
-      echomsg 'signify: Switching Changing failed: '. b:sy.info.dir
+      echomsg 'signify: Changing directory failed: '. b:sy.info.dir
       echohl NONE
       return
     endtry
