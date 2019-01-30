@@ -501,7 +501,7 @@ User SignifySetup~
 
 User Signify~
 
-  This event fires when Sy detects changes in a version-controlled file.
+  This event fires when Sy updated the signs.
 
 NOTE: Autocmds don't nest by default. If you use any command that triggers new
 events, make sure to use |autocmd-nested|.
