@@ -70,6 +70,11 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
     let old_count = empty(tokens[2]) ? 1 : str2nr(tokens[2])
     let new_count = empty(tokens[4]) ? 1 : str2nr(tokens[4])
 
+    " https://fossil-scm.org/forum/forumpost/834ce0f1e1
+    if a:vcs == 'fossil' && new_line == 0
+      let new_line = old_line - 1 - deleted
+    endif
+
     " 2 lines added:
 
     " @@ -5,0 +6,2 @@ this is line 5
