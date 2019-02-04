@@ -93,7 +93,7 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
     elseif (old_count >= 1) && (new_count == 0)
       if s:external_sign_present(a:sy, new_line) | continue | endif
       let deleted += old_count
-      if old_line == 1
+      if new_line == 0
         call add(ids, s:add_sign(a:sy, 1, 'SignifyRemoveFirstLine'))
       elseif s:sign_show_count
         let text = s:sign_delete . (old_count <= 99 ? old_count : '>')
