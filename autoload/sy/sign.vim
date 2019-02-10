@@ -70,7 +70,9 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
     let old_count = empty(tokens[2]) ? 1 : str2nr(tokens[2])
     let new_count = empty(tokens[4]) ? 1 : str2nr(tokens[4])
 
+    " Workaround for non-conventional diff output in older Fossil versions:
     " https://fossil-scm.org/forum/forumpost/834ce0f1e1
+    " Fixed as of: https://fossil-scm.org/index.html/info/7fd2a3652ea7368a
     if a:vcs == 'fossil' && new_line == 0
       let new_line = old_line - 1 - deleted
     endif
