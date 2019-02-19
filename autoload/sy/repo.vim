@@ -285,9 +285,9 @@ function! sy#repo#diffmode(do_tab) abort
     execute chdir fnameescape(cwd)
   endtry
   silent 1delete
-  diffthis
   set buftype=nofile bufhidden=wipe nomodified
   let &filetype = ft
+  diffthis
   wincmd p
   normal! ]czt
 endfunction
