@@ -299,7 +299,7 @@ function! s:initialize_job(vcs) abort
     if has('nvim')
       let cmd = &shell =~ 'cmd' ? vcs_cmd : ['sh', '-c', vcs_cmd]
     else
-      let cmd = join([&shell, &shellcmdflag, vcs_cmd])
+      let cmd = join([&shell, &shellcmdflag, &shellquote, vcs_cmd, &shellquote])
     endif
   else
     let cmd = ['sh', '-c', vcs_cmd]
