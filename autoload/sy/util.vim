@@ -31,7 +31,7 @@ function! sy#util#refresh_windows() abort
   endif
 
   if !get(g:, 'signify_cmdwin_active')
-    windo if exists('b:sy') | call sy#start() | endif
+    keepjumps windo if exists('b:sy') | call sy#start() | endif
   endif
 
   if exists('winid')
