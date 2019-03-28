@@ -452,10 +452,11 @@ if executable(s:difftool)
         \ 'tfs':      'tf'
         \ }
 else
-  call sy#verbose('No "diff" executable found. Disable support for svn, darcs, bzr, fossil.')
+  call sy#verbose('No "diff" executable found. Disable support for svn, darcs, bzr.')
   let s:vcs_dict = {
         \ 'git':      'git',
         \ 'hg':       'hg',
+        \ 'fossil':   'fossil',
         \ 'cvs':      'cvs',
         \ 'rcs':      'rcsdiff',
         \ 'accurev':  'accurev',
@@ -489,6 +490,7 @@ let s:default_vcs_cmds_diffmode = {
       \ 'svn':      'svn cat %f',
       \ 'bzr':      'bzr cat %f',
       \ 'darcs':    'darcs show contents -- %f',
+      \ 'fossil':   'fossil cat %f',
       \ 'cvs':      'cvs up -p -- %f 2>%n',
       \ 'perforce': 'p4 print %f',
       \ }
