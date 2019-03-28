@@ -97,3 +97,13 @@ function! sy#util#return_if_no_changes() abort
   endif
   return ''
 endfunction
+
+" Function: #execute {{{1
+function! sy#util#execute(cmd) abort
+  let lang = v:lang
+  redir => output
+    silent! execute a:cmd
+  redir END
+  silent! execute 'language message' lang
+  return output
+endfunction

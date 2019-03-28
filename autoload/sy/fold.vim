@@ -88,12 +88,7 @@ endfunction
 
 " Function: s:get_lines {{{1
 function! s:get_lines() abort
-  let lang = v:lang
-  language message C
-  redir => signlist
-    silent! execute 'sign place buffer='. b:sy.buffer
-  redir END
-  silent! execute 'language message' lang
+  let signlist = sy#util#execute('sign place buffer='. b:sy.buffer)
 
   let lines = []
   for line in split(signlist, '\n')[2:]

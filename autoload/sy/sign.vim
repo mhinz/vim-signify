@@ -24,9 +24,7 @@ function! sy#sign#get_current_signs(sy) abort
   let a:sy.internal = {}
   let a:sy.external = {}
 
-  redir => signlist
-    silent! execute 'sign place buffer='. a:sy.buffer
-  redir END
+  let signlist = sy#util#execute('sign place buffer='. a:sy.buffer)
 
   for signline in split(signlist, '\n')[2:]
     let tokens = matchlist(signline, '\v^\s+\S+\=(\d+)\s+\S+\=(\d+)\s+\S+\=(.*)$')
