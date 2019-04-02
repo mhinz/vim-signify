@@ -169,9 +169,9 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
           let offset += 1
           if s:external_sign_present(a:sy, line) | continue | endif
           call add(ids, s:add_sign(a:sy, line, 'SignifyChange'))
-          let added += 1
         endwhile
         while offset < new_count
+          let added  += 1
           let line    = new_line + offset
           let offset += 1
           if s:external_sign_present(a:sy, line) | continue | endif
