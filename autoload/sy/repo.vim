@@ -191,6 +191,8 @@ function! sy#repo#get_diff_cvs(sy, exitval, diff) abort
         break
       endif
     endfor
+  elseif a:exitval == 0 && len(a:diff) == 0
+    let found_diff = 1
   endif
   call s:get_diff_end(a:sy, found_diff, 'cvs', diff)
 endfunction
