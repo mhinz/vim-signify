@@ -33,6 +33,9 @@ manager](https://github.com/mhinz/vim-galore#managing-plugins), e.g. using
 [vim-plug](https://github.com/junegunn/vim-plug):
 
     Plug 'mhinz/vim-signify'
+    
+If you're using [Pathogen](https://github.com/tpope/vim-pathogen):
+    git clone https://github.com/mhinz/vim-signify ~/.vim/bundle/vim-signify
 
 ## Documentation
 
