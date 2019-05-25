@@ -47,6 +47,7 @@ Supported VCS:~
     accurev
     perforce
     tfs
+    yadm
 <
 ==============================================================================
 MODUS OPERANDI                                          *signify-modus-operandi*
@@ -83,7 +84,7 @@ If signs aren't showing up as expected, see if |signify-:SignifyDebug| shows
 anything suspicious. It will try all VCS and shows either errors or a diff for
 each VCS.
 
-If the output looks fine though, create an issue on Github:
+If the output looks fine though, create an issue on GitHub:
 
     https://github.com/mhinz/vim-signify/issues/new
 
@@ -165,6 +166,7 @@ Possible values: 'accurev'
                  'rcs'
                  'svn'
                  'tfs'
+                 'yadm'
 
 NOTE: This is the most important option, so read closely.
 
@@ -251,6 +253,7 @@ Default:
 >
     let g:signify_vcs_cmds = {
       \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
+      \ 'yadm':     'yadm diff --no-color --no-ext-diff -U0 -- %f',
       \ 'hg':       'hg diff --config extensions.color=! --config defaults.diff= --nodates -U0 -- %f',
       \ 'svn':      'svn diff --diff-cmd %d -x -U0 -- %f',
       \ 'bzr':      'bzr diff --using %d --diff-options=-U0 -- %f',
@@ -267,6 +270,7 @@ Default:
                                                    *g:signify_vcs_cmds_diffmode*  >
     let g:signify_vcs_cmds_diffmode = {
       \ 'git':      'git show HEAD:./%f',
+      \ 'yadm':     'yadm show HEAD:./%f',
       \ 'hg':       'hg cat %f',
       \ 'svn':      'svn cat %f',
       \ 'bzr':      'bzr cat %f',

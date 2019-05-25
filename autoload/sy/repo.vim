@@ -145,6 +145,13 @@ function! sy#repo#get_diff_git(sy, exitval, diff) abort
   call s:get_diff_end(a:sy, found_diff, 'git', diff)
 endfunction
 
+" Function: #get_diff_yadm {{{1
+function! sy#repo#get_diff_yadm(sy, exitval, diff) abort
+  call sy#verbose('get_diff_yadm()', 'yadm')
+  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
+  call s:get_diff_end(a:sy, found_diff, 'yadm', diff)
+endfunction
+
 " Function: #get_diff_hg {{{1
 function! sy#repo#get_diff_hg(sy, exitval, diff) abort
   call sy#verbose('get_diff_hg()', 'hg')
@@ -322,7 +329,7 @@ endfunction
 
 " Function: s:get_vcs_path {{{1
 function! s:get_vcs_path(vcs) abort
-  return (a:vcs =~# '\v(git|cvs|accurev|tfs)') ? b:sy.info.file : b:sy.info.path
+  return (a:vcs =~# '\v(git|cvs|accurev|tfs|yadm)') ? b:sy.info.file : b:sy.info.path
 endfunction
 
 " Function: s:expand_cmd {{{1
@@ -442,6 +449,7 @@ let s:difftool = get(g:, 'signify_difftool', 'diff')
 if executable(s:difftool)
   let s:vcs_dict = {
         \ 'git':      'git',
+        \ 'yadm':     'yadm',
         \ 'hg':       'hg',
         \ 'svn':      'svn',
         \ 'darcs':    'darcs',
@@ -457,6 +465,7 @@ else
   call sy#verbose('No "diff" executable found. Disable support for svn, darcs, bzr.')
   let s:vcs_dict = {
         \ 'git':      'git',
+        \ 'yadm':     'yadm',
         \ 'hg':       'hg',
         \ 'fossil':   'fossil',
         \ 'cvs':      'cvs',
@@ -474,6 +483,7 @@ endif
 
 let s:default_vcs_cmds = {
       \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
+      \ 'yadm':     'yadm diff --no-color --no-ext-diff -U0 -- %f',
       \ 'hg':       'hg diff --color=never --config aliases.diff= --nodates -U0 -- %f',
       \ 'svn':      'svn diff --diff-cmd %d -x -U0 -- %f',
       \ 'bzr':      'bzr diff --using %d --diff-options=-U0 -- %f',
@@ -488,6 +498,7 @@ let s:default_vcs_cmds = {
 
 let s:default_vcs_cmds_diffmode = {
       \ 'git':      'git show HEAD:./%f',
+      \ 'yadm':     'yadm show HEAD:./%f',
       \ 'hg':       'hg cat %f',
       \ 'svn':      'svn cat %f',
       \ 'bzr':      'bzr cat %f',

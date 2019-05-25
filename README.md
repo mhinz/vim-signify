@@ -8,7 +8,7 @@ removed lines in a file that is managed by a version control system (VCS)._
 ---
 
 - Supports **git**, **mercurial**, **darcs**, **bazaar**, **subversion**,
-  **cvs**, **rcs**, **fossil**, **accurev**, **perforce**, **tfs**.
+  **cvs**, **rcs**, **fossil**, **accurev**, **perforce**, **tfs**, **yadm**.
 - **Asynchronous** execution of VCS tools for Vim 7.4.1967+ and Neovim.
 - **Preserves signs** from other plugins.
 - Handles **nested repositories** controlled by different VCS.
