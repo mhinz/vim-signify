@@ -309,7 +309,7 @@ function! s:initialize_job(vcs) abort
       let cmd = &shell =~ '\v%(cmd|powershell)' ? vcs_cmd : ['sh', '-c', vcs_cmd]
     else
       if &shell =~ 'cmd'
-        let cmd = vcs_cmd
+        let cmd = join([&shell, &shellcmdflag, '(', vcs_cmd, ')'])
       elseif empty(&shellxquote)
         let cmd = join([&shell, &shellcmdflag, &shellquote, vcs_cmd, &shellquote])
       else
