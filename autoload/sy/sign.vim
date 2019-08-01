@@ -60,13 +60,7 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
     let a:sy.lines = []
     let ids        = []
 
-    let tokens = matchlist(line, '^@@ -\v(\d+),?(\d*) \+(\d+),?(\d*)')
-
-    let old_line = str2nr(tokens[1])
-    let new_line = str2nr(tokens[3])
-
-    let old_count = empty(tokens[2]) ? 1 : str2nr(tokens[2])
-    let new_count = empty(tokens[4]) ? 1 : str2nr(tokens[4])
+    let [old_line, new_line, old_count, new_count] = sy#sign#parse_hunk(line)
 
     " Workaround for non-conventional diff output in older Fossil versions:
     " https://fossil-scm.org/forum/forumpost/834ce0f1e1
@@ -227,6 +221,18 @@ function! sy#sign#remove_all_signs(bufnr) abort
   let sy.hunks = []
 endfunction
 
+" Function: #parse_hunk {{{1
+" Parse a hunk as '@@ -273,3 +267,14' into [old_line, new_line, old_count, new_count]
+function! sy#sign#parse_hunk(diffline) abort
+  let tokens = matchlist(a:diffline, '^@@ -\v(\d+),?(\d*) \+(\d+),?(\d*)')
+  return [
+        \ str2nr(tokens[1]),
+        \ str2nr(tokens[3]),
+        \ empty(tokens[2]) ? 1 : str2nr(tokens[2]),
+        \ empty(tokens[4]) ? 1 : str2nr(tokens[4])
+        \ ]
+endfunction
+
 " Function: s:add_sign {{{1
 function! s:add_sign(sy, line, type, ...) abort
   call add(a:sy.lines, a:line)
@@ -272,4 +278,3 @@ function! s:external_sign_present(sy, line) abort
     return 1
   endif
 endfunction
-

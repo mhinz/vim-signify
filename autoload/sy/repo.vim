@@ -376,11 +376,7 @@ function! s:strip_context(context)
 
     if state == 0
       if line =~ "^@@ "
-        let tokens = matchlist(line, '^@@ -\v(\d+),?(\d*) \+(\d+),?(\d*)')
-        let old_line = str2nr(tokens[1])
-        let new_line = str2nr(tokens[3])
-        let old_count = empty(tokens[2]) ? 1 : str2nr(tokens[2])
-        let new_count = empty(tokens[4]) ? 1 : str2nr(tokens[4])
+        let [old_line, new_line, old_count, new_count] = sy#sign#parse_hunk(line)
         let hunk = []
         let state = 1
       else
