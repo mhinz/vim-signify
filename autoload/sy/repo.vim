@@ -6,7 +6,7 @@ scriptencoding utf-8
 function! sy#repo#detect() abort
   for vcs in s:vcs_list
     let b:sy.detecting += 1
-    call sy#repo#get_diff_start(vcs)
+    call sy#repo#get_diff_start(vcs, function('sy#repo#job_exit_show_signs'))
   endfor
 endfunction
 
@@ -23,7 +23,7 @@ endfunction
 
 " Function: s:callback_nvim_exit {{{1
 function! s:callback_nvim_exit(_job_id, exitval, _event) dict abort
-  call s:job_exit(self.bufnr, self.vcs, a:exitval, self.stdoutbuf)
+  call self.func(self.bufnr, self.vcs, a:exitval, self.stdoutbuf)
 endfunction
 
 " Function: s:callback_vim_stdout {{{1
@@ -41,12 +41,12 @@ function! s:callback_vim_close(channel) dict abort
     endif
     sleep 10m
   endwhile
-  call s:job_exit(self.bufnr, self.vcs, exitval, self.stdoutbuf)
+  call self.func(self.bufnr, self.vcs, exitval, self.stdoutbuf)
 endfunction
 
-" Function: s:job_exit {{{1
-function! s:job_exit(bufnr, vcs, exitval, diff) abort
-  call sy#verbose('job_exit()', a:vcs)
+" Function: #job_exit_show_signs {{{1
+function! sy#repo#job_exit_show_signs(bufnr, vcs, exitval, diff) abort
+  call sy#verbose('sy#repo#job_exit_show_signs()', a:vcs)
   let sy = getbufvar(a:bufnr, 'sy')
   if empty(sy)
     call sy#verbose(printf('No b:sy found for %s', bufname(a:bufnr)), a:vcs)
@@ -62,8 +62,8 @@ function! s:job_exit(bufnr, vcs, exitval, diff) abort
 endfunction
 
 " Function: sy#get_diff_start {{{1
-function! sy#repo#get_diff_start(vcs) abort
-  call sy#verbose('get_diff_start()', a:vcs)
+function! sy#repo#get_diff_start(vcs, func) abort
+  call sy#verbose('sy#repoget_diff_start()', a:vcs)
 
   let job_id = get(b:, 'sy_job_id_'.a:vcs)
   " Neovim
@@ -73,6 +73,7 @@ function! sy#repo#get_diff_start(vcs) abort
     endif
 
     let [cmd, options] = s:initialize_job(a:vcs)
+    let options.func = a:func
     let [cwd, chdir] = sy#util#chdir()
 
     call sy#verbose(['CMD: '. string(cmd), 'CMD DIR:  '. b:sy.info.dir, 'ORIG DIR: '. cwd], a:vcs)
@@ -98,6 +99,7 @@ function! sy#repo#get_diff_start(vcs) abort
     endif
 
     let [cmd, options] = s:initialize_job(a:vcs)
+    let options.func = a:func
     let [cwd, chdir] = sy#util#chdir()
 
     call sy#verbose(['CMD: '. string(cmd), 'CMD DIR:  '. b:sy.info.dir, 'ORIG DIR: '. cwd], a:vcs)

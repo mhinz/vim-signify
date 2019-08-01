@@ -75,7 +75,7 @@ function! sy#start() abort
         call sy#verbose('Update is already in progress.', vcs)
       else
         call sy#verbose('Updating signs.', vcs)
-        call sy#repo#get_diff_start(vcs)
+        call sy#repo#get_diff_start(vcs, function('sy#repo#job_exit_show_signs'))
       endif
     endfor
   endif
