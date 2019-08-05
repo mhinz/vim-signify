@@ -61,6 +61,42 @@ function! sy#repo#job_exit_show_signs(bufnr, vcs, exitval, diff) abort
   call setbufvar(a:bufnr, 'sy_job_id_'.a:vcs, 0)
 endfunction
 
+" Function: #job_exit_preview_hunk {{{1
+function! sy#repo#job_exit_preview_hunk(_bufnr, _vcs, _exitval, diff) abort
+  let in_hunk = 0
+  let hunk = []
+
+  for line in a:diff
+    if in_hunk
+      if line[:2] == '@@ '
+        silent! wincmd P
+        if !&previewwindow
+          noautocmd botright new
+        endif
+        call setline(1, hunk)
+        silent! %foldopen!
+        setlocal previewwindow filetype=diff buftype=nofile bufhidden=delete
+        noautocmd wincmd p
+        return
+      endif
+      call add(hunk, line)
+    elseif line[:2] == '@@ ' && s:is_line_in_hunk(line)
+      let in_hunk = 1
+    endif
+  endfor
+endfunction
+
+function! s:is_line_in_hunk(hunkline)
+  let curline = line('.')
+  let [old_line, new_line, old_count, new_count] = sy#sign#parse_hunk(a:hunkline)
+
+  if curline >= new_line && curline <= (new_line + new_count)
+    return 1
+  endif
+
+  return 0
+endfunction
+
 " Function: sy#get_diff_start {{{1
 function! sy#repo#get_diff_start(vcs, func) abort
   call sy#verbose('sy#repoget_diff_start()', a:vcs)
@@ -301,6 +337,13 @@ function! sy#repo#diffmode(do_tab) abort
   diffthis
   wincmd p
   normal! ]czt
+endfunction
+
+" Function: #preview_hunk {{{1
+function! sy#repo#preview_hunk() abort
+  if exists('b:sy') && has_key(b:sy, 'updated_by')
+    call sy#repo#get_diff_start(b:sy.updated_by, function('sy#repo#job_exit_preview_hunk'))
+  endif
 endfunction
 
 " Function: s:initialize_job {{{1
