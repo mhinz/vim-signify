@@ -297,7 +297,7 @@ function! s:preview_hunk(_sy, vcs, diff) abort
         break
       endif
       call add(hunk, line)
-    elseif line[:2] == '@@ ' && s:is_line_in_hunk(line)
+    elseif line[:2] == '@@ ' && s:is_cur_line_in_hunk(line)
       let in_hunk = 1
     endif
   endfor
@@ -318,11 +318,22 @@ function! s:preview_hunk(_sy, vcs, diff) abort
   noautocmd call feedkeys("\<c-w>p", 'nt')
 endfunction
 
-function! s:is_line_in_hunk(hunkline)
-  let curline = line('.')
-  let [old_line, new_line, old_count, new_count] = sy#sign#parse_hunk(a:hunkline)
+function! s:is_cur_line_in_hunk(hunkline) abort
+  let cur_line = line('.')
+  let [old_line, new_line, _old_count, new_count] = sy#sign#parse_hunk(a:hunkline)
 
-  if curline >= new_line && curline < (new_line + new_count)
+  if cur_line == 1 && new_line == 0
+    " deleted first line
+    return 1
+  endif
+
+  if cur_line == new_line && new_line < old_line
+    " deleted lines
+    return 1
+  endif
+
+  if cur_line >= new_line && cur_line < (new_line + new_count)
+    " added/changed lines
     return 1
   endif
 
