@@ -6,7 +6,7 @@ scriptencoding utf-8
 function! sy#repo#detect() abort
   for vcs in s:vcs_list
     let b:sy.detecting += 1
-    call sy#repo#get_diff_start(vcs, function('sy#repo#job_exit_show_signs'))
+    call sy#repo#get_diff(vcs, function('sy#sign#set_signs'))
   endfor
 endfunction
 
@@ -23,7 +23,7 @@ endfunction
 
 " Function: s:callback_nvim_exit {{{1
 function! s:callback_nvim_exit(_job_id, exitval, _event) dict abort
-  call self.func(self.bufnr, self.vcs, a:exitval, self.stdoutbuf)
+  return s:handle_diff(self, a:exitval)
 endfunction
 
 " Function: s:callback_vim_stdout {{{1
@@ -41,65 +41,12 @@ function! s:callback_vim_close(channel) dict abort
     endif
     sleep 10m
   endwhile
-  call self.func(self.bufnr, self.vcs, exitval, self.stdoutbuf)
+  return s:handle_diff(self, exitval)
 endfunction
 
-" Function: #job_exit_show_signs {{{1
-function! sy#repo#job_exit_show_signs(bufnr, vcs, exitval, diff) abort
-  call sy#verbose('sy#repo#job_exit_show_signs()', a:vcs)
-  let sy = getbufvar(a:bufnr, 'sy')
-  if empty(sy)
-    call sy#verbose(printf('No b:sy found for %s', bufname(a:bufnr)), a:vcs)
-    return
-  elseif !empty(sy.updated_by) && sy.updated_by != a:vcs
-    call sy#verbose(printf('Signs already got updated by %s.', sy.updated_by), a:vcs)
-    return
-  elseif empty(sy.vcs) && sy.active
-    let sy.detecting -= 1
-  endif
-  call sy#repo#get_diff_{a:vcs}(sy, a:exitval, a:diff)
-  call setbufvar(a:bufnr, 'sy_job_id_'.a:vcs, 0)
-endfunction
-
-" Function: #job_exit_preview_hunk {{{1
-function! sy#repo#job_exit_preview_hunk(_bufnr, _vcs, _exitval, diff) abort
-  let in_hunk = 0
-  let hunk = []
-
-  for line in a:diff
-    if in_hunk
-      if line[:2] == '@@ '
-        silent! wincmd P
-        if !&previewwindow
-          noautocmd botright new
-        endif
-        call setline(1, hunk)
-        silent! %foldopen!
-        setlocal previewwindow filetype=diff buftype=nofile bufhidden=delete
-        noautocmd wincmd p
-        return
-      endif
-      call add(hunk, line)
-    elseif line[:2] == '@@ ' && s:is_line_in_hunk(line)
-      let in_hunk = 1
-    endif
-  endfor
-endfunction
-
-function! s:is_line_in_hunk(hunkline)
-  let curline = line('.')
-  let [old_line, new_line, old_count, new_count] = sy#sign#parse_hunk(a:hunkline)
-
-  if curline >= new_line && curline <= (new_line + new_count)
-    return 1
-  endif
-
-  return 0
-endfunction
-
-" Function: sy#get_diff_start {{{1
-function! sy#repo#get_diff_start(vcs, func) abort
-  call sy#verbose('sy#repoget_diff_start()', a:vcs)
+" Function: sy#get_diff {{{1
+function! sy#repo#get_diff(vcs, func) abort
+  call sy#verbose('sy#repo#get_diff()', a:vcs)
 
   let job_id = get(b:, 'sy_job_id_'.a:vcs)
   " Neovim
@@ -163,71 +110,71 @@ function! sy#repo#get_diff_start(vcs, func) abort
   endif
 endfunction
 
-" Function: s:get_diff_end {{{1
-function! s:get_diff_end(sy, found_diff, vcs, diff) abort
-  call sy#verbose('get_diff_end()', a:vcs)
-  if a:found_diff
-    if index(a:sy.vcs, a:vcs) == -1
-      let a:sy.vcs += [a:vcs]
-    endif
-    call sy#set_signs(a:sy, a:vcs, a:diff)
-  else
-    call sy#verbose('No valid diff found. Disabling this VCS.', a:vcs)
+" Function: s:handle_diff {{{1
+function! s:handle_diff(options, exitval) abort
+  call sy#verbose('s:handle_diff()', a:options.vcs)
+
+  let sy = getbufvar(a:options.bufnr, 'sy')
+  if empty(sy)
+    call sy#verbose(printf('No b:sy found for %s', bufname(a:options.bufnr)), a:options.vcs)
+    return
+  elseif !empty(sy.updated_by) && sy.updated_by != a:options.vcs
+    call sy#verbose(printf('Signs already got updated by %s.', sy.updated_by), a:options.vcs)
+    return
+  elseif empty(sy.vcs) && sy.active
+    let sy.detecting -= 1
   endif
+
+  let [found_diff, diff] = s:check_diff_{a:options.vcs}(a:exitval, a:options.stdoutbuf)
+  if found_diff
+    if index(sy.vcs, a:options.vcs) == -1
+      let sy.vcs += [a:options.vcs]
+    endif
+    call a:options.func(sy, a:options.vcs, diff)
+  else
+    call sy#verbose('No valid diff found. Disabling this VCS.', a:options.vcs)
+  endif
+
+  call setbufvar(a:options.bufnr, 'sy_job_id_'.a:options.vcs, 0)
 endfunction
 
-" Function: #get_diff_git {{{1
-function! sy#repo#get_diff_git(sy, exitval, diff) abort
-  call sy#verbose('get_diff_git()', 'git')
-  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
-  call s:get_diff_end(a:sy, found_diff, 'git', diff)
+" Function: s:check_diff_git {{{1
+function! s:check_diff_git(exitval, diff) abort
+  return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: #get_diff_yadm {{{1
-function! sy#repo#get_diff_yadm(sy, exitval, diff) abort
-  call sy#verbose('get_diff_yadm()', 'yadm')
-  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
-  call s:get_diff_end(a:sy, found_diff, 'yadm', diff)
+" Function: s:check_diff_yadm {{{1
+function! s:check_diff_yadm(exitval, diff) abort
+  return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: #get_diff_hg {{{1
-function! sy#repo#get_diff_hg(sy, exitval, diff) abort
-  call sy#verbose('get_diff_hg()', 'hg')
-  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
-  call s:get_diff_end(a:sy, found_diff, 'hg', diff)
+" Function: s:check_diff_hg {{{1
+function! s:check_diff_hg(exitval, diff) abort
+  return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: #get_diff_svn {{{1
-function! sy#repo#get_diff_svn(sy, exitval, diff) abort
-  call sy#verbose('get_diff_svn()', 'svn')
-  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
-  call s:get_diff_end(a:sy, found_diff, 'svn', diff)
+" Function: s:check_diff_svn {{{1
+function! s:check_diff_svn(exitval, diff) abort
+  return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: #get_diff_bzr {{{1
-function! sy#repo#get_diff_bzr(sy, exitval, diff) abort
-  call sy#verbose('get_diff_bzr()', 'bzr')
-  let [found_diff, diff] = (a:exitval =~ '[012]') ? [1, a:diff] : [0, []]
-  call s:get_diff_end(a:sy, found_diff, 'bzr', diff)
+" Function: s:check_diff_bzr {{{1
+function! s:check_diff_bzr(exitval, diff) abort
+  return (a:exitval =~ '[012]') ? [1, a:diff] : [0, []]
 endfunction
 
-" Function: #get_diff_darcs {{{1
-function! sy#repo#get_diff_darcs(sy, exitval, diff) abort
-  call sy#verbose('get_diff_darcs()', 'darcs')
-  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
-  call s:get_diff_end(a:sy, found_diff, 'darcs', diff)
+" Function: s:check_diff_darcs {{{1
+function! s:check_diff_darcs(exitval, diff) abort
+  return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: #get_diff_fossil {{{1
-function! sy#repo#get_diff_fossil(sy, exitval, diff) abort
-  call sy#verbose('get_diff_fossil()', 'fossil')
-  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
-  call s:get_diff_end(a:sy, found_diff, 'fossil', diff)
+" Function: s:check_diff_fossil {{{1
+function! s:check_diff_fossil(exitval, diff) abort
+  return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: #get_diff_cvs {{{1
-function! sy#repo#get_diff_cvs(sy, exitval, diff) abort
-  call sy#verbose('get_diff_cvs()', 'cvs')
+" Function: s:check_diff_cvs {{{1
+function! s:check_diff_cvs(exitval, diff) abort
   let [found_diff, diff] = [0, []]
   if a:exitval == 1
     for diffline in a:diff
@@ -239,35 +186,27 @@ function! sy#repo#get_diff_cvs(sy, exitval, diff) abort
   elseif a:exitval == 0 && len(a:diff) == 0
     let found_diff = 1
   endif
-  call s:get_diff_end(a:sy, found_diff, 'cvs', diff)
+  return [found_diff, diff]
 endfunction
 
-" Function: #get_diff_rcs {{{1
-function! sy#repo#get_diff_rcs(sy, exitval, diff) abort
-  call sy#verbose('get_diff_rcs()', 'rcs')
-  let [found_diff, diff] = a:exitval == 2 ? [0, []] : [1, a:diff]
-  call s:get_diff_end(a:sy, found_diff, 'rcs', diff)
+" Function: s:check_diff_rcs {{{1
+function! s:check_diff_rcs(exitval, diff) abort
+  return (a:exitval == 2) ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: #get_diff_accurev {{{1
-function! sy#repo#get_diff_accurev(sy, exitval, diff) abort
-  call sy#verbose('get_diff_accurev()', 'accurev')
-  let [found_diff, diff] = (a:exitval >= 2) ? [0, []] : [1, a:diff]
-  call s:get_diff_end(a:sy, found_diff, 'accurev', diff)
+" Function: s:check_diff_accurev {{{1
+function! s:check_diff_accurev(exitval, diff) abort
+  return (a:exitval >= 2) ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: #get_diff_perforce {{{1
-function! sy#repo#get_diff_perforce(sy, exitval, diff) abort
-  call sy#verbose('get_diff_perforce()', 'perforce')
-  let [found_diff, diff] = a:exitval ? [0, []] : [1, a:diff]
-  call s:get_diff_end(a:sy, found_diff, 'perforce', diff)
+" Function: s:check_diff_perforce {{{1
+function! s:check_diff_perforce(exitval, diff) abort
+  return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: #get_diff_tfs {{{1
-function! sy#repo#get_diff_tfs(sy, exitval, diff) abort
-  call sy#verbose('get_diff_tfs()', 'tfs')
-  let [found_diff, diff] = a:exitval ? [0, []] : [1, s:strip_context(a:diff)]
-  call s:get_diff_end(a:sy, found_diff, 'tfs', diff)
+" Function: s:check_diff_tfs {{{1
+function! s:check_diff_tfs(exitval, diff) abort
+  return a:exitval ? [0, []] : [1, s:strip_context(a:diff)]
 endfunction
 
 " Function: #get_stats {{{1
@@ -342,8 +281,52 @@ endfunction
 " Function: #preview_hunk {{{1
 function! sy#repo#preview_hunk() abort
   if exists('b:sy') && has_key(b:sy, 'updated_by')
-    call sy#repo#get_diff_start(b:sy.updated_by, function('sy#repo#job_exit_preview_hunk'))
+    call sy#repo#get_diff(b:sy.updated_by, function('s:preview_hunk'))
   endif
+endfunction
+
+function! s:preview_hunk(_sy, vcs, diff) abort
+  call sy#verbose('s:preview_hunk()', a:vcs)
+
+  let in_hunk = 0
+  let hunk = []
+
+  for line in a:diff
+    if in_hunk
+      if line[:2] == '@@ '
+        break
+      endif
+      call add(hunk, line)
+    elseif line[:2] == '@@ ' && s:is_line_in_hunk(line)
+      let in_hunk = 1
+    endif
+  endfor
+
+  if !in_hunk
+    return
+  endif
+
+  silent! wincmd P
+  if !&previewwindow
+    noautocmd botright new
+  endif
+  call setline(1, hunk)
+  silent! %foldopen!
+  setlocal previewwindow filetype=diff buftype=nofile bufhidden=delete
+  " With :noautocmd wincmd p, the first line of the preview window would show
+  " the 'cursorline', although it's not focused. Use feedkeys() instead.
+  noautocmd call feedkeys("\<c-w>p", 'nt')
+endfunction
+
+function! s:is_line_in_hunk(hunkline)
+  let curline = line('.')
+  let [old_line, new_line, old_count, new_count] = sy#sign#parse_hunk(a:hunkline)
+
+  if curline >= new_line && curline < (new_line + new_count)
+    return 1
+  endif
+
+  return 0
 endfunction
 
 " Function: s:initialize_job {{{1

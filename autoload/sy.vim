@@ -75,37 +75,9 @@ function! sy#start() abort
         call sy#verbose('Update is already in progress.', vcs)
       else
         call sy#verbose('Updating signs.', vcs)
-        call sy#repo#get_diff_start(vcs, function('sy#repo#job_exit_show_signs'))
+        call sy#repo#get_diff(vcs, function('sy#sign#set_signs'))
       endif
     endfor
-  endif
-endfunction
-
-" Function: #set_signs {{{1
-function! sy#set_signs(sy, vcs, diff) abort
-  call sy#verbose('set_signs()', a:vcs)
-
-  if a:sy.stats == [-1, -1, -1]
-    let a:sy.stats = [0, 0, 0]
-  endif
-
-  if empty(a:diff)
-    call sy#verbose('No changes found.', a:vcs)
-    let a:sy.stats = [0, 0, 0]
-    call sy#sign#remove_all_signs(a:sy.buffer)
-    return
-  endif
-
-  if get(g:, 'signify_line_highlight')
-    call sy#highlight#line_enable()
-  else
-    call sy#highlight#line_disable()
-  endif
-
-  call sy#sign#process_diff(a:sy, a:vcs, a:diff)
-
-  if exists('#User#Signify')
-    execute 'doautocmd' (s:has_doau_modeline ? '<nomodeline>' : '') 'User Signify'
   endif
 endfunction
 

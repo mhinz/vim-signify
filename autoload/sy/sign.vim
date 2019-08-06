@@ -233,6 +233,34 @@ function! sy#sign#parse_hunk(diffline) abort
         \ ]
 endfunction
 
+" Function: #set_signs {{{1
+function! sy#sign#set_signs(sy, vcs, diff) abort
+  call sy#verbose('sy#sign#set_signs()', a:vcs)
+
+  if a:sy.stats == [-1, -1, -1]
+    let a:sy.stats = [0, 0, 0]
+  endif
+
+  if empty(a:diff)
+    call sy#verbose('No changes found.', a:vcs)
+    let a:sy.stats = [0, 0, 0]
+    call sy#sign#remove_all_signs(a:sy.buffer)
+    return
+  endif
+
+  if get(g:, 'signify_line_highlight')
+    call sy#highlight#line_enable()
+  else
+    call sy#highlight#line_disable()
+  endif
+
+  call sy#sign#process_diff(a:sy, a:vcs, a:diff)
+
+  if exists('#User#Signify')
+    execute 'doautocmd' (s:has_doau_modeline ? '<nomodeline>' : '') 'User Signify'
+  endif
+endfunction
+
 " Function: s:add_sign {{{1
 function! s:add_sign(sy, line, type, ...) abort
   call add(a:sy.lines, a:line)
