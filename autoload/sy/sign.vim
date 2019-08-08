@@ -257,7 +257,7 @@ function! sy#sign#set_signs(sy, vcs, diff) abort
   call sy#sign#process_diff(a:sy, a:vcs, a:diff)
 
   if exists('#User#Signify')
-    execute 'doautocmd' (s:has_doau_modeline ? '<nomodeline>' : '') 'User Signify'
+    doautocmd <nomodeline> User Signify
   endif
 endfunction
 

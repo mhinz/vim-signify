@@ -2,9 +2,6 @@
 
 scriptencoding utf-8
 
-" Init: values {{{1
-let s:has_doau_modeline = v:version > 703 || v:version == 703 && has('patch442')
-
 " Function: #start {{{1
 function! sy#start() abort
   if g:signify_locked
