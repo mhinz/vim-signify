@@ -107,3 +107,42 @@ function! sy#util#execute(cmd) abort
   silent! execute 'language message' lang
   return output
 endfunction
+
+let s:window = 0
+
+function! sy#util#closePopup()
+  if s:window
+    let id = win_id2win(s:window)
+    if id > 0
+      execute id . 'close!'
+    endif
+    let s:window = 0
+  endif
+endfunction
+
+function! sy#util#renderPopup(input, ...)
+  call sy#util#closePopup()
+  let s:buf = nvim_create_buf(0, 1)
+  call nvim_buf_set_option(s:buf, 'syntax', 'diff')
+  let max_width = 100
+  let max_height = 16
+  let width = max(map(copy(a:input), {_, v -> len(v)})) + 1
+  let width = (width > max_width) ? max_width : width
+  let height = len(a:input)
+  let height = (height > max_height) ? max_height : height
+  call nvim_buf_set_lines(s:buf, 0, -1, 0, a:input)
+  let s:window = call('nvim_open_win', [s:buf, v:false, {
+          \ 'relative': 'cursor',
+          \ 'row': 0,
+          \ 'col': 0,
+          \   'width': width,
+          \   'height': height,
+          \ }])
+  call nvim_win_set_option(s:window, 'cursorline', v:false)
+  call nvim_win_set_option(s:window, 'foldenable', v:false)
+  call nvim_win_set_option(s:window, 'number', v:false)
+  call nvim_win_set_option(s:window, 'relativenumber', v:false)
+  call nvim_win_set_option(s:window, 'statusline', '')
+  call nvim_win_set_option(s:window, 'wrap', v:true)
+  autocmd CursorMoved * call sy#util#closePopup()
+endfunction
