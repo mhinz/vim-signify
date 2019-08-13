@@ -130,13 +130,13 @@ function! sy#util#popup_create(hunkdiff) abort
     let buf = nvim_create_buf(0, 1)
     call nvim_buf_set_option(buf, 'syntax', 'diff')
     call nvim_buf_set_lines(buf, 0, -1, 0, a:hunkdiff)
-    let s:popup_window = call('nvim_open_win', [buf, v:false, {
+    let s:popup_window = nvim_open_win(buf, v:false, {
           \ 'relative': 'cursor',
           \ 'row': 0,
           \ 'col': 0,
           \ 'width': width,
           \ 'height': height,
-          \ }])
+          \ })
     call nvim_win_set_option(s:popup_window, 'cursorline', v:false)
     call nvim_win_set_option(s:popup_window, 'foldenable', v:false)
     call nvim_win_set_option(s:popup_window, 'number', v:false)
