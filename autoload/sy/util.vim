@@ -117,7 +117,7 @@ function! sy#util#popup_close() abort
   endif
 endfunction
 
-function! sy#util#popup_create(hunkdiff, ...) abort
+function! sy#util#popup_create(hunkdiff) abort
   let max_width = 100
   let max_height = 16
   let width = max(map(copy(a:hunkdiff), {_, v -> len(v)})) + 1
