@@ -280,7 +280,7 @@ endfunction
 
 " Function: #preview_hunk {{{1
 function! sy#repo#preview_hunk() abort
-  if exists('b:sy') && has_key(b:sy, 'updated_by')
+  if exists('b:sy') && !empty(b:sy.updated_by)
     call sy#repo#get_diff(b:sy.updated_by, function('s:preview_hunk'))
   endif
 endfunction
