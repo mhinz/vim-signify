@@ -306,20 +306,20 @@ function! s:preview_hunk(_sy, vcs, diff) abort
     return
   endif
 
-  if exists('*nvim_open_win')
-    call sy#util#renderPopup(hunk)
-  else
-    silent! wincmd P
-    if !&previewwindow
-      noautocmd botright new
-    endif
-    call setline(1, hunk)
-    silent! %foldopen!
-    setlocal previewwindow filetype=diff buftype=nofile bufhidden=delete
-    " With :noautocmd wincmd p, the first line of the preview window would show
-    " the 'cursorline', although it's not focused. Use feedkeys() instead.
-    noautocmd call feedkeys("\<c-w>p", 'nt')
+  if sy#util#popup_create(hunk)
+    return
   endif
+
+  silent! wincmd P
+  if !&previewwindow
+    noautocmd botright new
+  endif
+  call setline(1, hunk)
+  silent! %foldopen!
+  setlocal previewwindow filetype=diff buftype=nofile bufhidden=delete
+  " With :noautocmd wincmd p, the first line of the preview window would show
+  " the 'cursorline', although it's not focused. Use feedkeys() instead.
+  noautocmd call feedkeys("\<c-w>p", 'nt')
 endfunction
 
 function! s:is_cur_line_in_hunk(hunkline) abort
