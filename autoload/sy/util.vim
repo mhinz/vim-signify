@@ -110,6 +110,7 @@ endfunction
 
 let s:popup_window = 0
 
+" Function: #popup_close {{{1
 function! sy#util#popup_close() abort
   if s:popup_window
     call nvim_win_close(s:popup_window, 1)
@@ -117,13 +118,12 @@ function! sy#util#popup_close() abort
   endif
 endfunction
 
+" Function: #popup_create {{{1
 function! sy#util#popup_create(hunkdiff) abort
-  let max_width = 100
-  let max_height = 16
-  let width = max(map(copy(a:hunkdiff), {_, v -> len(v)})) + 1
-  let width = (width > max_width) ? max_width : width
+  let max_height = winheight('%') - winline()
   let height = len(a:hunkdiff)
   let height = (height > max_height) ? max_height : height
+  let offset = s:offset()
 
   if exists('*nvim_open_win')
     call sy#util#popup_close()
@@ -131,13 +131,14 @@ function! sy#util#popup_create(hunkdiff) abort
     call nvim_buf_set_option(buf, 'syntax', 'diff')
     call nvim_buf_set_lines(buf, 0, -1, 0, a:hunkdiff)
     let s:popup_window = nvim_open_win(buf, v:false, {
-          \ 'relative': 'cursor',
-          \ 'row': 0,
-          \ 'col': 0,
-          \ 'width': width,
+          \ 'relative': 'win',
+          \ 'row': winline(),
+          \ 'col': offset - 1,
+          \ 'width': winwidth('%') - offset,
           \ 'height': height,
           \ })
     call nvim_win_set_option(s:popup_window, 'cursorline', v:false)
+    call nvim_win_set_option(s:popup_window, 'foldcolumn', 0)
     call nvim_win_set_option(s:popup_window, 'foldenable', v:false)
     call nvim_win_set_option(s:popup_window, 'number', v:false)
     call nvim_win_set_option(s:popup_window, 'relativenumber', v:false)
@@ -145,17 +146,31 @@ function! sy#util#popup_create(hunkdiff) abort
     autocmd CursorMoved * ++once call sy#util#popup_close()
   elseif exists('*popup_create')
     let s:popup_window = popup_create(a:hunkdiff, {
-          \ 'line': 'cursor',
-          \ 'col': 'cursor',
-          \ 'maxwidth': width,
+          \ 'line': 'cursor+1',
+          \ 'col': offset,
+          \ 'maxwidth': winwidth('%'),
           \ 'maxheight': height,
           \ 'moved': 'any',
           \ 'zindex': 1000,
           \ })
-    call setbufvar(winbufnr(s:popup_window), '&filetype', 'diff')
+    call setbufvar(winbufnr(s:popup_window), '&syntax', 'diff')
   else
     return 0
   endif
 
   return 1
+endfunction
+
+" Function: s:offset {{{1
+function! s:offset() abort
+  let offset = &foldcolumn
+  let offset += 2  " FIXME: Find better way to calculate the sign column width.
+  if &number
+    let l = len(line('$')) + 1
+    let offset += (&numberwidth > l) ? &numberwidth : l
+  elseif &relativenumber
+    let l = len(winheight('%')) + 1
+    let offset += (&numberwidth > l) ? &numberwidth : l
+  endif
+  return offset
 endfunction
