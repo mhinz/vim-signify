@@ -324,14 +324,14 @@ endfunction
 
 function! s:is_cur_line_in_hunk(hunkline) abort
   let cur_line = line('.')
-  let [old_line, new_line, _old_count, new_count] = sy#sign#parse_hunk(a:hunkline)
+  let [_old_line, new_line, old_count, new_count] = sy#sign#parse_hunk(a:hunkline)
 
   if cur_line == 1 && new_line == 0
     " deleted first line
     return 1
   endif
 
-  if cur_line == new_line && new_line < old_line
+  if cur_line == new_line && new_count < old_count
     " deleted lines
     return 1
   endif
