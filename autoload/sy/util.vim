@@ -148,7 +148,7 @@ function! sy#util#popup_create(hunkdiff) abort
     let s:popup_window = popup_create(a:hunkdiff, {
           \ 'line': 'cursor+1',
           \ 'col': offset,
-          \ 'maxwidth': winwidth('%'),
+          \ 'minwidth': winwidth('%'),
           \ 'maxheight': height,
           \ 'moved': 'any',
           \ 'zindex': 1000,
