@@ -121,7 +121,7 @@ endfunction
 " Function: #popup_create {{{1
 function! sy#util#popup_create(hunkdiff) abort
   let max_height = winheight('%') - winline()
-  let height = len(a:hunkdiff)
+  let height = len(filter(a:hunkdiff, {_,v -> !empty(v)}))
   let height = (height > max_height) ? max_height : height
   let offset = s:offset()
 
