@@ -134,7 +134,7 @@ function! sy#util#popup_create(hunkdiff) abort
           \ 'relative': 'win',
           \ 'row': winline(),
           \ 'col': offset - 1,
-          \ 'width': winwidth('%') - offset,
+          \ 'width': winwidth('%') - offset + 1,
           \ 'height': height,
           \ })
     call nvim_win_set_option(s:popup_window, 'cursorline', v:false)
