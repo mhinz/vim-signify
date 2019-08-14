@@ -12,13 +12,8 @@ endfunction
 
 " Function: s:callback_nvim_stdout{{{1
 function! s:callback_nvim_stdout(_job_id, data, _event) dict abort
-  if empty(self.stdoutbuf) || empty(self.stdoutbuf[-1])
-    let self.stdoutbuf += a:data
-  else
-    let self.stdoutbuf = self.stdoutbuf[:-2]
-          \ + [self.stdoutbuf[-1] . get(a:data, 0, '')]
-          \ + a:data[1:]
-  endif
+  let self.stdoutbuf[-1] .= a:data[0]
+  call extend(self.stdoutbuf, a:data[1:])
 endfunction
 
 " Function: s:callback_nvim_exit {{{1
@@ -363,7 +358,7 @@ function! s:initialize_job(vcs) abort
     let cmd = ['sh', '-c', vcs_cmd]
   endif
   let options = {
-        \ 'stdoutbuf':   [],
+        \ 'stdoutbuf':   [''],
         \ 'vcs':         a:vcs,
         \ 'bufnr':       bufnr('%'),
         \ }
