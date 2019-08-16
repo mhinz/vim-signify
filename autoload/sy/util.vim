@@ -120,10 +120,21 @@ endfunction
 
 " Function: #popup_create {{{1
 function! sy#util#popup_create(hunkdiff) abort
-  let max_height = winheight('%') - winline()
-  let height = len(filter(a:hunkdiff, {_,v -> !empty(v)}))
-  let height = (height > max_height) ? max_height : height
-  let offset = s:offset()
+  let offset      = s:offset()
+  let winline     = winline()
+  let min_height  = 6
+  let max_height  = winheight('%') - winline
+  let diff_height = len(filter(a:hunkdiff, {_,v -> !empty(v)}))
+  let height      = min([diff_height, max_height])
+
+  if diff_height > max_height && max_height < min_height
+    let max_scroll = min_height - max_height
+    let scroll     = min([max_scroll, diff_height - max_height])
+    " Old versions don't have feedkeys(..., 'x')
+    execute 'normal!' scroll.''
+    let winline -= scroll
+    let height  += scroll
+  endif
 
   if exists('*nvim_open_win')
     call sy#util#popup_close()
@@ -132,7 +143,7 @@ function! sy#util#popup_create(hunkdiff) abort
     call nvim_buf_set_lines(buf, 0, -1, 0, a:hunkdiff)
     let s:popup_window = nvim_open_win(buf, v:false, {
           \ 'relative': 'win',
-          \ 'row': winline(),
+          \ 'row': winline,
           \ 'col': offset - 1,
           \ 'width': winwidth('%') - offset + 1,
           \ 'height': height,
