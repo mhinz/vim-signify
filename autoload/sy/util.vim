@@ -124,7 +124,7 @@ function! sy#util#popup_create(hunkdiff) abort
   let winline     = winline()
   let min_height  = 6
   let max_height  = winheight('%') - winline
-  let diff_height = len(filter(a:hunkdiff, {_,v -> !empty(v)}))
+  let diff_height = len(a:hunkdiff)
   let height      = min([diff_height, max_height])
 
   if diff_height > max_height && max_height < min_height

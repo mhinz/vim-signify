@@ -284,7 +284,7 @@ function! s:preview_hunk(_sy, vcs, diff) abort
 
   for line in a:diff
     if in_hunk
-      if line[:2] == '@@ '
+      if line[:2] == '@@ ' || empty(line)
         break
       endif
       call add(hunk, line)
