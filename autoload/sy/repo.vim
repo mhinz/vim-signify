@@ -42,18 +42,17 @@ endfunction
 " Function: sy#get_diff {{{1
 function! sy#repo#get_diff(vcs, func) abort
   call sy#verbose('sy#repo#get_diff()', a:vcs)
-
   let job_id = get(b:, 'sy_job_id_'.a:vcs)
+  let [cmd, options] = s:initialize_job(a:vcs)
+  let options.func = a:func
+
   " Neovim
   if has('nvim')
     if job_id
       silent! call jobstop(job_id)
     endif
 
-    let [cmd, options] = s:initialize_job(a:vcs)
-    let options.func = a:func
     let [cwd, chdir] = sy#util#chdir()
-
     call sy#verbose(['CMD: '. string(cmd), 'CMD DIR:  '. b:sy.info.dir, 'ORIG DIR: '. cwd], a:vcs)
 
     try
@@ -76,10 +75,7 @@ function! sy#repo#get_diff(vcs, func) abort
       silent! call job_stop(job_id)
     endif
 
-    let [cmd, options] = s:initialize_job(a:vcs)
-    let options.func = a:func
     let [cwd, chdir] = sy#util#chdir()
-
     call sy#verbose(['CMD: '. string(cmd), 'CMD DIR:  '. b:sy.info.dir, 'ORIG DIR: '. cwd], a:vcs)
 
     try
@@ -100,8 +96,8 @@ function! sy#repo#get_diff(vcs, func) abort
 
   " Older Vim
   else
-    let diff = split(s:run(a:vcs), '\n')
-    call sy#repo#get_diff_{a:vcs}(b:sy, v:shell_error, diff)
+    let options.stdoutbuf = split(s:run(a:vcs), '\n')
+    call s:handle_diff(options, v:shell_error)
   endif
 endfunction
 
