@@ -116,7 +116,7 @@ function! s:handle_diff(options, exitval) abort
     let sy.detecting -= 1
   endif
 
-  if has('iconv')
+  if (&fenc != &enc) && has('iconv')
     call map(a:options.stdoutbuf, 'iconv(v:val, &fenc, &enc)')
   endif
 
@@ -257,7 +257,7 @@ function! sy#repo#diffmode(do_tab) abort
   try
     execute chdir fnameescape(b:sy.info.dir)
     leftabove vnew
-    if has('iconv')
+    if (fenc != &enc) && has('iconv')
       silent put =iconv(system(cmd), fenc, &enc)
     else
       silent put =system(cmd)
