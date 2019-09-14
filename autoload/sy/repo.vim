@@ -322,6 +322,52 @@ function! s:preview_hunk(_sy, vcs, diff) abort
   noautocmd call feedkeys("\<c-w>p", 'nt')
 endfunction
 
+" Function: #revert_hunk {{{1
+function! sy#repo#revert_hunk() abort
+  if exists('b:sy') && !empty(b:sy.updated_by)
+    call sy#repo#get_diff(b:sy.updated_by, function('s:revert_hunk'))
+  endif
+endfunction
+
+function! s:revert_hunk(_sy, vcs, diff) abort
+  call sy#verbose('s:revert_hunk()', a:vcs)
+
+  let [header, hunk] = s:extract_current_hunk(a:diff)
+  if empty(hunk)
+    return
+  endif
+
+  let [_old_line, new_line, _old_count, _new_count] = sy#sign#parse_hunk(header)
+
+  for line in hunk
+    echom new_line
+    echom line
+    let op = line[0]
+    let text = line[1:]
+    if op == ' '
+      if text != getline(new_line)
+        echoerr 'Could not apply context hunk for revert. Try saving the buffer first.'
+        return
+      endif
+      let new_line += 1
+    elseif op == '-'
+      call append(new_line-1, text)
+      let new_line += 1
+    elseif op == '+'
+      if text != getline(new_line)
+        echom text
+        echom getline(new_line)
+        echoerr 'Could not apply addition hunk for revert. Try saving the buffer first.'
+        return
+      endif
+      execute new_line 'delete _'
+    else
+      echoer 'Unknown diff operation ' . line
+      return
+    endif
+  endfor
+endfunction
+
 function! s:is_cur_line_in_hunk(hunkline) abort
   let cur_line = line('.')
   let [_old_line, new_line, old_count, new_count] = sy#sign#parse_hunk(a:hunkline)
