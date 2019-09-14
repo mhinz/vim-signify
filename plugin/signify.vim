@@ -72,6 +72,7 @@ command! -nargs=0 -bar -bang SignifyFold            call sy#fold#dispatch(<bang>
 command! -nargs=0 -bar -bang SignifyDiff            call sy#repo#diffmode(<bang>1)
 command! -nargs=0 -bar       SignifyDiffPreview     call sy#repo#preview_hunk()
 command! -nargs=0 -bar       SignifyRefresh         call sy#util#refresh_windows()
+command! -nargs=0 -bar       SignifyRevert          call sy#repo#revert_hunk()
 command! -nargs=0 -bar       SignifyEnable          call sy#enable()
 command! -nargs=0 -bar       SignifyDisable         call sy#disable()
 command! -nargs=0 -bar       SignifyToggle          call sy#toggle()
