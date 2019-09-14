@@ -206,7 +206,17 @@ function! sy#repo#debug_detection()
   endfor
 endfunction
 
-" #diffmode {{{1
+function! s:system_in_dir(cmd) abort
+  let [cwd, chdir] = sy#util#chdir()
+  try
+    execute chdir fnameescape(b:sy.info.dir)
+    return system(a:cmd)
+  finally
+    execute chdir fnameescape(cwd)
+  endtry
+endfunction
+
+" Function: #diffmode {{{1
 function! sy#repo#diffmode(do_tab) abort
   execute sy#util#return_if_no_changes()
 
@@ -224,18 +234,14 @@ function! sy#repo#diffmode(do_tab) abort
     tabedit %
   endif
   diffthis
-  let [cwd, chdir] = sy#util#chdir()
-  try
-    execute chdir fnameescape(b:sy.info.dir)
-    leftabove vnew
-    if (fenc != &enc) && has('iconv')
-      silent put =iconv(system(cmd), fenc, &enc)
-    else
-      silent put =system(cmd)
-    endif
-  finally
-    execute chdir fnameescape(cwd)
-  endtry
+
+  leftabove vnew
+  if (fenc != &enc) && has('iconv')
+    silent put =iconv(s:system_in_dir(cmd), fenc, &enc)
+  else
+    silent put =s:system_in_dir(cmd)
+  endif
+
   silent 1delete
   set buftype=nofile bufhidden=wipe nomodified
   let &filetype = ft
@@ -404,16 +410,13 @@ endfunction
 
 " s:run {{{1
 function! s:run(vcs)
-  let [cwd, chdir] = sy#util#chdir()
   try
-    execute chdir fnameescape(b:sy.info.dir)
-    let ret = system(s:expand_cmd(a:vcs, g:signify_vcs_cmds))
+    let ret = s:system_in_dir(s:expand_cmd(a:vcs, g:signify_vcs_cmds))
   catch
     " This exception message can be seen via :SignifyDebugUnknown.
     " E.g. unquoted VCS programs in vcd_cmds can lead to E484.
     let ret = v:exception .' at '. v:throwpoint
   finally
-    execute chdir fnameescape(cwd)
     return ret
   endtry
 endfunction
