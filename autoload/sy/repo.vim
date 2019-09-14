@@ -273,6 +273,24 @@ function! sy#repo#diffmode(do_tab) abort
   normal! ]czt
 endfunction
 
+function! s:extract_current_hunk(diff) abort
+  let header = ''
+  let hunk = []
+
+  for line in a:diff
+    if header != ''
+      if line[:2] == '@@ ' || empty(line)
+        break
+      endif
+      call add(hunk, line)
+    elseif line[:2] == '@@ ' && s:is_cur_line_in_hunk(line)
+      let header = line
+    endif
+  endfor
+
+  return [header, hunk]
+endfunction
+
 " Function: #preview_hunk {{{1
 function! sy#repo#preview_hunk() abort
   if exists('b:sy') && !empty(b:sy.updated_by)
@@ -283,21 +301,8 @@ endfunction
 function! s:preview_hunk(_sy, vcs, diff) abort
   call sy#verbose('s:preview_hunk()', a:vcs)
 
-  let in_hunk = 0
-  let hunk = []
-
-  for line in a:diff
-    if in_hunk
-      if line[:2] == '@@ ' || empty(line)
-        break
-      endif
-      call add(hunk, line)
-    elseif line[:2] == '@@ ' && s:is_cur_line_in_hunk(line)
-      let in_hunk = 1
-    endif
-  endfor
-
-  if !in_hunk
+  let [_, hunk] = s:extract_current_hunk(a:diff)
+  if empty(hunk)
     return
   endif
 
