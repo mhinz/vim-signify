@@ -216,30 +216,44 @@ function! s:system_in_dir(cmd) abort
   endtry
 endfunction
 
+" Function: s:get_base_cmd {{{1
+" Return a command to get the "base" version of the current buffer as a string.
+function! s:get_base_cmd(vcs) abort
+  call sy#verbose('sy#repo#get_base_cmd()', a:vcs)
+
+  if !has_key(g:signify_vcs_cmds_diffmode, a:vcs)
+    echomsg 'SignifyDiff has no support for: '. a:vcs
+    echomsg 'Open an issue for it at: https://github.com/mhinz/vim-signify/issues'
+    return
+  endif
+
+  return s:expand_cmd(a:vcs, g:signify_vcs_cmds_diffmode)
+endfunction
+
+function! sy#repo#get_base(vcs) abort
+  return s:system_in_dir(s:get_base_cmd(a:vcs))
+endfunction
+
 " Function: #diffmode {{{1
 function! sy#repo#diffmode(do_tab) abort
   execute sy#util#return_if_no_changes()
 
   let vcs = b:sy.updated_by
-  if !has_key(g:signify_vcs_cmds_diffmode, vcs)
-    echomsg 'SignifyDiff has no support for: '. vcs
-    echomsg 'Open an issue for it at: https://github.com/mhinz/vim-signify/issues'
-    return
-  endif
-  let cmd = s:expand_cmd(vcs, g:signify_vcs_cmds_diffmode)
-  call sy#verbose('SignifyDiff: '. cmd, vcs)
+
+  call sy#verbose('SignifyDiff', vcs)
   let ft = &filetype
   let fenc = &fenc
   if a:do_tab
     tabedit %
   endif
-  diffthis
+
+  let base = sy#repo#get_base(vcs)
 
   leftabove vnew
   if (fenc != &enc) && has('iconv')
-    silent put =iconv(s:system_in_dir(cmd), fenc, &enc)
+    silent put =iconv(base, fenc, &enc)
   else
-    silent put =s:system_in_dir(cmd)
+    silent put =base
   endif
 
   silent 1delete
