@@ -1,8 +1,8 @@
-" vim: et sw=2 sts=2
+" vim: et sw=2 sts=2 fdm=marker
 
 scriptencoding utf-8
 
-" Function: #detect {{{1
+" #detect {{{1
 function! sy#repo#detect() abort
   for vcs in s:vcs_list
     let b:sy.detecting += 1
@@ -10,23 +10,23 @@ function! sy#repo#detect() abort
   endfor
 endfunction
 
-" Function: s:callback_nvim_stdout{{{1
+" s:callback_nvim_stdout{{{1
 function! s:callback_nvim_stdout(_job_id, data, _event) dict abort
   let self.stdoutbuf[-1] .= a:data[0]
   call extend(self.stdoutbuf, a:data[1:])
 endfunction
 
-" Function: s:callback_nvim_exit {{{1
+" s:callback_nvim_exit {{{1
 function! s:callback_nvim_exit(_job_id, exitval, _event) dict abort
   return s:handle_diff(self, a:exitval)
 endfunction
 
-" Function: s:callback_vim_stdout {{{1
+" s:callback_vim_stdout {{{1
 function! s:callback_vim_stdout(_job_id, data) dict abort
   let self.stdoutbuf += [a:data]
 endfunction
 
-" Function: s:callback_vim_close {{{1
+" s:callback_vim_close {{{1
 function! s:callback_vim_close(channel) dict abort
   let job = ch_getjob(a:channel)
   while 1
@@ -39,7 +39,7 @@ function! s:callback_vim_close(channel) dict abort
   return s:handle_diff(self, exitval)
 endfunction
 
-" Function: sy#get_diff {{{1
+" sy#get_diff {{{1
 function! sy#repo#get_diff(vcs, func) abort
   call sy#verbose('sy#repo#get_diff()', a:vcs)
   let job_id = get(b:, 'sy_job_id_'.a:vcs)
@@ -101,7 +101,7 @@ function! sy#repo#get_diff(vcs, func) abort
   endif
 endfunction
 
-" Function: s:handle_diff {{{1
+" s:handle_diff {{{1
 function! s:handle_diff(options, exitval) abort
   call sy#verbose('s:handle_diff()', a:options.vcs)
 
@@ -133,42 +133,42 @@ function! s:handle_diff(options, exitval) abort
   call setbufvar(a:options.bufnr, 'sy_job_id_'.a:options.vcs, 0)
 endfunction
 
-" Function: s:check_diff_git {{{1
+" s:check_diff_git {{{1
 function! s:check_diff_git(exitval, diff) abort
   return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: s:check_diff_yadm {{{1
+" s:check_diff_yadm {{{1
 function! s:check_diff_yadm(exitval, diff) abort
   return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: s:check_diff_hg {{{1
+" s:check_diff_hg {{{1
 function! s:check_diff_hg(exitval, diff) abort
   return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: s:check_diff_svn {{{1
+" s:check_diff_svn {{{1
 function! s:check_diff_svn(exitval, diff) abort
   return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: s:check_diff_bzr {{{1
+" s:check_diff_bzr {{{1
 function! s:check_diff_bzr(exitval, diff) abort
   return (a:exitval =~ '[012]') ? [1, a:diff] : [0, []]
 endfunction
 
-" Function: s:check_diff_darcs {{{1
+" s:check_diff_darcs {{{1
 function! s:check_diff_darcs(exitval, diff) abort
   return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: s:check_diff_fossil {{{1
+" s:check_diff_fossil {{{1
 function! s:check_diff_fossil(exitval, diff) abort
   return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: s:check_diff_cvs {{{1
+" s:check_diff_cvs {{{1
 function! s:check_diff_cvs(exitval, diff) abort
   let [found_diff, diff] = [0, []]
   if a:exitval == 1
@@ -184,32 +184,32 @@ function! s:check_diff_cvs(exitval, diff) abort
   return [found_diff, diff]
 endfunction
 
-" Function: s:check_diff_rcs {{{1
+" s:check_diff_rcs {{{1
 function! s:check_diff_rcs(exitval, diff) abort
   return (a:exitval == 2) ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: s:check_diff_accurev {{{1
+" s:check_diff_accurev {{{1
 function! s:check_diff_accurev(exitval, diff) abort
   return (a:exitval >= 2) ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: s:check_diff_perforce {{{1
+" s:check_diff_perforce {{{1
 function! s:check_diff_perforce(exitval, diff) abort
   return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
-" Function: s:check_diff_tfs {{{1
+" s:check_diff_tfs {{{1
 function! s:check_diff_tfs(exitval, diff) abort
   return a:exitval ? [0, []] : [1, s:strip_context(a:diff)]
 endfunction
 
-" Function: #get_stats {{{1
+" #get_stats {{{1
 function! sy#repo#get_stats() abort
   return exists('b:sy') ? b:sy.stats : [-1, -1, -1]
 endfunction
 
-" Function: #debug_detection {{{1
+" #debug_detection {{{1
 function! sy#repo#debug_detection()
   if !exists('b:sy')
     echomsg 'signify: I cannot detect any changes!'
@@ -235,7 +235,7 @@ function! sy#repo#debug_detection()
   endfor
 endfunction
 
-" Function: #diffmode {{{1
+" #diffmode {{{1
 function! sy#repo#diffmode(do_tab) abort
   execute sy#util#return_if_no_changes()
 
@@ -273,6 +273,7 @@ function! sy#repo#diffmode(do_tab) abort
   normal! ]czt
 endfunction
 
+" s:extract_current_hunk {{{1
 function! s:extract_current_hunk(diff) abort
   let header = ''
   let hunk = []
@@ -291,7 +292,29 @@ function! s:extract_current_hunk(diff) abort
   return [header, hunk]
 endfunction
 
-" Function: #preview_hunk {{{1
+function! s:is_cur_line_in_hunk(hunkline) abort
+  let cur_line = line('.')
+  let [_old_line, new_line, old_count, new_count] = sy#sign#parse_hunk(a:hunkline)
+
+  if cur_line == 1 && new_line == 0
+    " deleted first line
+    return 1
+  endif
+
+  if cur_line == new_line && new_count < old_count
+    " deleted lines
+    return 1
+  endif
+
+  if cur_line >= new_line && cur_line < (new_line + new_count)
+    " added/changed lines
+    return 1
+  endif
+
+  return 0
+endfunction
+
+" #preview_hunk {{{1
 function! sy#repo#preview_hunk() abort
   if exists('b:sy') && !empty(b:sy.updated_by)
     call sy#repo#get_diff(b:sy.updated_by, function('s:preview_hunk'))
@@ -322,7 +345,7 @@ function! s:preview_hunk(_sy, vcs, diff) abort
   noautocmd call feedkeys("\<c-w>p", 'nt')
 endfunction
 
-" Function: #undo_hunk {{{1
+" #undo_hunk {{{1
 function! sy#repo#undo_hunk() abort
   if exists('b:sy') && !empty(b:sy.updated_by)
     call sy#repo#get_diff(b:sy.updated_by, function('s:undo_hunk'))
@@ -368,29 +391,7 @@ function! s:undo_hunk(_sy, vcs, diff) abort
   endfor
 endfunction
 
-function! s:is_cur_line_in_hunk(hunkline) abort
-  let cur_line = line('.')
-  let [_old_line, new_line, old_count, new_count] = sy#sign#parse_hunk(a:hunkline)
-
-  if cur_line == 1 && new_line == 0
-    " deleted first line
-    return 1
-  endif
-
-  if cur_line == new_line && new_count < old_count
-    " deleted lines
-    return 1
-  endif
-
-  if cur_line >= new_line && cur_line < (new_line + new_count)
-    " added/changed lines
-    return 1
-  endif
-
-  return 0
-endfunction
-
-" Function: s:initialize_job {{{1
+" s:initialize_job {{{1
 function! s:initialize_job(vcs) abort
   let vcs_cmd = s:expand_cmd(a:vcs, g:signify_vcs_cmds)
   if has('win32')
@@ -416,12 +417,12 @@ function! s:initialize_job(vcs) abort
   return [cmd, options]
 endfunction
 
-" Function: s:get_vcs_path {{{1
+" s:get_vcs_path {{{1
 function! s:get_vcs_path(vcs) abort
   return (a:vcs =~# '\v(git|cvs|accurev|tfs|yadm)') ? b:sy.info.file : b:sy.info.path
 endfunction
 
-" Function: s:expand_cmd {{{1
+" s:expand_cmd {{{1
 function! s:expand_cmd(vcs, vcs_cmds) abort
   let cmd = a:vcs_cmds[a:vcs]
   let cmd = s:replace(cmd, '%f', s:get_vcs_path(a:vcs))
@@ -430,7 +431,7 @@ function! s:expand_cmd(vcs, vcs_cmds) abort
   return cmd
 endfunction
 
-" Function: s:run {{{1
+" s:run {{{1
 function! s:run(vcs)
   let [cwd, chdir] = sy#util#chdir()
   try
@@ -446,13 +447,13 @@ function! s:run(vcs)
   endtry
 endfunction
 
-" Function: s:replace {{{1
+" s:replace {{{1
 function! s:replace(cmd, pat, sub)
   let parts = split(a:cmd, a:pat, 1)
   return join(parts, a:sub)
 endfunction
 
-" Function: s:strip_context {{{1
+" s:strip_context {{{1
 function! s:strip_context(context)
   let diff = []
   let hunk = []
@@ -528,6 +529,7 @@ function! s:strip_context(context)
   endif
   return diff
 endfunction
+" 1}}}
 
 " Variables {{{1
 let s:difftool = get(g:, 'signify_difftool', 'diff')

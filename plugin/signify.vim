@@ -1,4 +1,4 @@
-" vim: et sw=2 sts=2
+" vim: et sw=2 sts=2 fdm=marker
 
 scriptencoding utf-8
 
@@ -6,11 +6,11 @@ if exists('g:loaded_signify') || !has('signs') || &compatible
   finish
 endif
 
-" Init: values {{{1
+" Variables {{{1
 let g:loaded_signify = 1
 let g:signify_locked = 0
 
-" Init: autocmds {{{1
+" Autocmds {{{1
 augroup signify
   autocmd!
 
@@ -64,8 +64,7 @@ augroup signify
   endif
 augroup END
 
-" Init: commands {{{1
-
+" Commands {{{1
 command! -nargs=0 -bar       SignifyList            call sy#debug#list_active_buffers()
 command! -nargs=0 -bar       SignifyDebug           call sy#repo#debug_detection()
 command! -nargs=0 -bar -bang SignifyFold            call sy#fold#dispatch(<bang>1)
@@ -78,7 +77,7 @@ command! -nargs=0 -bar       SignifyDisable         call sy#disable()
 command! -nargs=0 -bar       SignifyToggle          call sy#toggle()
 command! -nargs=0 -bar       SignifyToggleHighlight call sy#highlight#line_toggle()
 
-" Init: mappings {{{1
+" Mappings {{{1
 let s:cpoptions = &cpoptions
 set cpoptions+=B
 
@@ -111,14 +110,15 @@ xnoremap <silent> <plug>(signify-motion-outer-visual)  :<c-u>call sy#util#hunk_t
 
 let &cpoptions = s:cpoptions
 unlet s:cpoptions
+" 1}}}
 
-" Function: save {{{1
-
+" s:save {{{1
 function! s:save()
   if exists('b:sy') && b:sy.active && &modified && &modifiable && ! &readonly
     write
   endif
 endfunction
+" 1}}}
 
 if exists('#User#SignifySetup')
   doautocmd <nomodeline> User SignifySetup

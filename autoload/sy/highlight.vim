@@ -1,8 +1,8 @@
-" vim: et sw=2 sts=2
+" vim: et sw=2 sts=2 fdm=marker
 
 scriptencoding utf-8
 
-" Init: values {{{1
+" Variables {{{1
 if get(g:, 'signify_sign_show_text', 1)
   let s:sign_add               = get(g:, 'signify_sign_add',               '+')
   let s:sign_delete_first_line = get(g:, 'signify_sign_delete_first_line', '‾')
@@ -16,8 +16,9 @@ else
 endif
 
 let s:sign_show_count = get(g:, 'signify_sign_show_count', 1)
+" 1}}}
 
-" Function: #setup {{{1
+" #setup {{{1
 function! sy#highlight#setup() abort
   highlight default link SignifyLineAdd             DiffAdd
   highlight default link SignifyLineDelete          DiffDelete
@@ -32,7 +33,7 @@ function! sy#highlight#setup() abort
   highlight default link SignifySignChangeDelete    SignifySignChange
 endfunction
 
-" Function: #line_enable {{{1
+" #line_enable {{{1
 function! sy#highlight#line_enable() abort
   execute 'sign define SignifyAdd text='. s:sign_add 'texthl=SignifySignAdd linehl=SignifyLineAdd'
   execute 'sign define SignifyChange text='. s:sign_change 'texthl=SignifySignChange linehl=SignifyLineChange'
@@ -54,7 +55,7 @@ function! sy#highlight#line_enable() abort
   let g:signify_line_highlight = 1
 endfunction
 
-" Function: #line_disable {{{1
+" #line_disable {{{1
 function! sy#highlight#line_disable() abort
   execute 'sign define SignifyAdd text='. s:sign_add 'texthl=SignifySignAdd linehl='
   execute 'sign define SignifyChange text='. s:sign_change 'texthl=SignifySignChange linehl='
@@ -78,7 +79,7 @@ function! sy#highlight#line_disable() abort
   let g:signify_line_highlight = 0
 endfunction
 
-" Function: #line_toggle {{{1
+" #line_toggle {{{1
 function! sy#highlight#line_toggle() abort
   if get(g:, 'signify_line_highlight')
     call sy#highlight#line_disable()

@@ -1,8 +1,8 @@
-" vim: et sw=2 sts=2
+" vim: et sw=2 sts=2 fdm=marker
 
 scriptencoding utf-8
 
-" Init: values {{{1
+" Variables {{{1
 if get(g:, 'signify_sign_show_text', 1)
   let s:sign_delete = get(g:, 'signify_sign_delete', '_')
 else
@@ -11,15 +11,16 @@ endif
 
 let s:sign_show_count  = get(g:, 'signify_sign_show_count', 1)
 let s:delete_highlight = ['', 'SignifyLineDelete']
+" 1}}}
 
-" Function: #id_next {{{1
+" #id_next {{{1
 function! sy#sign#id_next(sy) abort
   let id = a:sy.signid
   let a:sy.signid += 1
   return id
 endfunction
 
-" Function: #get_current_signs {{{1
+" #get_current_signs {{{1
 function! sy#sign#get_current_signs(sy) abort
   let a:sy.internal = {}
   let a:sy.external = {}
@@ -47,7 +48,7 @@ function! sy#sign#get_current_signs(sy) abort
 endfunction
 
 
-" Function: #process_diff {{{1
+" #process_diff {{{1
 function! sy#sign#process_diff(sy, vcs, diff) abort
   let a:sy.signtable             = {}
   let a:sy.hunks                 = []
@@ -208,7 +209,7 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
   let a:sy.stats = [added, modified, deleted]
 endfunction
 
-" Function: #remove_all_signs {{{1
+" #remove_all_signs {{{1
 function! sy#sign#remove_all_signs(bufnr) abort
   let sy = getbufvar(a:bufnr, 'sy')
 
@@ -221,7 +222,7 @@ function! sy#sign#remove_all_signs(bufnr) abort
   let sy.hunks = []
 endfunction
 
-" Function: #parse_hunk {{{1
+" #parse_hunk {{{1
 " Parse a hunk as '@@ -273,3 +267,14' into [old_line, new_line, old_count, new_count]
 function! sy#sign#parse_hunk(diffline) abort
   let tokens = matchlist(a:diffline, '^@@ -\v(\d+),?(\d*) \+(\d+),?(\d*)')
@@ -233,7 +234,7 @@ function! sy#sign#parse_hunk(diffline) abort
         \ ]
 endfunction
 
-" Function: #set_signs {{{1
+" #set_signs {{{1
 function! sy#sign#set_signs(sy, vcs, diff) abort
   call sy#verbose('sy#sign#set_signs()', a:vcs)
 
@@ -261,7 +262,7 @@ function! sy#sign#set_signs(sy, vcs, diff) abort
   endif
 endfunction
 
-" Function: s:add_sign {{{1
+" s:add_sign {{{1
 function! s:add_sign(sy, line, type, ...) abort
   call add(a:sy.lines, a:line)
   let a:sy.signtable[a:line] = 1
@@ -296,7 +297,7 @@ function! s:add_sign(sy, line, type, ...) abort
   return id
 endfunction
 
-" Function: s:external_sign_present {{{1
+" s:external_sign_present {{{1
 function! s:external_sign_present(sy, line) abort
   if has_key(a:sy.external, a:line)
     if has_key(a:sy.internal, a:line)

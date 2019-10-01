@@ -1,8 +1,8 @@
-" vim: et sw=2 sts=2
+" vim: et sw=2 sts=2 fdm=marker
 
 scriptencoding utf-8
 
-" Function: #next_hunk {{{1
+" #next_hunk {{{1
 function! sy#jump#next_hunk(count)
   execute sy#util#return_if_no_changes()
 
@@ -15,7 +15,7 @@ function! sy#jump#next_hunk(count)
   endif
 endfunction
 
-" Function: #prev_hunk {{{1
+" #prev_hunk {{{1
 function! sy#jump#prev_hunk(count)
   execute sy#util#return_if_no_changes()
 

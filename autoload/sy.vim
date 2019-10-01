@@ -1,8 +1,8 @@
-" vim: et sw=2 sts=2
+" vim: et sw=2 sts=2 fdm=marker
 
 scriptencoding utf-8
 
-" Function: #start {{{1
+" #start {{{1
 function! sy#start() abort
   if g:signify_locked
     call sy#verbose('Locked.')
@@ -78,7 +78,7 @@ function! sy#start() abort
   endif
 endfunction
 
-" Function: #stop {{{1
+" #stop {{{1
 function! sy#stop(bufnr) abort
   let sy = getbufvar(a:bufnr, 'sy')
   if empty(sy)
@@ -88,7 +88,7 @@ function! sy#stop(bufnr) abort
   call sy#sign#remove_all_signs(a:bufnr)
 endfunction
 
-" Function: #enable {{{1
+" #enable {{{1
 function! sy#enable() abort
   if !exists('b:sy')
     call sy#start()
@@ -102,7 +102,7 @@ function! sy#enable() abort
   endif
 endfunction
 
-" Function: #disable {{{1
+" #disable {{{1
 function! sy#disable() abort
   if exists('b:sy') && b:sy.active
     call sy#stop(b:sy.buffer)
@@ -111,7 +111,7 @@ function! sy#disable() abort
   endif
 endfunction
 
-" Function: #toggle {{{1
+" #toggle {{{1
 function! sy#toggle() abort
   if !exists('b:sy') || !b:sy.active
     call sy#enable()
@@ -120,12 +120,12 @@ function! sy#toggle() abort
   endif
 endfunction
 
-" Function: #buffer_is_active {{{1
+" #buffer_is_active {{{1
 function! sy#buffer_is_active()
   return exists('b:sy') && b:sy.active
 endfunction
 
-" Function: #verbose {{{1
+" #verbose {{{1
 function! sy#verbose(msg, ...) abort
   if &verbose
     if type(a:msg) == type([])
@@ -138,7 +138,7 @@ function! sy#verbose(msg, ...) abort
   endif
 endfunction
 
-" Function: s:skip {{{1
+" s:skip {{{1
 function! s:skip(path)
   if &diff || !filereadable(a:path)
     return 1

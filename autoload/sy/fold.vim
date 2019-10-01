@@ -1,11 +1,11 @@
-" vim: et sw=2 sts=2
+" vim: et sw=2 sts=2 fdm=marker
 
-" Function: SignifyFoldExpr {{{1
+" SignifyFoldExpr {{{1
 function! SignifyFoldExpr(lnum)
   return s:levels[a:lnum]
 endfunction
 
-" Function: SignifyFoldText {{{1
+" SignifyFoldText {{{1
 function! SignifyFoldText()
   let linelen = &textwidth ? &textwidth : 80
   let marker  = &foldmarker[:stridx(&foldmarker, ',')-1]
@@ -31,7 +31,7 @@ function! SignifyFoldText()
   return left . fill . right
 endfunction
 
-" Function: #dispatch {{{1
+" #dispatch {{{1
 function! sy#fold#dispatch(do_tab) abort
   if a:do_tab
     call sy#fold#enable(1)
@@ -40,7 +40,7 @@ function! sy#fold#dispatch(do_tab) abort
   endif
 endfunction
 
-" Function: #enable {{{1
+" #enable {{{1
 function! sy#fold#enable(do_tab) abort
   execute sy#util#return_if_no_changes()
 
@@ -57,14 +57,14 @@ function! sy#fold#enable(do_tab) abort
   setlocal foldlevel=0
 endfunction
 
-" Function: #disable {{{1
+" #disable {{{1
 function! sy#fold#disable() abort
   let &l:foldmethod = b:sy_folded.method
   let &l:foldtext = b:sy_folded.text
   normal! zv
 endfunction
 
-" Function: #toggle {{{1
+" #toggle {{{1
 function! sy#fold#toggle() abort
   if exists('b:sy_folded')
     call sy#fold#disable()
@@ -86,7 +86,7 @@ function! sy#fold#toggle() abort
   call sy#start()
 endfunction
 
-" Function: s:get_lines {{{1
+" s:get_lines {{{1
 function! s:get_lines() abort
   let signlist = sy#util#execute('sign place buffer='. b:sy.buffer)
 
@@ -97,9 +97,8 @@ function! s:get_lines() abort
 
   return reverse(lines)
 endfunction
-" }}}
 
-" Function: s:get_levels {{{1
+" s:get_levels {{{1
 function! s:get_levels(lines) abort
   let levels = {}
 
