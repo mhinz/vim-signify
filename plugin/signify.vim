@@ -24,6 +24,8 @@ augroup signify
 
   if get(g:, 'signify_realtime') && has('patch-7.4.1967')
     autocmd WinEnter * call sy#start()
+    autocmd ShellCmdPost * call sy#start()
+    autocmd VimResume * call sy#start()
     if get(g:, 'signify_update_on_bufenter')
       autocmd BufEnter * nested call s:save()
     else

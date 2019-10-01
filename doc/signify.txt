@@ -210,6 +210,9 @@ When this option is set, you get more aggressive sign updates:
     |CursorHoldI|   After 'updatetime' milliseconds without moving the cursor
                   in insert mode. Disable with |g:signify_cursorhold_insert|.
                   This also saves the buffer!~
+    |ShellCmdPost|  After shelling out via |:!|. Think `:!git commit -m foo`
+    |VimResume|     After suspending Vim with `<c-z>`, then doing things in
+                  the shell, and resuming to Vim via `fg`.
 
 You can check the autocmds yourself: `:au signify`
 
