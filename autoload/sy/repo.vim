@@ -322,15 +322,15 @@ function! s:preview_hunk(_sy, vcs, diff) abort
   noautocmd call feedkeys("\<c-w>p", 'nt')
 endfunction
 
-" Function: #revert_hunk {{{1
-function! sy#repo#revert_hunk() abort
+" Function: #undo_hunk {{{1
+function! sy#repo#undo_hunk() abort
   if exists('b:sy') && !empty(b:sy.updated_by)
-    call sy#repo#get_diff(b:sy.updated_by, function('s:revert_hunk'))
+    call sy#repo#get_diff(b:sy.updated_by, function('s:undo_hunk'))
   endif
 endfunction
 
-function! s:revert_hunk(_sy, vcs, diff) abort
-  call sy#verbose('s:revert_hunk()', a:vcs)
+function! s:undo_hunk(_sy, vcs, diff) abort
+  call sy#verbose('s:undo_hunk()', a:vcs)
 
   let [header, hunk] = s:extract_current_hunk(a:diff)
   if empty(hunk)
@@ -346,7 +346,7 @@ function! s:revert_hunk(_sy, vcs, diff) abort
     let text = line[1:]
     if op == ' '
       if text != getline(new_line)
-        echoerr 'Could not apply context hunk for revert. Try saving the buffer first.'
+        echoerr 'Could not apply context hunk for undo. Try saving the buffer first.'
         return
       endif
       let new_line += 1
@@ -357,7 +357,7 @@ function! s:revert_hunk(_sy, vcs, diff) abort
       if text != getline(new_line)
         echom text
         echom getline(new_line)
-        echoerr 'Could not apply addition hunk for revert. Try saving the buffer first.'
+        echoerr 'Could not apply addition hunk for undo. Try saving the buffer first.'
         return
       endif
       execute new_line 'delete _'
