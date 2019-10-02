@@ -593,6 +593,7 @@ let s:default_vcs_cmds_diffmode = {
       \ 'fossil':   'fossil cat %f',
       \ 'cvs':      'cvs up -p -- %f 2>%n',
       \ 'perforce': 'p4 print %f',
+      \ 'tfs':      'tf view -version:W -noprompt %f',
       \ }
 
 if exists('g:signify_vcs_cmds')
