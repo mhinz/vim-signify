@@ -46,55 +46,26 @@ function! sy#repo#get_diff(vcs, func) abort
   let [cmd, options] = s:initialize_job(a:vcs)
   let options.func = a:func
 
-  " Neovim
   if has('nvim')
     if job_id
       silent! call jobstop(job_id)
     endif
-
-    let [cwd, chdir] = sy#util#chdir()
-    call sy#verbose(['CMD: '. string(cmd), 'CMD DIR:  '. b:sy.info.dir, 'ORIG DIR: '. cwd], a:vcs)
-
-    try
-      execute chdir fnameescape(b:sy.info.dir)
-    catch
-      echohl ErrorMsg
-      echomsg 'signify: Changing directory failed: '. b:sy.info.dir
-      echohl NONE
-      return
-    endtry
     let b:sy_job_id_{a:vcs} = jobstart(cmd, extend(options, {
+          \ 'cwd':       b:sy.info.dir,
           \ 'on_stdout': function('s:callback_nvim_stdout'),
           \ 'on_exit':   function('s:callback_nvim_exit'),
           \ }))
-    execute chdir fnameescape(cwd)
-
-  " Newer Vim
-  elseif has('patch-7.4.1967')
+  elseif has('patch-8.0.902')
     if type(job_id) != type(0)
       silent! call job_stop(job_id)
     endif
-
-    let [cwd, chdir] = sy#util#chdir()
-    call sy#verbose(['CMD: '. string(cmd), 'CMD DIR:  '. b:sy.info.dir, 'ORIG DIR: '. cwd], a:vcs)
-
-    try
-      execute chdir fnameescape(b:sy.info.dir)
-    catch
-      echohl ErrorMsg
-      echomsg 'signify: Changing directory failed: '. b:sy.info.dir
-      echohl NONE
-      return
-    endtry
     let opts = {
+          \ 'cwd':      b:sy.info.dir,
           \ 'in_io':    'null',
           \ 'out_cb':   function('s:callback_vim_stdout', options),
           \ 'close_cb': function('s:callback_vim_close', options),
           \ }
     let b:sy_job_id_{a:vcs} = job_start(cmd, opts)
-    execute chdir fnameescape(cwd)
-
-  " Older Vim
   else
     let options.stdoutbuf = split(s:run(a:vcs), '\n')
     call s:handle_diff(options, v:shell_error)
