@@ -578,23 +578,23 @@ Assuming you prefer |hl-DiffText| over |hl-DiffChange| for changed lines:
 >
     highlight link SignifyLineChange DiffText
 <
-Personally, I use (256 colors terminal):
+Example configuration #1:~
 >
-    " highlight lines in Sy and vimdiff etc.)
-
-    highlight DiffAdd           cterm=bold ctermbg=none ctermfg=119
-    highlight DiffDelete        cterm=bold ctermbg=none ctermfg=167
-    highlight DiffChange        cterm=bold ctermbg=none ctermfg=227
-
-    " highlight signs in Sy
-
-    highlight SignifySignAdd    cterm=bold ctermbg=237  ctermfg=119
-    highlight SignifySignDelete cterm=bold ctermbg=237  ctermfg=167
-    highlight SignifySignChange cterm=bold ctermbg=237  ctermfg=227
+    highlight SignifySignAdd    ctermfg=green  guifg=#00ff00 cterm=NONE gui=NONE
+    highlight SignifySignDelete ctermfg=red    guifg=#ff0000 cterm=NONE gui=NONE
+    highlight SignifySignChange ctermfg=yellow guifg=#ffff00 cterm=NONE gui=NONE
 <
-For Unix people there is a small script, showcolors.bash, in the repo that
-shows all 256 colors available to the terminal. That makes picking the right
-numbers much easier.
+Example configuration #2:~
+>
+    let g:signify_sign_show_text = 0
+
+    highlight SignifySignAdd                  ctermbg=green                guibg=#00ff00
+    highlight SignifySignDelete ctermfg=black ctermbg=red    guifg=#ffffff guibg=#ff0000
+    highlight SignifySignChange ctermfg=black ctermbg=yellow guifg=#000000 guibg=#ffff00
+<
+Note: For Unix people there is a small script in the repo, showcolors.bash,
+that shows all 256 colors available in the terminal. That makes picking the
+right numbers much easier.
 
 Default highlight groups:~
 
