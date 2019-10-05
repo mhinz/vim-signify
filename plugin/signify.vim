@@ -22,7 +22,7 @@ augroup signify
 
   autocmd BufWritePost * call sy#start()
 
-  if get(g:, 'signify_realtime') && has('patch-7.4.1967')
+  if get(g:, 'signify_realtime') && (has('nvim') || has('patch-8.0.902'))
     autocmd WinEnter * call sy#start()
     autocmd ShellCmdPost * call sy#start()
     if exists('##VimResume')

@@ -217,7 +217,7 @@ When this option is set, you get more aggressive sign updates:
 You can check the autocmds yourself: `:au signify`
 
 NOTE: Running Sy on all these events would block too often for older Vim
-versions, thus this option requires Vim 7.4.1967+, which is the minimum
+versions, thus this option requires Vim 8.0.902+, which is the minimum
 version needed for asynchronous execution. Older Vim versions silently ignore
 this option.
 
