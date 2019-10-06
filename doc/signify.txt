@@ -133,8 +133,6 @@ Other options:~
     |g:signify_skip_filetype|
     |g:signify_skip_filename|
     |g:signify_skip_filename_pattern|
-    |g:signify_update_on_bufenter|
-    |g:signify_update_on_focusgained|
     |g:signify_line_highlight|
     |g:signify_sign_add|
     |g:signify_sign_delete|
@@ -143,8 +141,6 @@ Other options:~
     |g:signify_sign_changedelete|
     |g:signify_sign_show_count|
     |g:signify_sign_show_text|
-    |g:signify_cursorhold_normal|
-    |g:signify_cursorhold_insert|
     |g:signify_difftool|
     |g:signify_fold_context|
 
@@ -277,25 +273,6 @@ Don't activate the plugin for filenames matching these patterns.
 Default: <none>
 
 ------------------------------------------------------------------------------
-                                                  *g:signify_update_on_bufenter*  >
-    let g:signify_update_on_bufenter = 0
-<
-Update signs when entering a buffer that was modified.
-
-NOTE: This also saves the buffer to disk!
-
-------------------------------------------------------------------------------
-                                               *g:signify_update_on_focusgained*  >
-    let g:signify_update_on_focusgained = 0
-<
-Update the signs on |FocusGained|, thus when the window holding Vim gains focus.
-It does so by executing |signify-:SignifyRefresh|.
-
-NOTE: The |FocusGained| event is fired for all GUIs and even a few terminal
-emulators. If you use tmux, put `set-option -g focus-events on` in your
-tmux.conf.
-
-------------------------------------------------------------------------------
                                                       *g:signify_line_highlight*  >
     let g:signify_line_highlight = 0
 <
@@ -343,18 +320,6 @@ doesn't do it for you, you can set the background color of a particular sign
 yourself: |signify-colors|.
 
 If you want no sign column at all and use Vim 7.4.2201+, use 'signcolumn'.
-
-------------------------------------------------------------------------------
-                                                   *g:signify_cursorhold_normal*
-                                                   *g:signify_cursorhold_insert*  >
-    let g:signify_cursorhold_normal = 0
-    let g:signify_cursorhold_insert = 0
-<
-Additionally trigger sign updates in normal or insert mode after 'updatetime'
-milliseconds without any key presses. This fires only once between key presses,
-thus not every 'updatetime' milliseconds.
-
-NOTE: This also saves the buffer to disk!
 
 ------------------------------------------------------------------------------
                                                             *g:signify_difftool*  >
@@ -471,7 +436,10 @@ By default, signs get updated on these events:
     |BufEnter|      Opening or switching to another buffer.
     |WinEnter|      Opening or switching to another window.
     |BufWritePost|  Saving a buffer.
-    |FocusGained|   When the window containing Vim gains focus.
+    |FocusGained|   When the window containing Vim gains focus. Updates signs
+                  for all Vim windows. This event fires for all GUIs and even
+                  a few terminal emulators.
+                  For tmux, use this: `set-option -g focus-events on`
     |CursorHold|    After 'updatetime' milliseconds without moving the cursor
                   in normal mode.
     |CursorHoldI|   After 'updatetime' milliseconds without moving the cursor
