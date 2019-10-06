@@ -74,7 +74,7 @@ function! sy#repo#get_diff(vcs, live, func) abort
 
   let job_id = get(b:, 'sy_job_id_'.a:vcs)
 
-  if a:live && has_key(g:signify_vcs_cmds_diffmode, a:vcs)
+  if a:live
     let [cmd, options] = s:initialize_buffer_job(a:vcs)
     let options.difftool = 'diff'
   else
@@ -269,13 +269,6 @@ endfunction
 " Return a command to get the "base" version of the current buffer as a string.
 function! s:get_base_cmd(vcs) abort
   call sy#verbose('sy#repo#get_base_cmd()', a:vcs)
-
-  if !has_key(g:signify_vcs_cmds_diffmode, a:vcs)
-    echomsg 'SignifyDiff has no support for: '. a:vcs
-    echomsg 'Open an issue for it at: https://github.com/mhinz/vim-signify/issues'
-    return
-  endif
-
   return s:expand_cmd(a:vcs, g:signify_vcs_cmds_diffmode)
 endfunction
 
