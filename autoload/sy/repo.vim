@@ -237,7 +237,7 @@ function! sy#repo#debug_detection()
   endif
 
   for vcs in s:vcs_list
-    let cmd = s:expand_cmd(vcs, g:signify_vcs_cmds)
+    let cmd = s:get_base_cmd(vcs, g:signify_vcs_cmds)
     echohl Statement
     echo cmd
     echo repeat('=', len(cmd))
@@ -263,17 +263,6 @@ function! s:system_in_dir(cmd) abort
   finally
     execute chdir fnameescape(cwd)
   endtry
-endfunction
-
-" s:get_base_cmd {{{1
-" Return a command to get the "base" version of the current buffer as a string.
-function! s:get_base_cmd(vcs) abort
-  call sy#verbose('sy#repo#get_base_cmd()', a:vcs)
-  return s:expand_cmd(a:vcs, g:signify_vcs_cmds_diffmode)
-endfunction
-
-function! sy#repo#get_base(vcs) abort
-  return s:system_in_dir(s:get_base_cmd(a:vcs))
 endfunction
 
 " #diffmode {{{1
@@ -426,8 +415,7 @@ endfunction
 
 " s:initialize_job {{{1
 function! s:initialize_job(vcs) abort
-  let vcs_cmd = s:expand_cmd(a:vcs, g:signify_vcs_cmds)
-  return s:wrap_cmd(a:vcs, vcs_cmd)
+  return s:wrap_cmd(a:vcs, s:get_base_cmd(a:vcs, g:signify_vcs_cmds))
 endfunction
 
 " s:initialize_buffer_job {{{1
@@ -436,7 +424,7 @@ function! s:initialize_buffer_job(vcs) abort
   call s:write_buffer(bufferfile)
 
   let basefile = tempname()
-  let base_cmd = s:get_base_cmd(a:vcs) . '>' . fnameescape(basefile) . ' && '
+  let base_cmd = s:get_base_cmd(a:vcs, g:signify_vcs_cmds_diffmode) . '>' . fnameescape(basefile) . ' && '
 
   let diff_cmd = base_cmd .  s:difftool . ' -U0 ' . fnameescape(basefile) . ' ' . fnameescape(bufferfile)
   let [cmd, options] = s:wrap_cmd(a:vcs, diff_cmd)
@@ -476,8 +464,8 @@ function! s:get_vcs_path(vcs) abort
   return (a:vcs =~# '\v(git|cvs|accurev|tfs|yadm)') ? b:sy.info.file : b:sy.info.path
 endfunction
 
-" s:expand_cmd {{{1
-function! s:expand_cmd(vcs, vcs_cmds) abort
+" s:get_base_cmd {{{1
+function! s:get_base_cmd(vcs, vcs_cmds) abort
   let cmd = a:vcs_cmds[a:vcs]
   let cmd = s:replace(cmd, '%f', s:get_vcs_path(a:vcs))
   let cmd = s:replace(cmd, '%d', s:difftool)
@@ -485,10 +473,16 @@ function! s:expand_cmd(vcs, vcs_cmds) abort
   return cmd
 endfunction
 
+" s:get_base {{{1
+" Get the "base" version of the current buffer as a string.
+function! s:get_base(vcs) abort
+  return s:system_in_dir(s:get_base_cmd(a:vcs, g:signify_vcs_cmds_diffmode))
+endfunction
+
 " s:run {{{1
 function! s:run(vcs)
   try
-    let ret = s:system_in_dir(s:expand_cmd(a:vcs, g:signify_vcs_cmds))
+    let ret = s:system_in_dir(s:get_base_cmd(a:vcs, g:signify_vcs_cmds))
   catch
     " This exception message can be seen via :SignifyDebugUnknown.
     " E.g. unquoted VCS programs in vcd_cmds can lead to E484.
