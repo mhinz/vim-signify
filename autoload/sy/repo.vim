@@ -563,6 +563,7 @@ let s:default_vcs_cmds_diffmode = {
       \ 'darcs':    'darcs show contents -- %f',
       \ 'fossil':   'fossil cat %f',
       \ 'cvs':      'cvs up -p -- %f 2>%n',
+      \ 'rcs':      'co -q -p %f',
       \ 'perforce': 'p4 print %f',
       \ 'tfs':      'tf view -version:W -noprompt %f',
       \ }
