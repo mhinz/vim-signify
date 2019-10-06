@@ -564,6 +564,7 @@ let s:default_vcs_cmds_diffmode = {
       \ 'fossil':   'fossil cat %f',
       \ 'cvs':      'cvs up -p -- %f 2>%n',
       \ 'rcs':      'co -q -p %f',
+      \ 'accurev':  'accurev cat %f',
       \ 'perforce': 'p4 print %f',
       \ 'tfs':      'tf view -version:W -noprompt %f',
       \ }
