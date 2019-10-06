@@ -72,7 +72,7 @@ function! sy#start() abort
         call sy#verbose('Update is already in progress.', vcs)
       else
         call sy#verbose('Updating signs.', vcs)
-        call sy#repo#get_diff(vcs, function('sy#sign#set_signs'))
+        call sy#repo#get_diff(vcs, g:signify_live, function('sy#sign#set_signs'))
       endif
     endfor
   endif
