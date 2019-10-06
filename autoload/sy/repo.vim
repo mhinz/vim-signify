@@ -74,7 +74,7 @@ function! sy#repo#get_diff(vcs, live, func) abort
 
   let job_id = get(b:, 'sy_job_id_'.a:vcs)
 
-  if a:live
+  if &modified && a:live
     let [cmd, options] = s:initialize_buffer_job(a:vcs)
     let options.difftool = 'diff'
   else
@@ -654,7 +654,7 @@ else
   let g:signify_vcs_cmds_diffmode = s:default_vcs_cmds_diffmode
 endif
 
-let g:signify_live = get(g:, 'signify_live', 1)
+let g:signify_live = get(g:, 'signify_live', 1) && !has('win32')
 
 let s:difftool = sy#util#escape(s:difftool)
 let s:devnull  = has('win32') || has ('win64') ? 'NUL' : '/dev/null'

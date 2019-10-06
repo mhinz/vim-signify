@@ -9,6 +9,7 @@ endif
 " Variables {{{1
 let g:loaded_signify = 1
 let g:signify_locked = 0
+let g:signify_live   = get(g:, 'signify_live', 1) && !has('win32')
 
 " Autocmds {{{1
 augroup signify
@@ -29,15 +30,15 @@ augroup signify
       autocmd VimResume * call sy#start()
     endif
     if get(g:, 'signify_update_on_bufenter')
-      autocmd BufEnter * nested call s:save()
+      autocmd BufEnter * nested call s:start()
     else
       autocmd BufEnter * call sy#start()
     endif
     if get(g:, 'signify_cursorhold_normal', 1)
-      autocmd CursorHold * nested call s:save()
+      autocmd CursorHold * nested call s:start()
     endif
     if get(g:, 'signify_cursorhold_insert', 1)
-      autocmd CursorHoldI * nested call s:save()
+      autocmd CursorHoldI * nested call s:start()
     endif
     if get(g:, 'signify_update_on_focusgained', 1)
       autocmd FocusGained * SignifyRefresh
@@ -45,13 +46,13 @@ augroup signify
   else
     autocmd BufRead * call sy#start()
     if get(g:, 'signify_update_on_bufenter')
-      autocmd BufEnter * nested call s:save()
+      autocmd BufEnter * nested call s:start()
     endif
     if get(g:, 'signify_cursorhold_normal')
-      autocmd CursorHold * nested call s:save()
+      autocmd CursorHold * nested call s:start()
     endif
     if get(g:, 'signify_cursorhold_insert')
-      autocmd CursorHoldI * nested call s:save()
+      autocmd CursorHoldI * nested call s:start()
     endif
     if get(g:, 'signify_update_on_focusgained')
       autocmd FocusGained * SignifyRefresh
@@ -112,9 +113,11 @@ let &cpoptions = s:cpoptions
 unlet s:cpoptions
 " 1}}}
 
-" s:save {{{1
-function! s:save()
-  if exists('b:sy') && b:sy.active && &modified && &modifiable && ! &readonly
+" s:start {{{1
+function! s:start()
+  if g:signify_live
+    call sy#start()
+  elseif exists('b:sy') && b:sy.active && &modified && &modifiable && ! &readonly
     write
   endif
 endfunction
