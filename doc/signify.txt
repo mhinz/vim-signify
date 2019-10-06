@@ -22,7 +22,8 @@ TOC                                                           *signify-contents*
   SIGNS .......................... |signify-signs|
   OPTIONS ........................ |signify-options|
   COMMANDS ....................... |signify-commands|
-  AUTOCOMMAND .................... |signify-autocommand|
+  AUTOCMDS ....................... |signify-autocmds|
+  EVENTS ......................... |signify-events|
   MAPPINGS ....................... |signify-mappings|
   COLORS ......................... |signify-colors|
   FAQ ............................ |signify-faq|
@@ -63,16 +64,14 @@ tools that are supported and executable. It's recommended to set
 If one of the checks produces a proper diff, that VCS will automatically be
 used for all successive calls to Sy.
 
+See |signify-autocmds| for when signs get updated.
+
 If none of the checks produces a proper diff, the VCS will be set to `unknown`.
 The next time Sy gets run, the buffer will be marked as `inactive`, so it won't
 look for changes anymore.
 
 Or you set |g:signify_disable_by_default|, which registers all new buffers as
 `inactive`, and enable Sy on demand using |signify-:SignifyToggle|.
-
-By default, Sy is rather conservative and only updates signs when opening a
-new buffer or writing it. If you want more aggressive sign updating, have a
-look at |g:signify_realtime|.
 
 Use |signify-:SignifyList| to list all buffers managed by Sy and their current
 state.
@@ -125,7 +124,6 @@ default values, as long as no "Default:" section is given.
 Most important options:~
 
     |g:signify_vcs_list|
-    |g:signify_realtime|
 
 Other options:~
 
@@ -187,39 +185,6 @@ inactive.)
 NOTE: Some VCS rely on an external diff tool to work properly (svn, darcs,
 bzr, fossil), thus you have to make sure that Vim can find a valid diff tool.
 So either the one you set through |g:signify_difftool| or "diff" by default.
-
-------------------------------------------------------------------------------
-                                                            *g:signify_realtime*  >
-    let g:signify_realtime = 0
-<
-By default, the plugin is quite conservative and only updates on:
-
-    |BufRead|       Opening a buffer.
-    |BufWritePost|  Saving a buffer.
-
-When this option is set, you get more aggressive sign updates:
-
-    |BufEnter|      Opening or switching to another buffer.
-    |WinEnter|      Opening or switching to another window.
-    |BufWritePost|  Saving a buffer.
-    |FocusGained|   When the window containing Vim gains focus.
-                  Disable with |g:signify_update_on_focusgained|.
-    |CursorHold|    After 'updatetime' milliseconds without moving the cursor
-                  in normal mode. Disable with |g:signify_cursorhold_normal|.
-                  This also saves the buffer!~
-    |CursorHoldI|   After 'updatetime' milliseconds without moving the cursor
-                  in insert mode. Disable with |g:signify_cursorhold_insert|.
-                  This also saves the buffer!~
-    |ShellCmdPost|  After shelling out via |:!|. Think `:!git commit -m foo`
-    |VimResume|     After suspending Vim with `<c-z>`, then doing things in
-                  the shell, and resuming to Vim via `fg`. Only Neovim.
-
-You can check the autocmds yourself: `:au signify`
-
-NOTE: Running Sy on all these events would block too often for older Vim
-versions, thus this option requires Vim 8.0.902+, which is the minimum
-version needed for asynchronous execution. Older Vim versions silently ignore
-this option.
 
 ------------------------------------------------------------------------------
                                                             *g:signify_vcs_cmds*  >
@@ -499,19 +464,50 @@ It will show all tried commands and their output. Errors will be highlighted
 via |hl-ErrorMsg|.
 
 ==============================================================================
-AUTOCOMMAND                                                *signify-autocommand*
+AUTOCMDS                                                      *signify-autocmds*
+
+By default, signs get updated on these events:
+
+    |BufEnter|      Opening or switching to another buffer.
+    |WinEnter|      Opening or switching to another window.
+    |BufWritePost|  Saving a buffer.
+    |FocusGained|   When the window containing Vim gains focus.
+    |CursorHold|    After 'updatetime' milliseconds without moving the cursor
+                  in normal mode.
+    |CursorHoldI|   After 'updatetime' milliseconds without moving the cursor
+                  in insert mode.
+    |ShellCmdPost|  After shelling out via |:!|. Think `:!git commit -m foo`
+    |VimResume|     After suspending Vim with `<c-z>`, then doing things in
+                  the shell, and resuming to Vim via `fg`. Only Neovim.
+
+See all of them with:
+>
+    :au signify
+<
+You can disable sign updating for certain events:
+>
+    autocmd User SignifySetup autocmd! signify CursorHold,CursorHoldI
+<
+==============================================================================
+EVENTS                                                          *signify-events*
+
+Signify fires these user events:
 
 User SignifySetup~
 
-  This event fires at the end of `plugin/signify.vim`, in case you want to
-  change any of the default autocmds, commands, or mappings.
+    This event fires at the end of `plugin/signify.vim`, in case you want to
+    change any of the default autocmds, commands, or mappings.
 
 User Signify~
 
-  This event fires when Sy updated the signs.
+    This event fires when Sy updated the signs.
 
-NOTE: Autocmds don't nest by default. If you use any command that triggers new
-events, make sure to use |autocmd-nested|.
+Hook into these user events like this:
+>
+    autocmd User Signify echomsg 'updated!'
+<
+NOTE: Autocmds don't nest by default. If you use any command that triggers
+other events, make sure to use |autocmd-nested|.
 
 ==============================================================================
 MAPPINGS                                                      *signify-mappings*

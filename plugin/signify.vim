@@ -15,48 +15,25 @@ let g:signify_live   = get(g:, 'signify_live', 1) && !has('win32')
 augroup signify
   autocmd!
 
+  autocmd BufEnter     * call sy#start()
+  autocmd WinEnter     * call sy#start()
+  autocmd BufWritePost * call sy#start()
+
+  autocmd CursorHold   * nested call s:start()
+  autocmd CursorHoldI  * nested call s:start()
+
+  autocmd FocusGained  * SignifyRefresh
+
   autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
   autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
 
   autocmd CmdwinEnter * let g:signify_cmdwin_active = 1
   autocmd CmdwinLeave * let g:signify_cmdwin_active = 0
 
-  autocmd BufWritePost * call sy#start()
+  autocmd ShellCmdPost * call sy#start()
 
-  if get(g:, 'signify_realtime') && (has('nvim') || has('patch-8.0.902'))
-    autocmd WinEnter * call sy#start()
-    autocmd ShellCmdPost * call sy#start()
-    if exists('##VimResume')
-      autocmd VimResume * call sy#start()
-    endif
-    if get(g:, 'signify_update_on_bufenter')
-      autocmd BufEnter * nested call s:start()
-    else
-      autocmd BufEnter * call sy#start()
-    endif
-    if get(g:, 'signify_cursorhold_normal', 1)
-      autocmd CursorHold * nested call s:start()
-    endif
-    if get(g:, 'signify_cursorhold_insert', 1)
-      autocmd CursorHoldI * nested call s:start()
-    endif
-    if get(g:, 'signify_update_on_focusgained', 1)
-      autocmd FocusGained * SignifyRefresh
-    endif
-  else
-    autocmd BufRead * call sy#start()
-    if get(g:, 'signify_update_on_bufenter')
-      autocmd BufEnter * nested call s:start()
-    endif
-    if get(g:, 'signify_cursorhold_normal')
-      autocmd CursorHold * nested call s:start()
-    endif
-    if get(g:, 'signify_cursorhold_insert')
-      autocmd CursorHoldI * nested call s:start()
-    endif
-    if get(g:, 'signify_update_on_focusgained')
-      autocmd FocusGained * SignifyRefresh
-    endif
+  if exists('##VimResume')
+    autocmd VimResume * call sy#start()
   endif
 
   if has('gui_running') && has('win32') && argc()
