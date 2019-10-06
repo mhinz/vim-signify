@@ -608,11 +608,6 @@ else
         \ }
 endif
 
-let s:vcs_list = get(g:, 'signify_vcs_list', [])
-if empty(s:vcs_list)
-  let s:vcs_list = keys(filter(s:vcs_dict, 'executable(v:val)'))
-endif
-
 let s:default_vcs_cmds = {
       \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
       \ 'yadm':     'yadm diff --no-color --no-ext-diff -U0 -- %f',
@@ -654,5 +649,6 @@ else
   let g:signify_vcs_cmds_diffmode = s:default_vcs_cmds_diffmode
 endif
 
+let s:vcs_list = keys(filter(s:vcs_dict, 'executable(v:val)'))
 let s:difftool = sy#util#escape(s:difftool)
 let s:devnull  = has('win32') || has ('win64') ? 'NUL' : '/dev/null'

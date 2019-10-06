@@ -36,12 +36,6 @@ manager](https://github.com/mhinz/vim-galore#managing-plugins), e.g. using
 
     Plug 'mhinz/vim-signify'
 
-## Documentation
-
-1. Understand how the plugin works:
-   [`:h signify-modus-operandi`](https://github.com/mhinz/vim-signify/blob/master/doc/signify.txt#L52)
-1. Spare the plugin some work and read: `:h g:signify_vcs_list`
-
 ## Demo
 
 ![Example:signify in action](https://raw.githubusercontent.com/mhinz/vim-signify/master/pictures/signify-demo.gif)

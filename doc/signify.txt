@@ -58,8 +58,7 @@ whether the underlying file is controlled by a VCS (version control system) or
 not.
 
 For that, it asynchronously tries all the `diff` sub commands of all the VCS
-tools that are supported and executable. It's recommended to set
-|g:signify_vcs_list| to limit the VCS to test for.
+tools that are supported and executable.
 
 If one of the checks produces a proper diff, that VCS will automatically be
 used for all successive calls to Sy.
@@ -121,12 +120,6 @@ OPTIONS                                                        *signify-options*
 Put these variables into your vimrc. The provided examples also indicate the
 default values, as long as no "Default:" section is given.
 
-Most important options:~
-
-    |g:signify_vcs_list|
-
-Other options:~
-
     |g:signify_vcs_cmds|
     |g:signify_vcs_cmds_diffmode|
     |g:signify_disable_by_default|
@@ -145,44 +138,6 @@ Other options:~
     |g:signify_fold_context|
 
 ------------------------------------------------------------------------------
-                                                            *g:signify_vcs_list*  >
-    let g:signify_vcs_list = [ 'git', 'hg' ]
-<
-Default: empty
-Possible values: 'accurev'
-                 'bzr'
-                 'cvs'
-                 'darcs'
-                 'fossil'
-                 'git'
-                 'hg'
-                 'perforce'
-                 'rcs'
-                 'svn'
-                 'tfs'
-                 'yadm'
-
-NOTE: This is the most important option, so read closely.
-
-This option determines what VCS to check for.
-
-This can improve buffer loading time since by default all supported and
-installed VCS will be checked for. This only happens once, when signs get set
-the first time. Afterward, the VCS will either be remembered or registered as
-inactive when no VCS was found.
-
-If your Vim is recent enough, these checks will happen asynchronously.
-
-NOTE: If you don't set this option, updating signs for a non-VCS file can lead
-to a significant delay since all supported and installed VCS will be tested
-for. (But this also happens only once, afterward the buffer is registered as
-inactive.)
-
-NOTE: Some VCS rely on an external diff tool to work properly (svn, darcs,
-bzr, fossil), thus you have to make sure that Vim can find a valid diff tool.
-So either the one you set through |g:signify_difftool| or "diff" by default.
-
-------------------------------------------------------------------------------
                                                             *g:signify_vcs_cmds*  >
     let g:signify_vcs_cmds = {
         \ 'cvs': 'cvs -d '. $CVSROOT .' diff -U0 -- %f' }
@@ -190,10 +145,22 @@ So either the one you set through |g:signify_difftool| or "diff" by default.
 The command to use for updating signs in an `unmodified` buffer, thus when the
 buffer is in sync with the file on disk.
 
-By default, it returns a diff for all the changes since the last commit/revision.
+By default, it returns a diff for all the changes since the last commit.
 
-This is a |dict|. They key is any version control system from |g:signify_vcs_list|
-and the value is the corresponding command-line.
+The key can be any from this list:
+
+    git
+    yadm
+    hg
+    svn
+    darcs
+    bzr
+    fossil
+    cvs
+    rcs
+    accurev
+    perforce
+    tfs
 
 Modifiers:~
 
@@ -255,8 +222,8 @@ Default:
 The command to use for updating signs in a `modified` buffer, thus when the
 buffer is `not` in sync with the file on disk. Also for |signify-:SignifyDiff|.
 
-By default, it returns the file as of the last commit/revision. Thus without
-any of the current changes in the buffer.
+By default, it returns the file as of the last commit. Thus without any of the
+current changes in the buffer.
 
 Works the same as |g:signify_vcs_cmds|.
 
@@ -628,8 +595,6 @@ removed lines. Create a wrapper function around it and return a string:
                                                                 *signify-faq-02*
 The plugin is slow!~
 
-  * Set |g:signify_vcs_list|. Always.
-
   * Sy relies on external tools. Check if these are the bottleneck.
 
     If you use a centralized VCS like Subversion, is the connection to the
@@ -656,16 +621,9 @@ EXAMPLE                                                        *signify-example*
 
 An example configuration for Sy:
 >
-    let g:signify_vcs_list              = [ 'git', 'hg' ]
-    let g:signify_cursorhold_insert     = 1
-    let g:signify_cursorhold_normal     = 1
-    let g:signify_update_on_bufenter    = 0
-    let g:signify_update_on_focusgained = 1
-
-    nnoremap <leader>gt :SignifyToggle<CR>
-    nnoremap <leader>gh :SignifyToggleHighlight<CR>
-    nnoremap <leader>gr :SignifyRefresh<CR>
-    nnoremap <leader>gd :SignifyDebug<CR>
+    nnoremap <leader>gd :SignifyDiff<cr>
+    nnoremap <leader>gp :SignifyHunkDiff<cr>
+    nnoremap <leader>gu :SignifyHunkUndo<cr>
 
     " hunk jumping
     nmap <leader>gj <plug>(signify-next-hunk)
