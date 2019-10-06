@@ -654,7 +654,7 @@ else
   let g:signify_vcs_cmds_diffmode = s:default_vcs_cmds_diffmode
 endif
 
-let g:signify_live = get(g:, 'signify_live', 1) && !has('win32')
+let g:signify_live = get(g:, 'signify_live', 0) && !has('win32')
 
 let s:difftool = sy#util#escape(s:difftool)
 let s:devnull  = has('win32') || has ('win64') ? 'NUL' : '/dev/null'
