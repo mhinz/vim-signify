@@ -39,7 +39,7 @@ function! s:callback_vim_close(channel) dict abort
   return s:handle_diff(self, exitval)
 endfunction
 
-" Function: s:write_buffer {{{1
+" s:write_buffer {{{1
 " Stolen from https://github.com/airblade/vim-gitgutter
 function! s:write_buffer(file)
   let bufnr = bufnr('')
@@ -68,7 +68,7 @@ function! s:write_buffer(file)
   call writefile(bufcontents, a:file)
 endfunction
 
-" Function: sy#get_diff {{{1
+" sy#get_diff {{{1
 function! sy#repo#get_diff(vcs, live, func) abort
   call sy#verbose('sy#repo#get_diff()', a:vcs)
 
@@ -118,7 +118,6 @@ function! s:handle_diff(options, exitval) abort
     for f in a:options.tempfiles
       call delete(f)
     endfor
-  else
   endif
 
   let sy = getbufvar(a:options.bufnr, 'sy')
@@ -149,12 +148,12 @@ function! s:handle_diff(options, exitval) abort
   call setbufvar(a:options.bufnr, 'sy_job_id_'.a:options.vcs, 0)
 endfunction
 
-" Function: s:check_diff {{{1
+" s:check_diff_diff {{{1
 function! s:check_diff_diff(exitval, diff) abort
   return a:exitval <= 1 ? [1, a:diff] : [0, []]
 endfunction
 
-" Function: s:check_diff_git {{{1
+" s:check_diff_git {{{1
 function! s:check_diff_git(exitval, diff) abort
   return a:exitval ? [0, []] : [1, a:diff]
 endfunction
@@ -266,7 +265,7 @@ function! s:system_in_dir(cmd) abort
   endtry
 endfunction
 
-" Function: s:get_base_cmd {{{1
+" s:get_base_cmd {{{1
 " Return a command to get the "base" version of the current buffer as a string.
 function! s:get_base_cmd(vcs) abort
   call sy#verbose('sy#repo#get_base_cmd()', a:vcs)
@@ -284,7 +283,7 @@ function! sy#repo#get_base(vcs) abort
   return s:system_in_dir(s:get_base_cmd(a:vcs))
 endfunction
 
-" Function: #diffmode {{{1
+" #diffmode {{{1
 function! sy#repo#diffmode(do_tab) abort
   execute sy#util#return_if_no_changes()
 
@@ -438,7 +437,7 @@ function! s:initialize_job(vcs) abort
   return s:wrap_cmd(a:vcs, vcs_cmd)
 endfunction
 
-" Function: s:initialize_buffer_job {{{1
+" s:initialize_buffer_job {{{1
 function! s:initialize_buffer_job(vcs) abort
   let bufferfile = tempname()
   call s:write_buffer(bufferfile)
@@ -454,7 +453,7 @@ function! s:initialize_buffer_job(vcs) abort
   return [cmd, options]
 endfunction
 
-" Function: s:wrap_cmd {{{1
+" s:wrap_cmd {{{1
 function! s:wrap_cmd(vcs, cmd) abort
   if has('win32')
     if has('nvim')
@@ -668,9 +667,7 @@ else
   let g:signify_vcs_cmds_diffmode = s:default_vcs_cmds_diffmode
 endif
 
-if !exists('g:signify_live')
-  let g:signify_live = 1
-endif
+let g:signify_live = get(g:, 'signify_live', 1)
 
 let s:difftool = sy#util#escape(s:difftool)
 let s:devnull  = has('win32') || has ('win64') ? 'NUL' : '/dev/null'
