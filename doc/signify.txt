@@ -187,6 +187,11 @@ So either the one you set through |g:signify_difftool| or "diff" by default.
     let g:signify_vcs_cmds = {
         \ 'cvs': 'cvs -d '. $CVSROOT .' diff -U0 -- %f' }
 <
+The command to use for updating signs in an `unmodified` buffer, thus when the
+buffer is in sync with the file on disk.
+
+By default, it returns a diff for all the changes since the last commit/revision.
+
 This is a |dict|. They key is any version control system from |g:signify_vcs_list|
 and the value is the corresponding command-line.
 
@@ -218,16 +223,16 @@ Default:
     let g:signify_vcs_cmds = {
       \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
       \ 'yadm':     'yadm diff --no-color --no-ext-diff -U0 -- %f',
-      \ 'hg':       'hg diff --config extensions.color=! --config defaults.diff= --nodates -U0 -- %f',
+      \ 'hg':       'hg diff --color=never --config aliases.diff= --nodates -U0 -- %f',
       \ 'svn':      'svn diff --diff-cmd %d -x -U0 -- %f',
       \ 'bzr':      'bzr diff --using %d --diff-options=-U0 -- %f',
-      \ 'darcs':    'darcs diff --no-pause-for-gui --diff-command="%d -U0 %1 %2" -- %f',
+      \ 'darcs':    'darcs diff --no-pause-for-gui --no-unified --diff-opts=-U0 -- %f',
       \ 'fossil':   'fossil diff --unified -c 0 -- %f',
       \ 'cvs':      'cvs diff -U0 -- %f',
       \ 'rcs':      'rcsdiff -U0 %f 2>%n',
       \ 'accurev':  'accurev diff %f -- -U0',
       \ 'perforce': 'p4 info '. sy#util#shell_redirect('%n') . (has('win32') ? ' &&' : ' && env P4DIFF= P4COLORS=') .' p4 diff -du0 %f',
-      \ 'tfs':      'tf diff -version:W -noprompt %f',
+      \ 'tfs':      'tf diff -version:W -noprompt -format:Unified %f'
       \ }
 <
 ------------------------------------------------------------------------------
@@ -239,12 +244,21 @@ Default:
       \ 'svn':      'svn cat %f',
       \ 'bzr':      'bzr cat %f',
       \ 'darcs':    'darcs show contents -- %f',
+      \ 'fossil':   'fossil cat %f',
       \ 'cvs':      'cvs up -p -- %f 2>%n',
+      \ 'rcs':      'co -q -p %f',
+      \ 'accurev':  'accurev cat %f',
       \ 'perforce': 'p4 print %f',
+      \ 'tfs':      'tf view -version:W -noprompt %f',
       \ }
 <
-The command to use for |:SignifyDiff|. This option takes the same format as
-|g:signify_vcs_cmds|.
+The command to use for updating signs in a `modified` buffer, thus when the
+buffer is `not` in sync with the file on disk. Also for |signify-:SignifyDiff|.
+
+By default, it returns the file as of the last commit/revision. Thus without
+any of the current changes in the buffer.
+
+Works the same as |g:signify_vcs_cmds|.
 
 ------------------------------------------------------------------------------
                                                   *g:signify_disable_by_default*  >
