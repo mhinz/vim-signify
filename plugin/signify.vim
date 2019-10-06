@@ -9,7 +9,6 @@ endif
 " Variables {{{1
 let g:loaded_signify = 1
 let g:signify_locked = 0
-let g:signify_live   = get(g:, 'signify_live', 1) && !has('win32')
 
 " Autocmds {{{1
 augroup signify
@@ -19,8 +18,8 @@ augroup signify
   autocmd WinEnter     * call sy#start()
   autocmd BufWritePost * call sy#start()
 
-  autocmd CursorHold   * nested call s:start()
-  autocmd CursorHoldI  * nested call s:start()
+  autocmd CursorHold   * call sy#start()
+  autocmd CursorHoldI  * call sy#start()
 
   autocmd FocusGained  * SignifyRefresh
 
@@ -88,16 +87,6 @@ xnoremap <silent> <plug>(signify-motion-outer-visual)  :<c-u>call sy#util#hunk_t
 
 let &cpoptions = s:cpoptions
 unlet s:cpoptions
-" 1}}}
-
-" s:start {{{1
-function! s:start()
-  if g:signify_live
-    call sy#start()
-  elseif exists('b:sy') && b:sy.active && &modified && &modifiable && ! &readonly
-    write
-  endif
-endfunction
 " 1}}}
 
 if exists('#User#SignifySetup')

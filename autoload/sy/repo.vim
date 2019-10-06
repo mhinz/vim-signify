@@ -6,7 +6,7 @@ scriptencoding utf-8
 function! sy#repo#detect() abort
   for vcs in s:vcs_list
     let b:sy.detecting += 1
-    call sy#repo#get_diff(vcs, g:signify_live, function('sy#sign#set_signs'))
+    call sy#repo#get_diff(vcs, function('sy#sign#set_signs'))
   endfor
 endfunction
 
@@ -69,12 +69,12 @@ function! s:write_buffer(file)
 endfunction
 
 " sy#get_diff {{{1
-function! sy#repo#get_diff(vcs, live, func) abort
+function! sy#repo#get_diff(vcs, func) abort
   call sy#verbose('sy#repo#get_diff()', a:vcs)
 
   let job_id = get(b:, 'sy_job_id_'.a:vcs)
 
-  if &modified && a:live
+  if &modified
     let [cmd, options] = s:initialize_buffer_job(a:vcs)
     let options.difftool = 'diff'
   else
@@ -339,7 +339,7 @@ endfunction
 " #preview_hunk {{{1
 function! sy#repo#preview_hunk() abort
   if exists('b:sy') && !empty(b:sy.updated_by)
-    call sy#repo#get_diff(b:sy.updated_by, g:signify_live, function('s:preview_hunk'))
+    call sy#repo#get_diff(b:sy.updated_by, function('s:preview_hunk'))
   endif
 endfunction
 
@@ -370,7 +370,7 @@ endfunction
 " #undo_hunk {{{1
 function! sy#repo#undo_hunk() abort
   if exists('b:sy') && !empty(b:sy.updated_by)
-    call sy#repo#get_diff(b:sy.updated_by, 1, function('s:undo_hunk'))
+    call sy#repo#get_diff(b:sy.updated_by, function('s:undo_hunk'))
   endif
 endfunction
 
@@ -653,8 +653,6 @@ if exists('g:signify_vcs_cmds_diffmode')
 else
   let g:signify_vcs_cmds_diffmode = s:default_vcs_cmds_diffmode
 endif
-
-let g:signify_live = get(g:, 'signify_live', 1) && !has('win32')
 
 let s:difftool = sy#util#escape(s:difftool)
 let s:devnull  = has('win32') || has ('win64') ? 'NUL' : '/dev/null'
