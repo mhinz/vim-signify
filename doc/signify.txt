@@ -427,6 +427,13 @@ Another ":SignifyFold!" will toggle back to the previous settings.
 See |folds| to learn more about folding.
 
 ------------------------------------------------------------------------------
+                                                     *signify-:SignifyHunkDiff*  >
+    :SignifyHunkDiff
+<
+Used on a line with a change, this will show a diff of the hunk in a floating
+window (Nvim), popup (Vim), or preview window (fallback).
+
+------------------------------------------------------------------------------
                                                           *signify-:SignifyList*  >
     :SignifyList
 <

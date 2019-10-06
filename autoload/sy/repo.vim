@@ -336,14 +336,14 @@ function! s:is_cur_line_in_hunk(hunkline) abort
   return 0
 endfunction
 
-" #preview_hunk {{{1
-function! sy#repo#preview_hunk() abort
+" #diff_hunk {{{1
+function! sy#repo#diff_hunk() abort
   if exists('b:sy') && !empty(b:sy.updated_by)
-    call sy#repo#get_diff(b:sy.updated_by, function('s:preview_hunk'))
+    call sy#repo#get_diff(b:sy.updated_by, function('s:diff_hunk'))
   endif
 endfunction
 
-function! s:preview_hunk(_sy, vcs, diff) abort
+function! s:diff_hunk(_sy, vcs, diff) abort
   call sy#verbose('s:preview_hunk()', a:vcs)
 
   let [_, hunk] = s:extract_current_hunk(a:diff)
