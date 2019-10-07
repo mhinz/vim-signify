@@ -277,8 +277,9 @@ function! sy#repo#diffmode(do_tab) abort
   if a:do_tab
     tabedit %
   endif
+  diffthis
 
-  let base = sy#repo#get_base(vcs)
+  let base = s:get_base(vcs)
 
   leftabove vnew
   if (fenc != &enc) && has('iconv')
