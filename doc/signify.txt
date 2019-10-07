@@ -401,6 +401,13 @@ Used on a line with a change, this will show a diff of the hunk in a floating
 window (Nvim), popup (Vim), or preview window (fallback).
 
 ------------------------------------------------------------------------------
+                                                     *signify-:SignifyHunkUndo*  >
+    :SignifyHunkUndo
+<
+Used on a line with a change, this will restore the hunk to the base version.
+This effectively undoes the changes that ":SignifyHunkDiff" would show.
+
+------------------------------------------------------------------------------
                                                           *signify-:SignifyList*  >
     :SignifyList
 <
