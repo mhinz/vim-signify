@@ -386,8 +386,6 @@ function! s:undo_hunk(_sy, vcs, diff) abort
   let [_old_line, new_line, _old_count, _new_count] = sy#sign#parse_hunk(header)
 
   for line in hunk
-    echom new_line
-    echom line
     let op = line[0]
     let text = line[1:]
     if op == ' '
@@ -401,8 +399,6 @@ function! s:undo_hunk(_sy, vcs, diff) abort
       let new_line += 1
     elseif op == '+'
       if text != getline(new_line)
-        echom text
-        echom getline(new_line)
         echoerr 'Could not apply addition hunk for undo. Try saving the buffer first.'
         return
       endif
