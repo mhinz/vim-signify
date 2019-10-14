@@ -402,7 +402,7 @@ function! s:undo_hunk(_sy, vcs, diff) abort
         echoerr 'Could not apply addition hunk for undo. Try saving the buffer first.'
         return
       endif
-      execute new_line 'delete _'
+      execute 'silent' new_line 'delete _'
     else
       echoer 'Unknown diff operation ' . line
       return
