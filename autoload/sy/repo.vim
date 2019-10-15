@@ -375,7 +375,7 @@ function! sy#repo#undo_hunk() abort
   endif
 endfunction
 
-function! s:undo_hunk(_sy, vcs, diff) abort
+function! s:undo_hunk(sy, vcs, diff) abort
   call sy#verbose('s:undo_hunk()', a:vcs)
 
   let [header, hunk] = s:extract_current_hunk(a:diff)
@@ -408,6 +408,10 @@ function! s:undo_hunk(_sy, vcs, diff) abort
       return
     endif
   endfor
+
+  " Undoing altered the buffer, so update signs.
+  call setbufvar(a:sy.buffer, 'sy_job_id_'.a:vcs, 0)
+  return sy#start()
 endfunction
 
 " s:initialize_job {{{1
