@@ -61,7 +61,7 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
     let a:sy.lines = []
     let ids        = []
 
-    let [old_line, new_line, old_count, new_count] = sy#sign#parse_hunk(line)
+    let [old_line, old_count, new_line, new_count] = sy#sign#parse_hunk(line)
 
     " Workaround for non-conventional diff output in older Fossil versions:
     " https://fossil-scm.org/forum/forumpost/834ce0f1e1
@@ -223,13 +223,13 @@ function! sy#sign#remove_all_signs(bufnr) abort
 endfunction
 
 " #parse_hunk {{{1
-" Parse a hunk as '@@ -273,3 +267,14' into [old_line, new_line, old_count, new_count]
+" Parse a hunk as '@@ -273,3 +267,14' into [old_line, old_count, new_line, new_count]
 function! sy#sign#parse_hunk(diffline) abort
   let tokens = matchlist(a:diffline, '^@@ -\v(\d+),?(\d*) \+(\d+),?(\d*)')
   return [
         \ str2nr(tokens[1]),
-        \ str2nr(tokens[3]),
         \ empty(tokens[2]) ? 1 : str2nr(tokens[2]),
+        \ str2nr(tokens[3]),
         \ empty(tokens[4]) ? 1 : str2nr(tokens[4])
         \ ]
 endfunction

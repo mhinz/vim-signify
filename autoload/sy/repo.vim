@@ -317,7 +317,7 @@ endfunction
 
 function! s:is_cur_line_in_hunk(hunkline) abort
   let cur_line = line('.')
-  let [_old_line, new_line, old_count, new_count] = sy#sign#parse_hunk(a:hunkline)
+  let [_old_line, old_count, new_line, new_count] = sy#sign#parse_hunk(a:hunkline)
 
   if cur_line == 1 && new_line == 0
     " deleted first line
@@ -383,7 +383,7 @@ function! s:undo_hunk(sy, vcs, diff) abort
     return
   endif
 
-  let [_old_line, new_line, _old_count, _new_count] = sy#sign#parse_hunk(header)
+  let [_old_line, _old_count, new_line, _new_count] = sy#sign#parse_hunk(header)
 
   for line in hunk
     let op = line[0]
@@ -512,7 +512,7 @@ function! s:strip_context(context)
 
     if state == 0
       if line =~ "^@@ "
-        let [old_line, new_line, old_count, new_count] = sy#sign#parse_hunk(line)
+        let [old_line, old_count, new_line, new_count] = sy#sign#parse_hunk(line)
         let hunk = []
         let state = 1
       else
