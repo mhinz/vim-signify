@@ -45,6 +45,12 @@ else
 endif
 ```
 
+## Configuration for async update
+```vim
+" default updatetime 4000ms is not good for async update
+set updatetime=100
+```
+
 ## Demo
 
 ![Example:signify in action](https://raw.githubusercontent.com/mhinz/vim-signify/master/pictures/signify-demo.gif)
