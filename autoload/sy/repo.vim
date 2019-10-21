@@ -3,10 +3,11 @@
 scriptencoding utf-8
 
 " #detect {{{1
-function! sy#repo#detect() abort
+function! sy#repo#detect(bufnr) abort
+  let sy = getbufvar(a:bufnr, 'sy')
   for vcs in s:vcs_list
-    let b:sy.detecting += 1
-    call sy#repo#get_diff(vcs, function('sy#sign#set_signs'))
+    let sy.detecting += 1
+    call sy#repo#get_diff(a:bufnr, vcs, function('sy#sign#set_signs'))
   endfor
 endfunction
 
@@ -40,10 +41,8 @@ function! s:callback_vim_close(channel) dict abort
 endfunction
 
 " s:write_buffer {{{1
-" Stolen from https://github.com/airblade/vim-gitgutter
-function! s:write_buffer(file)
-  let bufnr = bufnr('')
-  let bufcontents = getbufline(bufnr, 1, '$')
+function! s:write_buffer(bufnr, file)
+  let bufcontents = getbufline(a:bufnr, 1, '$')
 
   if bufcontents == [''] && line2byte(1) == -1
     " Special case: completely empty buffer.
@@ -52,16 +51,17 @@ function! s:write_buffer(file)
     return
   endif
 
-  if getbufvar(bufnr, '&fileformat') ==# 'dos'
+  if getbufvar(a:bufnr, '&fileformat') ==# 'dos'
     call map(bufcontents, 'v:val."\r"')
   endif
 
-  let fenc = getbufvar(bufnr, '&fileencoding')
-  if fenc !=# &encoding
-    call map(bufcontents, 'iconv(v:val, &encoding, "'.fenc.'")')
+  let fenc = getbufvar(a:bufnr, '&fileencoding')
+  let enc  = getbufvar(a:bufnr, '&encoding')
+  if fenc !=# enc
+    call map(bufcontents, 'iconv(v:val, "'.enc.'", "'.fenc.'")')
   endif
 
-  if getbufvar(bufnr, '&bomb')
+  if getbufvar(a:bufnr, '&bomb')
     let bufcontents[0]='﻿'.bufcontents[0]
   endif
 
@@ -69,16 +69,16 @@ function! s:write_buffer(file)
 endfunction
 
 " sy#get_diff {{{1
-function! sy#repo#get_diff(vcs, func) abort
+function! sy#repo#get_diff(bufnr, vcs, func) abort
   call sy#verbose('sy#repo#get_diff()', a:vcs)
 
-  let job_id = get(b:, 'sy_job_id_'.a:vcs)
+  let job_id = getbufvar(a:bufnr, 'sy_job_id_'.a:vcs)
 
-  if &modified
-    let [cmd, options] = s:initialize_buffer_job(a:vcs)
+  if getbufvar(a:bufnr, '&modified')
+    let [cmd, options] = s:initialize_buffer_job(a:bufnr, a:vcs)
     let options.difftool = 'diff'
   else
-    let [cmd, options] = s:initialize_job(a:vcs)
+    let [cmd, options] = s:initialize_job(a:bufnr, a:vcs)
     let options.difftool = a:vcs
   endif
 
@@ -88,22 +88,24 @@ function! sy#repo#get_diff(vcs, func) abort
     if job_id
       silent! call jobstop(job_id)
     endif
-    let b:sy_job_id_{a:vcs} = jobstart(cmd, extend(options, {
-          \ 'cwd':       b:sy.info.dir,
+    let job_id = jobstart(cmd, extend(options, {
+          \ 'cwd':       getbufvar(a:bufnr, 'sy').info.dir,
           \ 'on_stdout': function('s:callback_nvim_stdout'),
           \ 'on_exit':   function('s:callback_nvim_exit'),
           \ }))
+    call setbufvar(a:bufnr, 'sy_job_id_'.a:vcs, job_id)
   elseif has('patch-8.0.902')
     if type(job_id) != type(0)
       silent! call job_stop(job_id)
     endif
     let opts = {
-          \ 'cwd':      b:sy.info.dir,
+          \ 'cwd':      getbufvar(a:bufnr, 'sy').info.dir,
           \ 'in_io':    'null',
           \ 'out_cb':   function('s:callback_vim_stdout', options),
           \ 'close_cb': function('s:callback_vim_close', options),
           \ }
-    let b:sy_job_id_{a:vcs} = job_start(cmd, opts)
+    let job_id = job_start(cmd, opts)
+    call setbufvar(a:bufnr, 'sy_job_id_'.a:vcs, job_id)
   else
     let options.stdoutbuf = split(s:run(a:vcs), '\n')
     call s:handle_diff(options, v:shell_error)
@@ -131,8 +133,10 @@ function! s:handle_diff(options, exitval) abort
     let sy.detecting -= 1
   endif
 
-  if (&fenc != &enc) && has('iconv')
-    call map(a:options.stdoutbuf, 'iconv(v:val, &fenc, &enc)')
+  let fenc = getbufvar(a:options.bufnr, '&fenc')
+  let enc  = getbufvar(a:options.bufnr, '&enc')
+  if (fenc != enc) && has('iconv')
+    call map(a:options.stdoutbuf, printf('iconv(v:val, "%s", "%s")', fenc, enc))
   endif
 
   let [found_diff, diff] = s:check_diff_{a:options.difftool}(a:exitval, a:options.stdoutbuf)
@@ -225,8 +229,9 @@ function! s:check_diff_tfs(exitval, diff) abort
 endfunction
 
 " #get_stats {{{1
-function! sy#repo#get_stats() abort
-  return exists('b:sy') ? b:sy.stats : [-1, -1, -1]
+function! sy#repo#get_stats(...) abort
+  let sy = getbufvar(a:0 ? a:1 : bufnr(''), 'sy')
+  return empty(sy) ? [-1, -1, -1] : sy.stats
 endfunction
 
 " #debug_detection {{{1
@@ -237,7 +242,7 @@ function! sy#repo#debug_detection()
   endif
 
   for vcs in s:vcs_list
-    let cmd = s:get_base_cmd(vcs, g:signify_vcs_cmds)
+    let cmd = s:get_base_cmd(bufnr(''), vcs, g:signify_vcs_cmds)
     echohl Statement
     echo cmd
     echo repeat('=', len(cmd))
@@ -340,7 +345,7 @@ endfunction
 " #diff_hunk {{{1
 function! sy#repo#diff_hunk() abort
   if exists('b:sy') && !empty(b:sy.updated_by)
-    call sy#repo#get_diff(b:sy.updated_by, function('s:diff_hunk'))
+    call sy#repo#get_diff(bufnr(''), b:sy.updated_by, function('s:diff_hunk'))
   endif
 endfunction
 
@@ -371,7 +376,7 @@ endfunction
 " #undo_hunk {{{1
 function! sy#repo#undo_hunk() abort
   if exists('b:sy') && !empty(b:sy.updated_by)
-    call sy#repo#get_diff(b:sy.updated_by, function('s:undo_hunk'))
+    call sy#repo#get_diff(bufnr(''), b:sy.updated_by, function('s:undo_hunk'))
   endif
 endfunction
 
@@ -415,20 +420,20 @@ function! s:undo_hunk(sy, vcs, diff) abort
 endfunction
 
 " s:initialize_job {{{1
-function! s:initialize_job(vcs) abort
-  return s:wrap_cmd(a:vcs, s:get_base_cmd(a:vcs, g:signify_vcs_cmds))
+function! s:initialize_job(bufnr, vcs) abort
+  return s:wrap_cmd(a:bufnr, a:vcs, s:get_base_cmd(a:bufnr, a:vcs, g:signify_vcs_cmds))
 endfunction
 
 " s:initialize_buffer_job {{{1
-function! s:initialize_buffer_job(vcs) abort
+function! s:initialize_buffer_job(bufnr, vcs) abort
   let bufferfile = tempname()
-  call s:write_buffer(bufferfile)
+  call s:write_buffer(a:bufnr, bufferfile)
 
   let basefile = tempname()
-  let base_cmd = s:get_base_cmd(a:vcs, g:signify_vcs_cmds_diffmode) . '>' . fnameescape(basefile) . ' && '
+  let base_cmd = s:get_base_cmd(a:bufnr, a:vcs, g:signify_vcs_cmds_diffmode) . '>' . fnameescape(basefile) . ' && '
 
   let diff_cmd = base_cmd .  s:difftool . ' -U0 ' . fnameescape(basefile) . ' ' . fnameescape(bufferfile)
-  let [cmd, options] = s:wrap_cmd(a:vcs, diff_cmd)
+  let [cmd, options] = s:wrap_cmd(a:bufnr, a:vcs, diff_cmd)
 
   let options.tempfiles = [basefile, bufferfile]
 
@@ -436,7 +441,7 @@ function! s:initialize_buffer_job(vcs) abort
 endfunction
 
 " s:wrap_cmd {{{1
-function! s:wrap_cmd(vcs, cmd) abort
+function! s:wrap_cmd(bufnr, vcs, cmd) abort
   if has('win32')
     if has('nvim')
       let cmd = &shell =~ '\v%(cmd|powershell)' ? a:cmd : ['sh', '-c', a:cmd]
@@ -453,22 +458,24 @@ function! s:wrap_cmd(vcs, cmd) abort
     let cmd = ['sh', '-c', a:cmd]
   endif
   let options = {
-        \ 'stdoutbuf':   [''],
-        \ 'vcs':         a:vcs,
-        \ 'bufnr':       bufnr('%'),
+        \ 'stdoutbuf': [''],
+        \ 'vcs': a:vcs,
+        \ 'bufnr': a:bufnr,
         \ }
   return [cmd, options]
 endfunction
 
 " s:get_vcs_path {{{1
-function! s:get_vcs_path(vcs) abort
-  return (a:vcs =~# '\v(git|cvs|accurev|tfs|yadm)') ? b:sy.info.file : b:sy.info.path
+function! s:get_vcs_path(bufnr, vcs) abort
+  return (a:vcs =~# '\v(git|cvs|accurev|tfs|yadm)')
+        \ ? getbufvar(a:bufnr, 'sy').info.file
+        \ : getbufvar(a:bufnr, 'sy').info.path
 endfunction
 
 " s:get_base_cmd {{{1
-function! s:get_base_cmd(vcs, vcs_cmds) abort
+function! s:get_base_cmd(bufnr, vcs, vcs_cmds) abort
   let cmd = a:vcs_cmds[a:vcs]
-  let cmd = s:replace(cmd, '%f', s:get_vcs_path(a:vcs))
+  let cmd = s:replace(cmd, '%f', s:get_vcs_path(a:bufnr, a:vcs))
   let cmd = s:replace(cmd, '%d', s:difftool)
   let cmd = s:replace(cmd, '%n', s:devnull)
   return cmd
@@ -476,14 +483,14 @@ endfunction
 
 " s:get_base {{{1
 " Get the "base" version of the current buffer as a string.
-function! s:get_base(vcs) abort
-  return s:system_in_dir(s:get_base_cmd(a:vcs, g:signify_vcs_cmds_diffmode))
+function! s:get_base(bufnr, vcs) abort
+  return s:system_in_dir(s:get_base_cmd(a:bufnr, a:vcs, g:signify_vcs_cmds_diffmode))
 endfunction
 
 " s:run {{{1
 function! s:run(vcs)
   try
-    let ret = s:system_in_dir(s:get_base_cmd(a:vcs, g:signify_vcs_cmds))
+    let ret = s:system_in_dir(s:get_base_cmd(bufnr(''), a:vcs, g:signify_vcs_cmds))
   catch
     " This exception message can be seen via :SignifyDebugUnknown.
     " E.g. unquoted VCS programs in vcd_cmds can lead to E484.
