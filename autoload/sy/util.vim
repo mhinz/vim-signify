@@ -31,7 +31,9 @@ function! sy#util#refresh_windows() abort
   endif
 
   if !get(g:, 'signify_cmdwin_active')
-    keepjumps windo if exists('b:sy') | call sy#start() | endif
+    for bufnr in tabpagebuflist()
+      call sy#start({'bufnr': bufnr})
+    endfor
   endif
 
   if exists('winid')
