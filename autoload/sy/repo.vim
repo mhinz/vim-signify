@@ -284,7 +284,7 @@ function! sy#repo#diffmode(do_tab) abort
   endif
   diffthis
 
-  let base = s:get_base(vcs)
+  let base = s:get_base(bufnr(''), vcs)
 
   leftabove vnew
   if (fenc != &enc) && has('iconv')
