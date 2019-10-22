@@ -29,7 +29,7 @@ function! sy#start(...) abort
 
   if empty(sy) || sy.path != sy_path
     call sy#verbose('Register new file: '. sy_path)
-    let sy = {
+    let new_sy = {
           \ 'path':       sy_path,
           \ 'buffer':     bufnr,
           \ 'active':     0,
@@ -44,16 +44,16 @@ function! sy#start(...) abort
           \    'path': sy#util#escape(sy_path),
           \    'file': sy#util#escape(fnamemodify(sy_path, ':t'))
           \ }}
-    call setbufvar(bufnr, 'sy', sy)
+    call setbufvar(bufnr, 'sy', new_sy)
     if get(g:, 'signify_disable_by_default')
       call sy#verbose('Disabled by default.')
       return
     endif
-    let sy.active = 1
-    call setbufvar(bufnr, 'sy', sy)
+    let new_sy.active = 1
+    call setbufvar(bufnr, 'sy', new_sy)
     call sy#repo#detect(bufnr)
   elseif has('vim_starting')
-    call sy#verbose("Don't r   un Sy more than once during startup.")
+    call sy#verbose("Don't run Sy more than once during startup.")
     return
   elseif !sy.active
     call sy#verbose('Inactive buffer.')
