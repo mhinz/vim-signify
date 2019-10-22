@@ -165,12 +165,23 @@ function! s:skip(bufnr, path)
     return 1
   endif
 
+  " DEPRECATED: Use g:signify_skip.pattern instead.
   if exists('g:signify_skip_filename_pattern')
     for pattern in g:signify_skip_filename_pattern
       if a:path =~ pattern
         return 1
       endif
     endfor
+  endif
+
+  if exists('g:signify_skip')
+    if has_key(g:signify_skip, 'pattern')
+      for pattern in g:signify_skip.pattern
+        if a:path =~ pattern
+          return 1
+        endif
+      endfor
+    endif
   endif
 
   return 0
