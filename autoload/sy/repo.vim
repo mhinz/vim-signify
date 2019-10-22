@@ -657,6 +657,18 @@ else
   let g:signify_vcs_cmds_diffmode = s:default_vcs_cmds_diffmode
 endif
 
-let s:vcs_list = keys(filter(s:vcs_dict, 'executable(v:val)'))
+let s:vcs_list = keys(s:vcs_dict)
+if exists('g:signify_skip') && has_key(g:signify_skip, 'vcs')
+  if has_key(g:signify_skip.vcs, 'allow')
+    let s:vcs_list = g:signify_skip.vcs.allow
+  elseif has_key(g:signify_skip.vcs, 'deny')
+    for vcs in g:signify_skip.vcs.deny
+      silent! call remove(s:vcs_dict, vcs)
+    endfor
+    let s:vcs_list = keys(s:vcs_dict)
+  end
+endif
+let s:vcs_list = filter(s:vcs_list, 'executable(v:val)')
+
 let s:difftool = sy#util#escape(s:difftool)
 let s:devnull  = has('win32') || has ('win64') ? 'NUL' : '/dev/null'
