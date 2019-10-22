@@ -153,7 +153,7 @@ function! s:skip(bufnr, path)
   endif
 
   if exists('g:signify_skip_filetype')
-    if has_key(g:signify_skip_filetype, &filetype)
+    if has_key(g:signify_skip_filetype, getbufvar(a:bufnr, '&filetype'))
       return 1
     elseif has_key(g:signify_skip_filetype, 'help')
           \ && getbufvar(a:bufnr, '&buftype') == 'help')
