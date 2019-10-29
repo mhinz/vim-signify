@@ -70,7 +70,7 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
       let new_line = old_line - 1 - deleted
     endif
 
-    " 2 lines added:
+    " Pure add:
 
     " @@ -5,0 +6,2 @@ this is line 5
     " +this is line 5
@@ -85,7 +85,7 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
         call add(ids, s:add_sign(a:sy, line, 'SignifyAdd'))
       endwhile
 
-    " 2 lines removed:
+    " Pure delete
 
     " @@ -6,2 +5,0 @@ this is line 5
     " -this is line 6
@@ -105,14 +105,13 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
         call add(ids, s:add_sign(a:sy, new_line, 'SignifyDeleteMore', s:sign_delete))
       endif
 
-    " 2 lines changed:
-
-    " @@ -5,2 +5,2 @@ this is line 4
-    " -this is line 5
-    " -this is line 6
-    " +this os line 5
-    " +this os line 6
-    elseif old_count == new_count
+    " There are additions and deletions, however we don't know which lines are
+    " 'changed' and which are new so we just show the whole block as changed.
+    "
+    " With sufficiently smart heuristics we could see which lines are the most
+    " dissimilar to the previous lines and mark them as additions but for now
+    " we will not do that.
+    else
       let modified += old_count
       let offset    = 0
       while offset < new_count
@@ -121,58 +120,6 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
         if s:external_sign_present(a:sy, line) | continue | endif
         call add(ids, s:add_sign(a:sy, line, 'SignifyChange'))
       endwhile
-    else
-
-      " 2 lines changed; 2 lines removed:
-
-      " @@ -5,4 +5,2 @@ this is line 4
-      " -this is line 5
-      " -this is line 6
-      " -this is line 7
-      " -this is line 8
-      " +this os line 5
-      " +this os line 6
-      if old_count > new_count
-        let modified += new_count
-        let removed   = old_count - new_count
-        let deleted  += removed
-        let offset    = 0
-        while offset < new_count - 1
-          let line    = new_line + offset
-          let offset += 1
-          if s:external_sign_present(a:sy, line) | continue | endif
-          call add(ids, s:add_sign(a:sy, line, 'SignifyChange'))
-        endwhile
-        let line = new_line + offset
-        if s:external_sign_present(a:sy, line) | continue | endif
-        call add(ids, s:add_sign(a:sy, line, (removed > 9)
-              \ ? 'SignifyChangeDeleteMore'
-              \ : 'SignifyChangeDelete'. removed))
-
-      " lines changed and added:
-
-      " @@ -5 +5,3 @@ this is line 4
-      " -this is line 5
-      " +this os line 5
-      " +this is line 42
-      " +this is line 666
-      else
-        let modified += old_count
-        let offset    = 0
-        while offset < old_count
-          let line    = new_line + offset
-          let offset += 1
-          if s:external_sign_present(a:sy, line) | continue | endif
-          call add(ids, s:add_sign(a:sy, line, 'SignifyChange'))
-        endwhile
-        while offset < new_count
-          let added  += 1
-          let line    = new_line + offset
-          let offset += 1
-          if s:external_sign_present(a:sy, line) | continue | endif
-          call add(ids, s:add_sign(a:sy, line, 'SignifyAdd'))
-        endwhile
-      endif
     endif
 
     if !empty(ids)
