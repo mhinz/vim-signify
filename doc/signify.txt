@@ -520,13 +520,11 @@ highlighting groups: |hl-DiffAdd|, |hl-DiffChange|, |hl-DiffDelete|:
     highlight link SignifyLineAdd             DiffAdd
     highlight link SignifyLineChange          DiffChange
     highlight link SignifyLineDelete          DiffDelete
-    highlight link SignifyLineChangeDelete    SignifyLineChange
     highlight link SignifyLineDeleteFirstLine SignifyLineDelete
 
     highlight link SignifySignAdd             DiffAdd
     highlight link SignifySignChange          DiffChange
     highlight link SignifySignDelete          DiffDelete
-    highlight link SignifySignChangeDelete    SignifySignChange
     highlight link SignifySignDeleteFirstLine SignifySignDelete
 <
 Thus if you do not want to change the standard highlighting groups, but want
