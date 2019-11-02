@@ -444,6 +444,12 @@ You can disable sign updating for certain events:
 >
     autocmd User SignifySetup autocmd! signify CursorHold,CursorHoldI
 <
+If you don't need immediate feedback or responses from your VCS are slow, then
+use this to only update signs when writing the buffer:
+>
+    autocmd User SignifySetup
+          \ exe 'au! signify' | au signify BufWritePost * call sy#start()
+<
 ==============================================================================
 EVENTS                                                          *signify-events*
 
