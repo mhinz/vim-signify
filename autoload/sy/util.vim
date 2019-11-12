@@ -138,16 +138,18 @@ function! sy#util#popup_create(hunkdiff) abort
     let height  += scroll
   endif
 
+  let padding = repeat(' ', offset - 1)
+
   if exists('*nvim_open_win')
     call sy#util#popup_close()
     let buf = nvim_create_buf(0, 1)
     call nvim_buf_set_option(buf, 'syntax', 'diff')
-    call nvim_buf_set_lines(buf, 0, -1, 0, a:hunkdiff)
+    call nvim_buf_set_lines(buf, 0, -1, 0, map(a:hunkdiff, 'v:val[0].padding.v:val[1:]'))
     let s:popup_window = nvim_open_win(buf, v:false, {
           \ 'relative': 'win',
           \ 'row': winline,
-          \ 'col': offset - 1,
-          \ 'width': winwidth('%') - offset + 1,
+          \ 'col': 0,
+          \ 'width': winwidth('%'),
           \ 'height': height,
           \ })
     call nvim_win_set_option(s:popup_window, 'cursorline', v:false)
@@ -158,9 +160,9 @@ function! sy#util#popup_create(hunkdiff) abort
     call nvim_win_set_option(s:popup_window, 'wrap', v:true)
     autocmd CursorMoved * ++once call sy#util#popup_close()
   elseif exists('*popup_create')
-    let s:popup_window = popup_create(a:hunkdiff, {
+    let s:popup_window = popup_create(map(a:hunkdiff, 'v:val[0].padding.v:val[1:]'), {
           \ 'line': 'cursor+1',
-          \ 'col': offset,
+          \ 'col': 0,
           \ 'minwidth': winwidth('%'),
           \ 'maxheight': height,
           \ 'moved': 'any',
