@@ -23,7 +23,6 @@ function! sy#start(...) abort
     let new_sy = {
           \ 'path':       path,
           \ 'buffer':     bufnr,
-          \ 'active':     0,
           \ 'detecting':  0,
           \ 'vcs':        [],
           \ 'hunks':      [],
@@ -36,18 +35,10 @@ function! sy#start(...) abort
           \    'file': sy#util#escape(fnamemodify(path, ':t'))
           \ }}
     call setbufvar(bufnr, 'sy', new_sy)
-    if get(g:, 'signify_disable_by_default')
-      call sy#verbose('Disabled by default.')
-      return
-    endif
-    let new_sy.active = 1
-    call setbufvar(bufnr, 'sy', new_sy)
+    call sy#set_autocmds()
     call sy#repo#detect(bufnr)
   elseif has('vim_starting')
     call sy#verbose("Don't run Sy more than once during startup.")
-    return
-  elseif !sy.active
-    call sy#verbose('Inactive buffer.')
     return
   elseif empty(sy.vcs)
     if get(sy, 'retry')
@@ -59,7 +50,7 @@ function! sy#start(...) abort
         call sy#verbose('Detection is already in progress.')
       else
         call sy#verbose('No VCS found. Disabling.')
-        call sy#disable(sy.buffer)
+        call sy#stop(sy.buffer)
       endif
     endif
   else
@@ -76,50 +67,23 @@ function! sy#start(...) abort
 endfunction
 
 " #stop {{{1
-function! sy#stop(bufnr) abort
-  if empty(getbufvar(a:bufnr, 'sy'))
-    return
-  endif
-  call sy#sign#remove_all_signs(a:bufnr)
-endfunction
-
-" #enable {{{1
-function! sy#enable() abort
-  if !exists('b:sy')
-    call sy#start()
-    return
-  endif
-
-  if !b:sy.active
-    let b:sy.active = 1
-    let b:sy.retry  = 1
-    call sy#start()
-  endif
-endfunction
-
-" #disable {{{1
-function! sy#disable(...) abort
-  let sy = getbufvar(a:0 ? a:1 : bufnr(''), 'sy')
-
-  if !empty(sy) && sy.active
-    call sy#stop(sy.buffer)
-    let b:sy.active = 0
-    let b:sy.stats = [-1, -1, -1]
-  endif
+function! sy#stop(...) abort
+  let bufnr = bufnr('')
+  if empty(getbufvar(a:0 ? a:1 : bufnr, 'sy')) | return | endif
+  call sy#sign#remove_all_signs(bufnr)
+  " TODO: Can't unset autocmds in another buffer.
+  autocmd! signify * <buffer>
+  call setbufvar(bufnr, 'sy', {})
 endfunction
 
 " #toggle {{{1
 function! sy#toggle() abort
-  if !exists('b:sy') || !b:sy.active
-    call sy#enable()
-  else
-    call sy#disable()
-  endif
+  call call(empty(getbufvar(bufnr(''), 'sy')) ? 'sy#start' : 'sy#stop', [])
 endfunction
 
 " #buffer_is_active {{{1
 function! sy#buffer_is_active()
-  return exists('b:sy') && b:sy.active
+  return !empty(getbufvar(bufnr(''), 'sy'))
 endfunction
 
 " #verbose {{{1
@@ -132,6 +96,43 @@ function! sy#verbose(msg, ...) abort
     else
       echomsg printf('[sy%s] %s', (a:0 ? ':'.a:1 : ''), a:msg)
     endif
+  endif
+endfunction
+
+" #set_autocmds {{{1
+function! sy#set_autocmds() abort
+  augroup signify
+    autocmd!
+
+    autocmd BufEnter     <buffer> call sy#start()
+    autocmd WinEnter     <buffer> call sy#start()
+    autocmd BufWritePost <buffer> call sy#start()
+
+    autocmd CursorHold   <buffer> call sy#start()
+    autocmd CursorHoldI  <buffer> call sy#start()
+
+    autocmd FocusGained  <buffer> SignifyRefresh
+
+    autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
+    autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
+
+    autocmd CmdwinEnter <buffer> let g:signify_cmdwin_active = 1
+    autocmd CmdwinLeave <buffer> let g:signify_cmdwin_active = 0
+
+    autocmd ShellCmdPost <buffer> call sy#start()
+
+    if exists('##VimResume')
+      autocmd VimResume <buffer> call sy#start()
+    endif
+
+    if has('gui_running') && has('win32') && argc()
+      " Fix 'no signs at start' race.
+      autocmd GUIEnter <buffer> redraw
+    endif
+  augroup END
+
+  if exists('#User#SignifyAutocmds')
+    doautocmd <nomodeline> User SignifyAutocmds
   endif
 endfunction
 

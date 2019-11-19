@@ -442,12 +442,12 @@ See all of them with:
 <
 You can disable sign updating for certain events:
 >
-    autocmd User SignifySetup autocmd! signify CursorHold,CursorHoldI
+    autocmd User SignifyAutocmd autocmd! signify CursorHold,CursorHoldI
 <
 If you don't need immediate feedback or responses from your VCS are slow, then
 use this to only update signs when writing the buffer:
 >
-    autocmd User SignifySetup
+    autocmd User SignifyAutocmd
           \ exe 'au! signify' | au signify BufWritePost * call sy#start()
 <
 ==============================================================================
@@ -458,7 +458,12 @@ Signify fires these user events:
 User SignifySetup~
 
     This event fires at the end of `plugin/signify.vim`, in case you want to
-    change any of the default autocmds, commands, or mappings.
+    change any of the default commands, or mappings.
+
+User SignifyAutocmds~
+
+    This event fires every time the autocmds get set, in case you use
+    |signify-:SignifyToggle| a lot. Useful to change the default autocmds.
 
 User Signify~
 
@@ -625,6 +630,9 @@ EXAMPLE                                                        *signify-example*
 
 An example configuration for Sy:
 >
+    " Faster sign updates on CursorHold/CursorHoldI
+    set updatetime=100
+
     nnoremap <leader>gd :SignifyDiff<cr>
     nnoremap <leader>gp :SignifyHunkDiff<cr>
     nnoremap <leader>gu :SignifyHunkUndo<cr>
