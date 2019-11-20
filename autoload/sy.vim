@@ -80,6 +80,22 @@ function! sy#toggle() abort
   call call(empty(getbufvar(bufnr(''), 'sy')) ? 'sy#start' : 'sy#stop', [])
 endfunction
 
+" #start_all {{{1
+function! sy#start_all() abort
+  for bufnr in range(1, bufnr(''))
+    call sy#start({'bufnr': bufnr})
+  endfor
+endfunction
+
+" #stop_all {{{1
+function! sy#stop_all() abort
+  for bufnr in range(1, bufnr(''))
+    if !empty(getbufvar(bufnr, 'sy'))
+      call sy#stop(bufnr)
+    endif
+  endfor
+endfunction
+
 " #buffer_is_active {{{1
 function! sy#buffer_is_active()
   return !empty(getbufvar(bufnr(''), 'sy'))
