@@ -71,8 +71,7 @@ function! sy#stop(...) abort
   let bufnr = bufnr('')
   if empty(getbufvar(a:0 ? a:1 : bufnr, 'sy')) | return | endif
   call sy#sign#remove_all_signs(bufnr)
-  " TODO: Can't unset autocmds in another buffer.
-  autocmd! signify * <buffer>
+  execute printf('autocmd! signify * <buffer=%d>', bufnr)
   call setbufvar(bufnr, 'sy', {})
 endfunction
 
@@ -102,7 +101,7 @@ endfunction
 " #set_autocmds {{{1
 function! sy#set_autocmds() abort
   augroup signify
-    autocmd!
+    autocmd! * <buffer>
 
     autocmd BufEnter     <buffer> call sy#start()
     autocmd WinEnter     <buffer> call sy#start()
