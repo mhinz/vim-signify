@@ -85,6 +85,7 @@ function! sy#start_all() abort
   for bufnr in range(1, bufnr(''))
     call sy#start({'bufnr': bufnr})
   endfor
+  let g:signify_disable_by_default = 0
 endfunction
 
 " #stop_all {{{1
@@ -94,6 +95,7 @@ function! sy#stop_all() abort
       call sy#stop(bufnr)
     endif
   endfor
+  let g:signify_disable_by_default = 1
 endfunction
 
 " #buffer_is_active {{{1
