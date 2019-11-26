@@ -35,7 +35,7 @@ function! sy#start(...) abort
           \    'file': sy#util#escape(fnamemodify(path, ':t'))
           \ }}
     call setbufvar(bufnr, 'sy', new_sy)
-    call sy#set_autocmds()
+    call sy#set_buflocal_autocmds(bufnr)
     call sy#repo#detect(bufnr)
   elseif has('vim_starting')
     call sy#verbose("Don't run Sy more than once during startup.")
@@ -114,35 +114,31 @@ function! sy#verbose(msg, ...) abort
   endif
 endfunction
 
-" #set_autocmds {{{1
-function! sy#set_autocmds() abort
+" #set_buflocal_autocmds {{{1
+function! sy#set_buflocal_autocmds(bufnr) abort
+  if get(g:, 'signify_disable_by_default')
+    return
+  endif
+
   augroup signify
-    autocmd! * <buffer>
+    execute printf('autocmd! * <buffer=%d>', a:bufnr)
 
-    autocmd BufEnter     <buffer> call sy#start()
-    autocmd WinEnter     <buffer> call sy#start()
-    autocmd BufWritePost <buffer> call sy#start()
+    execute printf('autocmd BufEnter     <buffer=%d> call sy#start()', a:bufnr)
+    execute printf('autocmd WinEnter     <buffer=%d> call sy#start()', a:bufnr)
+    execute printf('autocmd BufWritePost <buffer=%d> call sy#start()', a:bufnr)
 
-    autocmd CursorHold   <buffer> call sy#start()
-    autocmd CursorHoldI  <buffer> call sy#start()
+    execute printf('autocmd CursorHold   <buffer=%d> call sy#start()', a:bufnr)
+    execute printf('autocmd CursorHoldI  <buffer=%d> call sy#start()', a:bufnr)
 
-    autocmd FocusGained  <buffer> SignifyRefresh
+    execute printf('autocmd FocusGained  <buffer=%d> SignifyRefresh', a:bufnr)
 
-    autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
-    autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
+    execute printf('autocmd CmdwinEnter <buffer=%d> let g:signify_cmdwin_active = 1', a:bufnr)
+    execute printf('autocmd CmdwinLeave <buffer=%d> let g:signify_cmdwin_active = 0', a:bufnr)
 
-    autocmd CmdwinEnter <buffer> let g:signify_cmdwin_active = 1
-    autocmd CmdwinLeave <buffer> let g:signify_cmdwin_active = 0
-
-    autocmd ShellCmdPost <buffer> call sy#start()
+    execute printf('autocmd ShellCmdPost <buffer=%d> call sy#start()', a:bufnr)
 
     if exists('##VimResume')
-      autocmd VimResume <buffer> call sy#start()
-    endif
-
-    if has('gui_running') && has('win32') && argc()
-      " Fix 'no signs at start' race.
-      autocmd GUIEnter <buffer> redraw
+      execute printf('autocmd VimResume <buffer=%d> call sy#start()', a:bufnr)
     endif
   augroup END
 

@@ -58,11 +58,18 @@ xnoremap <silent> <plug>(signify-motion-outer-visual)  :<c-u>call sy#util#hunk_t
 
 let &cpoptions = s:cpoptions
 unlet s:cpoptions
-" 1}}}
 
-if !get(g:, 'signify_disable_by_default')
-  call sy#set_autocmds()
+" Autocmds {{{1
+if has('gui_running') && has('win32') && argc()
+  " Fix 'no signs at start' race.
+  autocmd GUIEnter * redraw
 endif
+
+autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
+autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
+
+autocmd BufNewFile,BufRead * call sy#set_buflocal_autocmds(expand('<abuf>'))
+" 1}}}
 
 if exists('#User#SignifySetup')
   doautocmd <nomodeline> User SignifySetup
