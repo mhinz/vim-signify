@@ -116,10 +116,6 @@ endfunction
 
 " #set_buflocal_autocmds {{{1
 function! sy#set_buflocal_autocmds(bufnr) abort
-  if get(g:, 'signify_disable_by_default')
-    return
-  endif
-
   augroup signify
     execute printf('autocmd! * <buffer=%d>', a:bufnr)
 

@@ -68,7 +68,10 @@ endif
 autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
 autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
 
-autocmd BufNewFile,BufRead * call sy#set_buflocal_autocmds(expand('<abuf>'))
+autocmd BufNewFile,BufRead * nested
+      \ if !get(g:, 'signify_disable_by_default') |
+      \   call sy#start({'bufnr': bufnr('')}) |
+      \ endif
 " 1}}}
 
 if exists('#User#SignifySetup')
