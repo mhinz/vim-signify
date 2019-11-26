@@ -230,8 +230,11 @@ Works the same as |g:signify_vcs_cmds|.
                                                   *g:signify_disable_by_default*  >
     let g:signify_disable_by_default = 0
 <
-This makes Sy not looking for changes for each new buffer. You can easily
-enable it later using |signify-:SignifyToggle|.
+Disable Sy by default. You can still enable it later via:
+
+    |signify-:SignifyToggle|
+    |signify-:SignifyEnable|
+    |signify-:SignifyEnableAll|
 
 ------------------------------------------------------------------------------
                                                *g:signify_skip_filename_pattern*
@@ -332,10 +335,22 @@ Can also be used to when a repository was initialized while Sy was already
 loaded.
 
 ------------------------------------------------------------------------------
+                                                     *signify-:SignifyEnableAll*  >
+    :SignifyEnableAll
+<
+Enable the plugin for all buffers. Sets |g:signify_disable_by_default| to 0.
+
+------------------------------------------------------------------------------
                                                        *signify-:SignifyDisable*  >
     :SignifyDisable
 <
 Disable the plugin for the current buffer only.
+
+------------------------------------------------------------------------------
+                                                    *signify-:SignifyDisableAll*  >
+    :SignifyDisableAll
+<
+Disable the plugin for all buffers. Sets |g:signify_disable_by_default| to 1.
 
 ------------------------------------------------------------------------------
                                                         *signify-:SignifyToggle*  >
@@ -462,8 +477,9 @@ User SignifySetup~
 
 User SignifyAutocmds~
 
-    This event fires every time the autocmds get set, in case you use
-    |signify-:SignifyToggle| a lot. Useful to change the default autocmds.
+    This event fires every time Sy sets autocmds. E.g. when opening a
+    version-controlled file or when using |signify-:SignifyToggle| a lot.
+    Useful to change the default |signify-autocmds|.
 
 User Signify~
 
