@@ -234,6 +234,27 @@ function! sy#repo#get_stats(...) abort
   return empty(sy) ? [-1, -1, -1] : sy.stats
 endfunction
 
+" #get_stats_decorated {{{1
+function! sy#repo#get_stats_decorated(...)
+  let bufnr = a:0 ? a:1 : bufnr('')
+  let [added, modified, removed] = sy#repo#get_stats(bufnr)
+  let symbols = ['+', '-', '~']
+  let stats = [added, removed, modified]  " reorder
+  let statline = ''
+
+  for i in range(3)
+    if stats[i] > 0
+      let statline .= printf('%s%s ', symbols[i], stats[i])
+    endif
+  endfor
+
+  if !empty(statline)
+    let statline = printf('[%s]', statline[:-2])
+  endif
+
+  return statline
+endfunction
+
 " #debug_detection {{{1
 function! sy#repo#debug_detection()
   if !exists('b:sy')

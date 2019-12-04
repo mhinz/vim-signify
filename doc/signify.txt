@@ -563,37 +563,60 @@ color for |hl-Normal| but for |hl-SignColumn|. To avoid that visible difference:
 ==============================================================================
 FAQ                                                                *signify-faq*
 
-    |signify-faq-01|  What about vim-flagship support?
+    |signify-faq-01|  How to display changes in the statusline?
     |signify-faq-02|  The plugin is slow!
     |signify-faq-03|  Line highlighting without showing signs?
 
 ------------------------------------------------------------------------------
                                                                 *signify-faq-01*
-What about vim-flagship support?~
+How to display changes in the statusline?~
 
-sy#repo#get_stats() returns a list with 3 integers for added, modified and
-removed lines. Create a wrapper function around it and return a string:
+Use either of the following two functions. Both take an optional buffer number
+and default to the current one.
+
+  - sy#repo#get_stats(...)~
+
+    Returns a list with the number of added, modified, and removed lines.
+
+  - sy#repo#get_stats_decorated(...)~
+
+    Similar to sy#repo#get_stats(), but with added decorations.
+    Example: "[+3 -8 ~5]"
+
+Using 'statusline':
+>
+    function! MyStatusline()
+      return ' %f '. sy#repo#get_stats_decorated()
+    endfunction
+
+    set statusline=%!MyStatusline()
+<
+The above is the short form of:
 >
     function! s:sy_stats_wrapper()
-      let symbols = ['+', '-', '~']
       let [added, modified, removed] = sy#repo#get_stats()
+      let symbols = ['+', '-', '~']
       let stats = [added, removed, modified]  " reorder
-      let hunkline = ''
+      let statline = ''
 
       for i in range(3)
         if stats[i] > 0
-          let hunkline .= printf('%s%s ', symbols[i], stats[i])
+          let statline .= printf('%s%s ', symbols[i], stats[i])
         endif
       endfor
 
-      if !empty(hunkline)
-        let hunkline = printf('[%s]', hunkline[:-2])
+      if !empty(statline)
+        let statline = printf('[%s]', statline[:-2])
       endif
 
-      return hunkline
+      return statline
     endfunction
 
-    autocmd User Flags call Hoist('buffer', function('s:sy_stats_wrapper'))
+    function! MyStatusline()
+      return ' %f '. s:sy_stats_wrapper()
+    endfunction
+
+    set statusline=%!MyStatusline()
 <
 ------------------------------------------------------------------------------
                                                                 *signify-faq-02*
