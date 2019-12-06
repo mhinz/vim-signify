@@ -606,37 +606,6 @@ endfunction
 " 1}}}
 
 " Variables {{{1
-let s:difftool = get(g:, 'signify_difftool', 'diff')
-if executable(s:difftool)
-  let s:vcs_dict = {
-        \ 'git':      'git',
-        \ 'yadm':     'yadm',
-        \ 'hg':       'hg',
-        \ 'svn':      'svn',
-        \ 'darcs':    'darcs',
-        \ 'bzr':      'bzr',
-        \ 'fossil':   'fossil',
-        \ 'cvs':      'cvs',
-        \ 'rcs':      'rcsdiff',
-        \ 'accurev':  'accurev',
-        \ 'perforce': 'p4',
-        \ 'tfs':      'tf'
-        \ }
-else
-  call sy#verbose('No "diff" executable found. Disable support for svn, darcs, bzr.')
-  let s:vcs_dict = {
-        \ 'git':      'git',
-        \ 'yadm':     'yadm',
-        \ 'hg':       'hg',
-        \ 'fossil':   'fossil',
-        \ 'cvs':      'cvs',
-        \ 'rcs':      'rcsdiff',
-        \ 'accurev':  'accurev',
-        \ 'perforce': 'p4',
-        \ 'tfs':      'tf'
-        \ }
-endif
-
 let s:default_vcs_cmds = {
       \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
       \ 'yadm':     'yadm diff --no-color --no-ext-diff -U0 -- %f',
@@ -678,6 +647,8 @@ else
   let g:signify_vcs_cmds_diffmode = s:default_vcs_cmds_diffmode
 endif
 
+let s:vcs_dict = map(copy(g:signify_vcs_cmds), 'split(v:val)[0]')
+
 if exists('g:signify_skip') && has_key(g:signify_skip, 'vcs')
   if has_key(g:signify_skip.vcs, 'allow')
     let s:vcs_list = filter(copy(g:signify_skip.vcs.allow), 'executable(s:vcs_dict[v:val])')
@@ -691,5 +662,5 @@ else
   let s:vcs_list = keys(filter(s:vcs_dict, 'executable(v:val)'))
 endif
 
-let s:difftool = sy#util#escape(s:difftool)
+let s:difftool = sy#util#escape(get(g:, 'signify_difftool', 'diff'))
 let s:devnull  = has('win32') || has ('win64') ? 'NUL' : '/dev/null'
