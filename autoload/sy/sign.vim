@@ -135,12 +135,6 @@ function! sy#sign#process_diff(sy, vcs, diff) abort
     execute 'sign unplace' a:sy.internal[line].id 'buffer='.a:sy.buffer
   endfor
 
-  if has('gui_macvim') && has('gui_running') && mode() == 'n'
-    " MacVim needs an extra kick in the butt, when setting signs from the
-    " exit handler. :redraw would trigger a "hanging cursor" issue.
-    call feedkeys("\<c-l>", 'n')
-  endif
-
   if empty(a:sy.updated_by) && empty(a:sy.hunks)
     call sy#verbose('Successful exit value, but no diff. Keep VCS for time being.', a:vcs)
     return
