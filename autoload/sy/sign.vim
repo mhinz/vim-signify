@@ -240,6 +240,9 @@ endfunction
 
 " s:external_sign_present {{{1
 function! s:external_sign_present(sy, line) abort
+  if has('nvim-0.4')
+    return 
+  endif
   if has_key(a:sy.external, a:line)
     if has_key(a:sy.internal, a:line)
       " Remove Sy signs from lines with other signs.
