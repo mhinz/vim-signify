@@ -153,7 +153,7 @@ function! sy#util#popup_create(hunkdiff) abort
           \ 'height': height,
           \ })
     call nvim_win_set_option(s:popup_window, 'cursorline', v:false)
-    call nvim_win_set_option(s:popup_window, 'foldcolumn', 0)
+    call nvim_win_set_option(s:popup_window, 'foldcolumn', has('nvim-0.5') ? '0' : 0)
     call nvim_win_set_option(s:popup_window, 'foldenable', v:false)
     call nvim_win_set_option(s:popup_window, 'number', v:false)
     call nvim_win_set_option(s:popup_window, 'relativenumber', v:false)
