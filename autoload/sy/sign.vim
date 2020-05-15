@@ -229,10 +229,11 @@ function! s:add_sign(sy, line, type, ...) abort
           \ a:1,
           \ s:delete_highlight[g:signify_line_highlight])
   endif
-  execute printf('sign place %d line=%d name=%s buffer=%s',
+  execute printf('sign place %d line=%d name=%s priority=%d buffer=%s',
         \ id,
         \ a:line,
         \ a:type,
+        \ get(g:, 'signify_priority', 10),
         \ a:sy.buffer)
 
   return id

@@ -135,6 +135,7 @@ default values, as long as no "Default:" section is given.
     |g:signify_sign_show_text|
     |g:signify_difftool|
     |g:signify_fold_context|
+    |g:signify_priority|
 
 ------------------------------------------------------------------------------
                                                             *g:signify_vcs_cmds*  >
@@ -320,6 +321,14 @@ unfolded. Using |zo| (and similar |fold-commands|) on a folded line will reveal
 3 more lines of context. Using |zo| a second time will reveal everything.
 
 Default: [3, 8]
+
+------------------------------------------------------------------------------
+                                                        *g:signify_priority*  >
+    let g:signify_priority = 5
+<
+This changes the sign priority used for signs. See |sign-priority|.
+
+Default: 10
 
 ==============================================================================
 COMMAND                                                       *signify-commands*
