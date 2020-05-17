@@ -248,6 +248,12 @@ endfunction
 
 " s:external_sign_present {{{1
 function! s:external_sign_present(sy, line) abort
+  " If sign priority is supported, so are multiple signs per line.
+  " Therefore, we can report no external signs present and let
+  " g:signify_priority control whether Sy's signs are shown.
+  if !empty(s:sign_priority)
+    return
+  endif
   if has_key(a:sy.external, a:line)
     if has_key(a:sy.internal, a:line)
       " Remove Sy signs from lines with other signs.
