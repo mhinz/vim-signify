@@ -9,6 +9,13 @@ else
   let s:sign_delete = ' '
 endif
 
+" Support for sign priority was added together with sign_place().
+if exists('*sign_place')
+  let s:sign_priority = printf('priority=%d', get(g:, 'signify_priority', 10))
+else
+  let s:sign_priority = ''
+endif
+
 let s:sign_show_count  = get(g:, 'signify_sign_show_count', 1)
 let s:delete_highlight = ['', 'SignifyLineDelete']
 " 1}}}
@@ -229,11 +236,11 @@ function! s:add_sign(sy, line, type, ...) abort
           \ a:1,
           \ s:delete_highlight[g:signify_line_highlight])
   endif
-  execute printf('sign place %d line=%d name=%s priority=%d buffer=%s',
+  execute printf('sign place %d line=%d name=%s %s buffer=%s',
         \ id,
         \ a:line,
         \ a:type,
-        \ get(g:, 'signify_priority', 10),
+        \ s:sign_priority,
         \ a:sy.buffer)
 
   return id
