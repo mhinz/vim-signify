@@ -23,7 +23,6 @@ function! sy#start(...) abort
     let new_sy = {
           \ 'path':       path,
           \ 'buffer':     bufnr,
-          \ 'active':     0,
           \ 'detecting':  0,
           \ 'vcs':        [],
           \ 'hunks':      [],
@@ -36,18 +35,10 @@ function! sy#start(...) abort
           \    'file': sy#util#escape(fnamemodify(path, ':t'))
           \ }}
     call setbufvar(bufnr, 'sy', new_sy)
-    if get(g:, 'signify_disable_by_default')
-      call sy#verbose('Disabled by default.')
-      return
-    endif
-    let new_sy.active = 1
-    call setbufvar(bufnr, 'sy', new_sy)
+    call sy#set_buflocal_autocmds(bufnr)
     call sy#repo#detect(bufnr)
   elseif has('vim_starting')
     call sy#verbose("Don't run Sy more than once during startup.")
-    return
-  elseif !sy.active
-    call sy#verbose('Inactive buffer.')
     return
   elseif empty(sy.vcs)
     if get(sy, 'retry')
@@ -59,7 +50,7 @@ function! sy#start(...) abort
         call sy#verbose('Detection is already in progress.')
       else
         call sy#verbose('No VCS found. Disabling.')
-        call sy#disable(sy.buffer)
+        call sy#stop(sy.buffer)
       endif
     endif
   else
@@ -76,50 +67,40 @@ function! sy#start(...) abort
 endfunction
 
 " #stop {{{1
-function! sy#stop(bufnr) abort
-  if empty(getbufvar(a:bufnr, 'sy'))
-    return
-  endif
-  call sy#sign#remove_all_signs(a:bufnr)
-endfunction
-
-" #enable {{{1
-function! sy#enable() abort
-  if !exists('b:sy')
-    call sy#start()
-    return
-  endif
-
-  if !b:sy.active
-    let b:sy.active = 1
-    let b:sy.retry  = 1
-    call sy#start()
-  endif
-endfunction
-
-" #disable {{{1
-function! sy#disable(...) abort
-  let sy = getbufvar(a:0 ? a:1 : bufnr(''), 'sy')
-
-  if !empty(sy) && sy.active
-    call sy#stop(sy.buffer)
-    let b:sy.active = 0
-    let b:sy.stats = [-1, -1, -1]
-  endif
+function! sy#stop(...) abort
+  let bufnr = bufnr('')
+  if empty(getbufvar(a:0 ? a:1 : bufnr, 'sy')) | return | endif
+  call sy#sign#remove_all_signs(bufnr)
+  execute printf('autocmd! signify * <buffer=%d>', bufnr)
+  call setbufvar(bufnr, 'sy', {})
 endfunction
 
 " #toggle {{{1
 function! sy#toggle() abort
-  if !exists('b:sy') || !b:sy.active
-    call sy#enable()
-  else
-    call sy#disable()
-  endif
+  call call(empty(getbufvar(bufnr(''), 'sy')) ? 'sy#start' : 'sy#stop', [])
+endfunction
+
+" #start_all {{{1
+function! sy#start_all() abort
+  for bufnr in range(1, bufnr(''))
+    call sy#start({'bufnr': bufnr})
+  endfor
+  let g:signify_disable_by_default = 0
+endfunction
+
+" #stop_all {{{1
+function! sy#stop_all() abort
+  for bufnr in range(1, bufnr(''))
+    if !empty(getbufvar(bufnr, 'sy'))
+      call sy#stop(bufnr)
+    endif
+  endfor
+  let g:signify_disable_by_default = 1
 endfunction
 
 " #buffer_is_active {{{1
 function! sy#buffer_is_active()
-  return exists('b:sy') && b:sy.active
+  return !empty(getbufvar(bufnr(''), 'sy'))
 endfunction
 
 " #verbose {{{1
@@ -132,6 +113,35 @@ function! sy#verbose(msg, ...) abort
     else
       echomsg printf('[sy%s] %s', (a:0 ? ':'.a:1 : ''), a:msg)
     endif
+  endif
+endfunction
+
+" #set_buflocal_autocmds {{{1
+function! sy#set_buflocal_autocmds(bufnr) abort
+  augroup signify
+    execute printf('autocmd! * <buffer=%d>', a:bufnr)
+
+    execute printf('autocmd BufEnter     <buffer=%d> call sy#start()', a:bufnr)
+    execute printf('autocmd WinEnter     <buffer=%d> call sy#start()', a:bufnr)
+    execute printf('autocmd BufWritePost <buffer=%d> call sy#start()', a:bufnr)
+
+    execute printf('autocmd CursorHold   <buffer=%d> call sy#start()', a:bufnr)
+    execute printf('autocmd CursorHoldI  <buffer=%d> call sy#start()', a:bufnr)
+
+    execute printf('autocmd FocusGained  <buffer=%d> SignifyRefresh', a:bufnr)
+
+    execute printf('autocmd CmdwinEnter <buffer=%d> let g:signify_cmdwin_active = 1', a:bufnr)
+    execute printf('autocmd CmdwinLeave <buffer=%d> let g:signify_cmdwin_active = 0', a:bufnr)
+
+    execute printf('autocmd ShellCmdPost <buffer=%d> call sy#start()', a:bufnr)
+
+    if exists('##VimResume')
+      execute printf('autocmd VimResume <buffer=%d> call sy#start()', a:bufnr)
+    endif
+  augroup END
+
+  if exists('#User#SignifyAutocmds')
+    doautocmd <nomodeline> User SignifyAutocmds
   endif
 endfunction
 

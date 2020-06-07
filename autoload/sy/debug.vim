@@ -14,7 +14,7 @@ function! sy#debug#list_active_buffers() abort
 
     echo "\n". path ."\n". repeat('=', strlen(path))
 
-    for k in ['active', 'buffer', 'vcs', 'stats', 'signid']
+    for k in ['buffer', 'vcs', 'stats', 'signid']
       if k == 'stats'
         echo printf("%10s  =  %d added, %d changed, %d removed\n",
               \ k,

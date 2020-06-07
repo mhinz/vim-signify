@@ -93,7 +93,8 @@ endfunction
 
 " #return_if_no_changes {{{1
 function! sy#util#return_if_no_changes() abort
-  if !exists('b:sy') || empty(b:sy.hunks)
+  let sy = getbufvar(bufnr(''), 'sy')
+  if empty(sy) || empty(sy.hunks)
     echomsg 'signify: There are no changes.'
     return 'return'
   endif

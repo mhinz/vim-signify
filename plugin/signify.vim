@@ -6,40 +6,8 @@ if exists('g:loaded_signify') || !has('signs') || &compatible
   finish
 endif
 
-" Variables {{{1
 let g:loaded_signify = 1
 let g:signify_locked = 0
-
-" Autocmds {{{1
-augroup signify
-  autocmd!
-
-  autocmd BufEnter     * call sy#start()
-  autocmd WinEnter     * call sy#start()
-  autocmd BufWritePost * call sy#start()
-
-  autocmd CursorHold   * call sy#start()
-  autocmd CursorHoldI  * call sy#start()
-
-  autocmd FocusGained  * SignifyRefresh
-
-  autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
-  autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
-
-  autocmd CmdwinEnter * let g:signify_cmdwin_active = 1
-  autocmd CmdwinLeave * let g:signify_cmdwin_active = 0
-
-  autocmd ShellCmdPost * call sy#start()
-
-  if exists('##VimResume')
-    autocmd VimResume * call sy#start()
-  endif
-
-  if has('gui_running') && has('win32') && argc()
-    " Fix 'no signs at start' race.
-    autocmd GUIEnter * redraw
-  endif
-augroup END
 
 " Commands {{{1
 command! -nargs=0 -bar       SignifyList            call sy#debug#list_active_buffers()
@@ -49,10 +17,13 @@ command! -nargs=0 -bar -bang SignifyDiff            call sy#repo#diffmode(<bang>
 command! -nargs=0 -bar       SignifyHunkDiff        call sy#repo#diff_hunk()
 command! -nargs=0 -bar       SignifyHunkUndo        call sy#repo#undo_hunk()
 command! -nargs=0 -bar       SignifyRefresh         call sy#util#refresh_windows()
-command! -nargs=0 -bar       SignifyEnable          call sy#enable()
-command! -nargs=0 -bar       SignifyDisable         call sy#disable()
+
+command! -nargs=0 -bar       SignifyEnable          call sy#start()
+command! -nargs=0 -bar       SignifyDisable         call sy#stop()
 command! -nargs=0 -bar       SignifyToggle          call sy#toggle()
 command! -nargs=0 -bar       SignifyToggleHighlight call sy#highlight#line_toggle()
+command! -nargs=0 -bar       SignifyEnableAll       call sy#start_all()
+command! -nargs=0 -bar       SignifyDisableAll      call sy#stop_all()
 
 " Mappings {{{1
 let s:cpoptions = &cpoptions
@@ -87,6 +58,20 @@ xnoremap <silent> <plug>(signify-motion-outer-visual)  :<c-u>call sy#util#hunk_t
 
 let &cpoptions = s:cpoptions
 unlet s:cpoptions
+
+" Autocmds {{{1
+if has('gui_running') && has('win32') && argc()
+  " Fix 'no signs at start' race.
+  autocmd GUIEnter * redraw
+endif
+
+autocmd QuickFixCmdPre  *vimgrep* let g:signify_locked = 1
+autocmd QuickFixCmdPost *vimgrep* let g:signify_locked = 0
+
+autocmd BufNewFile,BufRead * nested
+      \ if !get(g:, 'signify_disable_by_default') |
+      \   call sy#start({'bufnr': bufnr('')}) |
+      \ endif
 " 1}}}
 
 if exists('#User#SignifySetup')

@@ -231,8 +231,11 @@ Works the same as |g:signify_vcs_cmds|.
                                                   *g:signify_disable_by_default*  >
     let g:signify_disable_by_default = 0
 <
-This makes Sy not looking for changes for each new buffer. You can easily
-enable it later using |signify-:SignifyToggle|.
+Disable Sy by default. You can still enable it later via:
+
+    |signify-:SignifyToggle|
+    |signify-:SignifyEnable|
+    |signify-:SignifyEnableAll|
 
 ------------------------------------------------------------------------------
                                                *g:signify_skip_filename_pattern*
@@ -341,10 +344,22 @@ Can also be used to when a repository was initialized while Sy was already
 loaded.
 
 ------------------------------------------------------------------------------
+                                                     *signify-:SignifyEnableAll*  >
+    :SignifyEnableAll
+<
+Enable the plugin for all buffers. Sets |g:signify_disable_by_default| to 0.
+
+------------------------------------------------------------------------------
                                                        *signify-:SignifyDisable*  >
     :SignifyDisable
 <
 Disable the plugin for the current buffer only.
+
+------------------------------------------------------------------------------
+                                                    *signify-:SignifyDisableAll*  >
+    :SignifyDisableAll
+<
+Disable the plugin for all buffers. Sets |g:signify_disable_by_default| to 1.
 
 ------------------------------------------------------------------------------
                                                         *signify-:SignifyToggle*  >
@@ -451,12 +466,12 @@ See all of them with:
 <
 You can disable sign updating for certain events:
 >
-    autocmd User SignifySetup autocmd! signify CursorHold,CursorHoldI
+    autocmd User SignifyAutocmds autocmd! signify CursorHold,CursorHoldI
 <
 If you don't need immediate feedback or responses from your VCS are slow, then
 use this to only update signs when writing the buffer:
 >
-    autocmd User SignifySetup
+    autocmd User SignifyAutocmds
           \ exe 'au! signify' | au signify BufWritePost * call sy#start()
 <
 ==============================================================================
@@ -467,7 +482,13 @@ Signify fires these user events:
 User SignifySetup~
 
     This event fires at the end of `plugin/signify.vim`, in case you want to
-    change any of the default autocmds, commands, or mappings.
+    change any of the default commands, or mappings.
+
+User SignifyAutocmds~
+
+    This event fires every time Sy sets autocmds. E.g. when opening a
+    version-controlled file or when using |signify-:SignifyToggle| a lot.
+    Useful to change the default |signify-autocmds|.
 
 User Signify~
 
@@ -657,6 +678,9 @@ EXAMPLE                                                        *signify-example*
 
 An example configuration for Sy:
 >
+    " Faster sign updates on CursorHold/CursorHoldI
+    set updatetime=100
+
     nnoremap <leader>gd :SignifyDiff<cr>
     nnoremap <leader>gp :SignifyHunkDiff<cr>
     nnoremap <leader>gu :SignifyHunkUndo<cr>
