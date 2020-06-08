@@ -40,29 +40,35 @@ function! sy#start(...) abort
   elseif has('vim_starting')
     call sy#verbose("Don't run Sy more than once during startup.")
     return
-  elseif empty(sy.vcs)
-    if get(sy, 'retry')
-      let sy.retry = 0
-      call sy#verbose('Redetecting VCS.')
-      call sy#repo#detect(sy.buffer)
-    else
-      if get(sy, 'detecting')
-        call sy#verbose('Detection is already in progress.')
-      else
-        call sy#verbose('No VCS found. Disabling.')
-        call sy#stop(sy.buffer)
-      endif
-    endif
   else
-    for vcs in sy.vcs
-      let job_id = getbufvar(sy.buffer, 'sy_job_id_'. vcs, 0)
-      if type(job_id) != type(0) || job_id > 0
-        call sy#verbose('Update is already in progress.', vcs)
+    let path = s:get_path(bufnr)
+    if s:skip(bufnr, path)
+      call sy#stop()
+      return
+    elseif empty(sy.vcs)
+      if get(sy, 'retry')
+        let sy.retry = 0
+        call sy#verbose('Redetecting VCS.')
+        call sy#repo#detect(sy.buffer)
       else
-        call sy#verbose('Updating signs.', vcs)
-        call sy#repo#get_diff(sy.buffer, vcs, function('sy#sign#set_signs'))
+        if get(sy, 'detecting')
+          call sy#verbose('Detection is already in progress.')
+        else
+          call sy#verbose('No VCS found. Disabling.')
+          call sy#stop(sy.buffer)
+        endif
       endif
-    endfor
+    else
+      for vcs in sy.vcs
+        let job_id = getbufvar(sy.buffer, 'sy_job_id_'. vcs, 0)
+        if type(job_id) != type(0) || job_id > 0
+          call sy#verbose('Update is already in progress.', vcs)
+        else
+          call sy#verbose('Updating signs.', vcs)
+          call sy#repo#get_diff(sy.buffer, vcs, function('sy#sign#set_signs'))
+        endif
+      endfor
+    endif
   endif
 endfunction
 
