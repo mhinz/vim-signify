@@ -42,7 +42,7 @@ function! sy#start(...) abort
     return
   else
     let path = s:get_path(bufnr)
-    if s:skip(bufnr, path)
+    if !filereadable(path)
       call sy#stop()
       return
     elseif empty(sy.vcs)
