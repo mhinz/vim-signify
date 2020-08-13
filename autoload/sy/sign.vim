@@ -159,10 +159,10 @@ endfunction
 
 " #remove_all_signs {{{1
 function! sy#sign#remove_all_signs(bufnr) abort
-  let sy = getbufvar(a:bufnr, 'sy')
+  let sy = getbufvar(a:bufnr, 'sy', {})
 
-  for hunk in sy.hunks
-    for id in hunk.ids
+  for hunk in get(sy, 'hunks', [])
+    for id in get(hunk, 'ids', [])
       execute 'sign unplace' id 'buffer='.a:bufnr
     endfor
   endfor
