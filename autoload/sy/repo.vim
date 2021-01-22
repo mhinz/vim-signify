@@ -413,7 +413,7 @@ function! s:undo_hunk(sy, vcs, diff) abort
     return
   endif
 
-  let [_old_line, _old_count, new_line, _new_count] = sy#sign#parse_hunk(header)
+  let [_old_line, _old_count, new_line, new_count] = sy#sign#parse_hunk(header)
 
   for line in hunk
     let op = line[0]
@@ -425,7 +425,7 @@ function! s:undo_hunk(sy, vcs, diff) abort
       endif
       let new_line += 1
     elseif op == '-'
-      call append(new_line-1, text)
+      call append(new_count == 0 ? new_line : new_line - 1, text)
       let new_line += 1
     elseif op == '+'
       if text != getline(new_line)
