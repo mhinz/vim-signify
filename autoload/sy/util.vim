@@ -24,6 +24,10 @@ endfunction
 
 " #refresh_windows {{{1
 function! sy#util#refresh_windows() abort
+  " return if signify is not active
+  if empty(getbufvar(bufnr(''), 'sy'))
+    return
+  endif
   if exists('*win_getid')
     let winid = win_getid()
   else
