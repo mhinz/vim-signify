@@ -88,7 +88,7 @@ endfunction
 
 " #start_all {{{1
 function! sy#start_all() abort
-  for bufnr in range(1, bufnr(''))
+  for bufnr in range(1, bufnr("$"))
     call sy#start({'bufnr': bufnr})
   endfor
   let g:signify_disable_by_default = 0
@@ -105,8 +105,9 @@ function! sy#stop_all() abort
 endfunction
 
 " #buffer_is_active {{{1
-function! sy#buffer_is_active()
-  return !empty(getbufvar(bufnr(''), 'sy'))
+function! sy#buffer_is_active(...)
+  let bufnr = a:0 ? a:1 : bufnr('')
+  return !empty(getbufvar(bufnr, 'sy'))
 endfunction
 
 " #verbose {{{1
