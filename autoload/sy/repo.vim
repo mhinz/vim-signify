@@ -469,7 +469,7 @@ endfunction
 function! s:wrap_cmd(bufnr, vcs, cmd) abort
   if has('win32')
     if has('nvim')
-      let cmd = &shell =~ '\v%(cmd|powershell)' ? a:cmd : ['sh', '-c', a:cmd]
+      let cmd = &shell =~ '\v%(cmd|powershell|pwsh)' ? a:cmd : ['sh', '-c', a:cmd]
     else
       if &shell =~ 'cmd'
         let cmd = join([&shell, &shellcmdflag, '(', a:cmd, ')'])
