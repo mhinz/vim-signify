@@ -24,10 +24,6 @@ endfunction
 
 " #refresh_windows {{{1
 function! sy#util#refresh_windows() abort
-  " return if signify is not active
-  if empty(getbufvar(bufnr(''), 'sy'))
-    return
-  endif
   if exists('*win_getid')
     let winid = win_getid()
   else
@@ -36,7 +32,9 @@ function! sy#util#refresh_windows() abort
 
   if !get(g:, 'signify_cmdwin_active')
     for bufnr in tabpagebuflist()
-      call sy#start({'bufnr': bufnr})
+      if sy#buffer_is_active(bufnr)
+        call sy#start({'bufnr': bufnr})
+      endif
     endfor
   endif
 
