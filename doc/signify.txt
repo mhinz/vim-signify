@@ -329,7 +329,7 @@ unfolded. Using |zo| (and similar |fold-commands|) on a folded line will reveal
 Default: [3, 8]
 
 ------------------------------------------------------------------------------
-                                                        *g:signify_priority*  >
+                                                            *g:signify_priority*  >
     let g:signify_priority = 5
 <
 This changes the sign priority used for signs. See |sign-priority|.
