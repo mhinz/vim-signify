@@ -3,22 +3,14 @@
 scriptencoding utf-8
 
 " Variables {{{1
-if get(g:, 'signify_sign_show_text', 1)
-  let s:sign_add               = get(g:, 'signify_sign_add',               '+')
-  let s:sign_delete_first_line = get(g:, 'signify_sign_delete_first_line', '‾')
-  let s:sign_change            = get(g:, 'signify_sign_change',            '!')
-  let s:sign_change_delete     = get(g:, 'signify_sign_change_delete', s:sign_change . s:sign_delete_first_line)
-  if strdisplaywidth(s:sign_change_delete) > 2
-    call sy#verbose(printf('Changing g:signify_sign_change_delete from %s to !- to avoid E239', s:sign_change_delete))
-    let s:sign_change_delete = '!-'
-  endif
-else
-  let s:sign_add               = ' '
-  let s:sign_delete_first_line = ' '
-  let s:sign_change            = ' '
-  let s:sign_change_delete     = ' '
+let s:sign_add               = get(g:, 'signify_sign_add',               '+')
+let s:sign_delete_first_line = get(g:, 'signify_sign_delete_first_line', '‾')
+let s:sign_change            = get(g:, 'signify_sign_change',            '!')
+let s:sign_change_delete     = get(g:, 'signify_sign_change_delete', s:sign_change . s:sign_delete_first_line)
+if strdisplaywidth(s:sign_change_delete) > 2
+  call sy#verbose(printf('Changing g:signify_sign_change_delete from %s to !- to avoid E239', s:sign_change_delete))
+  let s:sign_change_delete = '!-'
 endif
-
 let s:sign_show_count = get(g:, 'signify_sign_show_count', 1)
 " 1}}}
 

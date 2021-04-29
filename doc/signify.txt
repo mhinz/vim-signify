@@ -133,7 +133,6 @@ default values, as long as no "Default:" section is given.
     |g:signify_sign_change|
     |g:signify_sign_change_delete|
     |g:signify_sign_show_count|
-    |g:signify_sign_show_text|
     |g:signify_difftool|
     |g:signify_fold_context|
     |g:signify_priority|
@@ -282,25 +281,17 @@ these.
 You can use Unicode characters, but signs must not take up more than two
 cells. Otherwise, |E239| is thrown.
 
+Examples:~
+>
+  let g:signify_sign_add    = '▊'  " U+258A LEFT THREE QUARTERS BLOCK (1 cell)
+  let g:signify_sign_change = '██' " U+2588 FULL BLOCK x2 (2 cells)
+<
 ------------------------------------------------------------------------------
                                                      *g:signify_sign_show_count*  >
     let g:signify_sign_show_count = 1
 <
 Add the number of deleted lines to |g:signify_sign_delete| (up to 99).
 Otherwise, only the usual sign text will be shown.
-
-------------------------------------------------------------------------------
-                                                      *g:signify_sign_show_text*  >
-    let g:signify_sign_show_text = 1
-<
-Don't show any text in the sign column. (Actually it will show a non-breaking
-space.)
-
-This is useful if you only want to see colors instead. If your colorscheme
-doesn't do it for you, you can set the background color of a particular sign
-yourself: |signify-colors|.
-
-If you want no sign column at all and use Vim 7.4.2201+, use 'signcolumn'.
 
 ------------------------------------------------------------------------------
                                                             *g:signify_difftool*  >
@@ -569,19 +560,11 @@ Assuming you prefer |hl-DiffText| over |hl-DiffChange| for changed lines:
 >
     highlight link SignifyLineChange DiffText
 <
-Example configuration #1:~
+Example configuration:~
 >
     highlight SignifySignAdd    ctermfg=green  guifg=#00ff00 cterm=NONE gui=NONE
     highlight SignifySignDelete ctermfg=red    guifg=#ff0000 cterm=NONE gui=NONE
     highlight SignifySignChange ctermfg=yellow guifg=#ffff00 cterm=NONE gui=NONE
-<
-Example configuration #2:~
->
-    let g:signify_sign_show_text = 0
-
-    highlight SignifySignAdd                  ctermbg=green                guibg=#00ff00
-    highlight SignifySignDelete ctermfg=black ctermbg=red    guifg=#ffffff guibg=#ff0000
-    highlight SignifySignChange ctermfg=black ctermbg=yellow guifg=#000000 guibg=#ffff00
 <
 Note: For Unix people there is a small script in the repo, showcolors.bash,
 that shows all 256 colors available in the terminal. That makes picking the
