@@ -3,11 +3,7 @@
 scriptencoding utf-8
 
 " Variables {{{1
-if get(g:, 'signify_sign_show_text', 1)
-  let s:sign_delete = get(g:, 'signify_sign_delete', '_')
-else
-  let s:sign_delete = ' '
-endif
+let s:sign_delete = get(g:, 'signify_sign_delete', '_')
 
 " Support for sign priority was added together with sign_place().
 if exists('*sign_place')
