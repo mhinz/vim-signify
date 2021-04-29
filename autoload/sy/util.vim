@@ -115,6 +115,22 @@ endfunction
 
 let s:popup_window = 0
 
+" #get_hunk_stats {{{1
+function! sy#util#get_hunk_stats() abort
+  execute sy#util#return_if_no_changes()
+
+  let curline = line('.')
+  let total_hunks = len(b:sy.hunks)
+
+  for i in range(total_hunks)
+    if b:sy.hunks[i].start <= curline && b:sy.hunks[i].end >= curline
+      return { 'total_hunks': total_hunks, 'current_hunk': i + 1 }
+    endif
+  endfor
+
+  return {}
+endfunction
+
 " #popup_close {{{1
 function! sy#util#popup_close() abort
   if s:popup_window

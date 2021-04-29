@@ -520,6 +520,17 @@ Mapping other keys:
     nmap <leader>gJ 9999<leader>gj
     nmap <leader>gK 9999<leader>gk
 <
+When you jump to a hunk, show "[Hunk 2/15]" by putting this in your vimrc:
+>
+    autocmd User SignifyHunk call s:show_current_hunk()
+
+    function! s:show_current_hunk() abort
+      let h = sy#util#get_hunk_stats()
+      if !empty(h)
+        echo printf('[Hunk %d/%d]', h.current_hunk, h.total_hunks)
+      endif
+    endfunction
+<
 ------------------------------------------------------------------------------
 Hunk text object:~
 >

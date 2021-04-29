@@ -13,6 +13,10 @@ function! sy#jump#next_hunk(count)
   if !empty(hunk)
     execute 'sign jump '. hunk.ids[0] .' buffer='. b:sy.buffer
   endif
+
+  if exists('#User#SignifyHunk')
+    doautocmd <nomodeline> User SignifyHunk
+  endif
 endfunction
 
 " #prev_hunk {{{1
@@ -25,5 +29,9 @@ function! sy#jump#prev_hunk(count)
 
   if !empty(hunk)
     execute 'sign jump '. hunk.ids[0] .' buffer='. b:sy.buffer
+  endif
+
+  if exists('#User#SignifyHunk')
+    doautocmd <nomodeline> User SignifyHunk
   endif
 endfunction
