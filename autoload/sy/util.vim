@@ -177,7 +177,7 @@ function! sy#util#popup_create(hunkdiff) abort
     call nvim_win_set_option(s:popup_window, 'number', v:false)
     call nvim_win_set_option(s:popup_window, 'relativenumber', v:false)
     call nvim_win_set_option(s:popup_window, 'wrap', v:true)
-    autocmd CursorMoved * ++once call sy#util#popup_close()
+    autocmd CursorMoved <buffer> ++once call sy#util#popup_close()
   elseif exists('*popup_create')
     let s:popup_window = popup_create(map(a:hunkdiff, 'v:val[0].padding.v:val[1:]'), {
           \ 'line': 'cursor+1',
