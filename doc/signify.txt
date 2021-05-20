@@ -123,6 +123,7 @@ default values, as long as no "Default:" section is given.
     |g:signify_vcs_cmds|
     |g:signify_vcs_cmds_diffmode|
     |g:signify_disable_by_default|
+    |g:signify_skip|
     |g:signify_skip_filetype|
     |g:signify_skip_filename|
     |g:signify_skip_filename_pattern|
@@ -236,6 +237,18 @@ Disable Sy by default. You can still enable it later via:
     |signify-:SignifyToggle|
     |signify-:SignifyEnable|
     |signify-:SignifyEnableAll|
+
+------------------------------------------------------------------------------
+                                                              *g:signify_skip*
+>
+    let g:signify_skip = { 'vcs': { 'allow': ['git'] } }
+    let g:signify_skip = { 'vcs': { 'deny': ['perforce'] } }
+<
+Allow only certain VCS or deny all but the specified ones. Mutually exclusive.
+
+This can be used to replace the old g:signify_vcs_list.
+
+Default: <none>
 
 ------------------------------------------------------------------------------
                                                *g:signify_skip_filename_pattern*
