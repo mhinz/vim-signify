@@ -263,6 +263,14 @@ Default: <none>
 Enable line highlighting in addition to using signs by default.
 
 ------------------------------------------------------------------------------
+                                                    *g:signify_number_highlight*  >
+    let g:signify_number_highlight = 0
+<
+Enable number column highlighting in addition to using signs by default.
+
+This requires Vim 8.2.3874+ or Neovim 0.3.2+.
+
+------------------------------------------------------------------------------
                                               *g:signify_sign_add*
                                               *g:signify_sign_delete*
                                               *g:signify_sign_delete_first_line*

@@ -195,6 +195,27 @@ function! sy#util#popup_create(hunkdiff) abort
   return 1
 endfunction
 
+" #numhl {{{1
+try
+  sign define SyTest numhl=Number
+  let s:use_numhl = 1
+  sign undefine SyTest
+catch
+  let s:use_numhl = 0
+endtry
+
+function! sy#util#numhl(hlgroup) abort
+  if !s:use_numhl
+    return ''
+  endif
+
+  if get(g:, 'signify_number_highlight')
+    return printf('numhl=%s', a:hlgroup)
+  else
+    return 'numhl='
+  endif
+endfunction
+
 " s:offset {{{1
 function! s:offset() abort
   let offset = &foldcolumn
