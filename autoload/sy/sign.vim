@@ -280,10 +280,11 @@ function! s:add_sign(sy, line, type, ...) abort
   endif
 
   if a:type =~# 'SignifyDelete'
-    execute printf('sign define %s text=%s texthl=SignifySignDelete linehl=%s',
+    execute printf('sign define %s text=%s texthl=SignifySignDelete linehl=%s %s',
           \ a:type,
           \ a:1,
-          \ s:delete_highlight[g:signify_line_highlight])
+          \ s:delete_highlight[g:signify_line_highlight],
+          \ sy#util#numhl('SignifySignDelete'))
   endif
   execute printf('sign place %d line=%d name=%s %s buffer=%s',
         \ id,

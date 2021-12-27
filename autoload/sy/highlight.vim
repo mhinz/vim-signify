@@ -31,19 +31,19 @@ endfunction
 
 " #line_enable {{{1
 function! sy#highlight#line_enable() abort
-  execute 'sign define SignifyAdd text='. s:sign_add 'texthl=SignifySignAdd linehl=SignifyLineAdd'
-  execute 'sign define SignifyChange text='. s:sign_change 'texthl=SignifySignChange linehl=SignifyLineChange'
-  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete 'texthl=SignifySignChangeDelete linehl=SignifyLineChangeDelete'
-  execute 'sign define SignifyRemoveFirstLine text='. s:sign_delete_first_line 'texthl=SignifySignDeleteFirstLine linehl=SignifyLineDeleteFirstLine'
+  execute 'sign define SignifyAdd text='. s:sign_add ' texthl=SignifySignAdd linehl=SignifyLineAdd '. sy#util#numhl('SignifySignAdd')
+  execute 'sign define SignifyChange text='. s:sign_change ' texthl=SignifySignChange linehl=SignifyLineChange '. sy#util#numhl('SignifySignChange')
+  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete ' texthl=SignifySignChangeDelete linehl=SignifyLineChangeDelete '. sy#util#numhl('SignifySignChangeDelete')
+  execute 'sign define SignifyRemoveFirstLine text='. s:sign_delete_first_line ' texthl=SignifySignDeleteFirstLine linehl=SignifyLineDeleteFirstLine '. sy#util#numhl('SignifySignDeleteFirstLine')
   let g:signify_line_highlight = 1
 endfunction
 
 " #line_disable {{{1
 function! sy#highlight#line_disable() abort
-  execute 'sign define SignifyAdd text='. s:sign_add 'texthl=SignifySignAdd linehl='
-  execute 'sign define SignifyChange text='. s:sign_change 'texthl=SignifySignChange linehl='
-  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete 'texthl=SignifySignChangeDelete linehl='
-  execute 'sign define SignifyRemoveFirstLine text='. s:sign_delete_first_line 'texthl=SignifySignDeleteFirstLine linehl='
+  execute 'sign define SignifyAdd text='. s:sign_add ' texthl=SignifySignAdd linehl= '. sy#util#numhl('SignifySignAdd')
+  execute 'sign define SignifyChange text='. s:sign_change ' texthl=SignifySignChange linehl= '. sy#util#numhl('SignifySignChange')
+  execute 'sign define SignifyChangeDelete text='. s:sign_change_delete ' texthl=SignifySignChangeDelete linehl= '. sy#util#numhl('SignifySignChangeDelete')
+  execute 'sign define SignifyRemoveFirstLine text='. s:sign_delete_first_line ' texthl=SignifySignDeleteFirstLine linehl= '. sy#util#numhl('SignifySignDeleteFirstLine')
   let g:signify_line_highlight = 0
 endfunction
 
