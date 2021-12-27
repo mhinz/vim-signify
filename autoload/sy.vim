@@ -10,6 +10,11 @@ function! sy#start(...) abort
     return
   endif
 
+  if g:signify_detecting > 50
+    call sy#verbose('Too many detection jobs running, deferring detection')
+    return
+  endif
+
   let bufnr = a:0 && has_key(a:1, 'bufnr') ? a:1.bufnr : bufnr('')
   let sy = getbufvar(bufnr, 'sy')
 

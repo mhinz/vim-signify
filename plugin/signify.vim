@@ -8,6 +8,7 @@ endif
 
 let g:loaded_signify = 1
 let g:signify_locked = 0
+let g:signify_detecting = 0
 
 " Commands {{{1
 command! -nargs=0 -bar       SignifyList            call sy#debug#list_active_buffers()
