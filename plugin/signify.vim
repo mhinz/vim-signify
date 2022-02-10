@@ -26,6 +26,8 @@ command! -nargs=0 -bar       SignifyToggleHighlight call sy#highlight#line_toggl
 command! -nargs=0 -bar       SignifyEnableAll       call sy#start_all()
 command! -nargs=0 -bar       SignifyDisableAll      call sy#stop_all()
 
+command! -nargs=1 -bar       SignifyChangeTarget    call sy#repo#update_target(<f-args>)
+
 " Mappings {{{1
 let s:cpoptions = &cpoptions
 set cpoptions+=B
