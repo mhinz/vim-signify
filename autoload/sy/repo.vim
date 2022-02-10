@@ -446,6 +446,11 @@ function! s:undo_hunk(sy, vcs, diff) abort
   return sy#start()
 endfunction
 
+" #update_target {{{1
+function! sy#repo#update_target(target) abort
+  let g:signify_vcs_target = a:target
+endfunction
+
 " s:initialize_job {{{1
 function! s:initialize_job(bufnr, vcs) abort
   return s:wrap_cmd(a:bufnr, a:vcs, s:get_base_cmd(a:bufnr, a:vcs, g:signify_vcs_cmds))
@@ -505,6 +510,20 @@ function! s:get_base_cmd(bufnr, vcs, vcs_cmds) abort
   let cmd = s:replace(cmd, '%f', s:get_vcs_path(a:bufnr, a:vcs))
   let cmd = s:replace(cmd, '%d', s:difftool)
   let cmd = s:replace(cmd, '%n', s:devnull)
+
+  if index(['git', 'hg'], a:vcs) >= 0
+    let s:target = ""
+    if g:signify_vcs_target == "default"
+      if a:vcs == 'git'
+        let s:target = 'HEAD'
+      else
+        let s:target = '.'
+      endif
+    else
+      let s:target = g:signify_vcs_target
+    endif
+    let cmd = s:replace(cmd, '%t', s:target)
+  endif
   return cmd
 endfunction
 
@@ -613,9 +632,9 @@ endfunction
 
 " Variables {{{1
 let s:default_vcs_cmds = {
-      \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
+      \ 'git':      'git diff --no-color --no-ext-diff -U0 %t -- %f',
       \ 'yadm':     'yadm diff --no-color --no-ext-diff -U0 -- %f',
-      \ 'hg':       'hg diff --color=never --config aliases.diff= --nodates -U0 -- %f',
+      \ 'hg':       'hg --config alias.diff=diff diff --color=never --nodates -U0 --from %t -- %f',
       \ 'svn':      'svn diff --diff-cmd %d -x -U0 -- %f',
       \ 'bzr':      'bzr diff --using %d --diff-options=-U0 -- %f',
       \ 'darcs':    'darcs diff --no-pause-for-gui --no-unified --diff-opts=-U0 -- %f',
@@ -652,6 +671,8 @@ if exists('g:signify_vcs_cmds_diffmode')
 else
   let g:signify_vcs_cmds_diffmode = s:default_vcs_cmds_diffmode
 endif
+
+let g:signify_vcs_target = 'default'
 
 let s:vcs_dict = map(copy(g:signify_vcs_cmds), 'split(v:val)[0]')
 
