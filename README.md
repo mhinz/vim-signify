@@ -31,7 +31,7 @@ _Similar plugin for git: [vim-gitgutter](https://github.com/airblade/vim-gitgutt
 ## Installation
 
 The `master` branch is async-only and thus requires at least Vim 8.0.902. Use
-the `legacy` branch for older Vim versions.
+the `legacy` tag for older Vim versions.
 
 Using your favorite [plugin
 manager](https://github.com/mhinz/vim-galore#managing-plugins), e.g.
@@ -41,7 +41,7 @@ manager](https://github.com/mhinz/vim-galore#managing-plugins), e.g.
 if has('nvim') || has('patch-8.0.902')
   Plug 'mhinz/vim-signify'
 else
-  Plug 'mhinz/vim-signify', { 'branch': 'legacy' }
+  Plug 'mhinz/vim-signify', { 'tag': 'legacy' }
 endif
 ```
 
