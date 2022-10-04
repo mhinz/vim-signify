@@ -28,13 +28,24 @@ function! sy#sign#get_current_signs(sy) abort
   let a:sy.internal = {}
   let a:sy.external = {}
 
-  let signlist = sy#util#execute('sign place buffer='. a:sy.buffer)
+  let has_sign_func = has('patch-8.1.614')
+  if has_sign_func
+    let signlist = sign_getplaced(a:sy.buffer)[0].signs
+  else
+    let signlist = split(sy#util#execute('sign place buffer='. a:sy.buffer), '\n')[2:]
+  endif
 
-  for signline in split(signlist, '\n')[2:]
-    let tokens = matchlist(signline, '\v^\s+\S+\=(\d+)\s+\S+\=(\d+)\s+\S+\=(.*)$')
-    let line   = str2nr(tokens[1])
-    let id     = str2nr(tokens[2])
-    let type   = tokens[3]
+  for signline in signlist
+    if has_sign_func
+      let line   = signline.lnum
+      let id     = signline.id
+      let type   = signline.name
+    else
+      let tokens = matchlist(signline, '\v^\s+\S+\=(\d+)\s+\S+\=(\d+)\s+\S+\=(.*)$')
+      let line   = str2nr(tokens[1])
+      let id     = str2nr(tokens[2])
+      let type   = tokens[3]
+    endif
 
     if type =~# '^Signify'
       " Handle ambiguous signs. Assume you have signs on line 3 and 4.
