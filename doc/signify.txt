@@ -128,6 +128,7 @@ default values, as long as no "Default:" section is given.
     |g:signify_skip_filename|
     |g:signify_skip_filename_pattern|
     |g:signify_line_highlight|
+    |g:signify_number_highlight|
     |g:signify_sign_add|
     |g:signify_sign_delete|
     |g:signify_sign_delete_first_line|
