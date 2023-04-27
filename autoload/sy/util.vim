@@ -229,3 +229,33 @@ function! s:offset() abort
   endif
   return offset
 endfunction
+
+" #get_signs {{{1
+if exists('*sign_getplaced')
+  function! sy#util#get_signs(bufnr)
+    return sign_getplaced(a:bufnr)[0].signs
+  endfunction
+else
+  function! sy#util#get_signs(bufnr)
+    let buf = bufnr(a:bufnr)
+    let signs = []
+
+    let signlist = execute('sign place buffer='. buf)
+    for signline in split(signlist, '\n')[2:]
+      let tokens = matchlist(signline, '\v^\s+\S+\=(\d+)\s+\S+\=(\d+)\s+\S+\=(.*)\s+\S+\=(\d+)$')
+      let line   = str2nr(tokens[1])
+      let id     = str2nr(tokens[2])
+      let name   = tokens[3]
+      let priority = str2nr(tokens[4])
+      call add(signs, {
+            \ 'lnum': line,
+            \ 'id': id,
+            \ 'name': name,
+            \ 'priority': priority,
+            \ 'group': ''
+            \ })
+    endfor
+
+    return signs
+  endfunction
+endif

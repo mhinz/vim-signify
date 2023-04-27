@@ -28,24 +28,19 @@ function! sy#sign#get_current_signs(sy) abort
   let a:sy.internal = {}
   let a:sy.external = {}
 
-  let signlist = sy#util#execute('sign place buffer='. a:sy.buffer)
+  let signlist = sy#util#get_signs(a:sy.buffer)
 
-  for signline in split(signlist, '\n')[2:]
-    let tokens = matchlist(signline, '\v^\s+\S+\=(\d+)\s+\S+\=(\d+)\s+\S+\=(.*)$')
-    let line   = str2nr(tokens[1])
-    let id     = str2nr(tokens[2])
-    let type   = tokens[3]
-
-    if type =~# '^Signify'
+  for sign in signlist
+    if sign.name =~# '^Signify'
       " Handle ambiguous signs. Assume you have signs on line 3 and 4.
       " Removing line 3 would lead to the second sign to be shifted up
       " to line 3. Now there are still 2 signs, both one line 3.
-      if has_key(a:sy.internal, line)
-        execute 'sign unplace' a:sy.internal[line].id 'buffer='.a:sy.buffer
+      if has_key(a:sy.internal, sign.lnum)
+        execute 'sign unplace' a:sy.internal[sign.lnum].id 'buffer='.a:sy.buffer
       endif
-      let a:sy.internal[line] = { 'type': type, 'id': id }
+      let a:sy.internal[sign.lnum] = { 'type': sign.name, 'id': sign.id }
     else
-      let a:sy.external[line] = id
+      let a:sy.external[sign.lnum] = sign.id
     endif
   endfor
 endfunction

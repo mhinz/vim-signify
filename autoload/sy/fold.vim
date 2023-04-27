@@ -88,14 +88,7 @@ endfunction
 
 " s:get_lines {{{1
 function! s:get_lines() abort
-  let signlist = sy#util#execute('sign place buffer='. b:sy.buffer)
-
-  let lines = []
-  for line in split(signlist, '\n')[2:]
-    call insert(lines, matchlist(line, '\v^\s+line\=(\d+)')[1], 0)
-  endfor
-
-  return reverse(lines)
+  return map(sy#util#get_signs(b:sy.buffer), {_, val -> val.lnum})
 endfunction
 
 " s:get_levels {{{1
