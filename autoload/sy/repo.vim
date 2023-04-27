@@ -310,6 +310,10 @@ function! sy#repo#diffmode(do_tab) abort
   let base = s:get_base(bufnr(''), vcs)
 
   leftabove vnew
+
+  let undolevels = &l:undolevels
+  setlocal undolevels=-1
+
   if (fenc != &enc) && has('iconv')
     silent put =iconv(base, fenc, &enc)
   else
@@ -319,6 +323,7 @@ function! sy#repo#diffmode(do_tab) abort
   silent 1delete
   set buftype=nofile bufhidden=wipe nomodified
   let &filetype = ft
+  let &l:undolevels = undolevels
   diffthis
   wincmd p
   normal! ]czt
