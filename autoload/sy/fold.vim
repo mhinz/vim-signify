@@ -88,24 +88,7 @@ endfunction
 
 " s:get_lines {{{1
 function! s:get_lines() abort
-  let lines = []
-
-  let has_sign_func = has('patch-8.1.614')
-  if has_sign_func
-    let signlist = sign_getplaced(b:sy.buffer)[0].signs
-  else
-    let signlist = split(sy#util#execute('sign place buffer='. b:sy.buffer), '\n')[2:]
-  endif
-
-  for signline in signlist
-    if has_sign_func
-      call insert(lines, signline.lnum, 0)
-    else
-      call insert(lines, matchlist(line, '\v^\s+line\=(\d+)')[1], 0)
-    endif
-  endfor
-
-  return reverse(lines)
+  return map(sy#util#get_signs(b:sy.buffer), {_, val -> val.lnum})
 endfunction
 
 " s:get_levels {{{1
