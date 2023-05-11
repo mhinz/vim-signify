@@ -169,6 +169,8 @@ Modifiers:~
     %f       actual filepath
     %d       |g:signify_difftool|
     %n       Unix: `/dev/null`, Windows: `NUL`
+    %t       Target commit for the diff. NOTE: only works with git and hg at
+             the moment
 
 Redirection: Instead of `>foo` use `sy#util#shell_redirect('foo')`. This
 helper function takes 'shellredir' into account.
@@ -190,9 +192,9 @@ colors are emitted. Our parser expects lines in the diff output to start with
 Default:
 >
     let g:signify_vcs_cmds = {
-      \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
+      \ 'git':      'git diff --no-color --no-ext-diff -U0 %t -- %f',
       \ 'yadm':     'yadm diff --no-color --no-ext-diff -U0 -- %f',
-      \ 'hg':       'hg diff --color=never --config aliases.diff= --nodates -U0 -- %f',
+      \ 'hg':       'hg diff --color=never --config aliases.diff= --nodates -U0 --from %t -- %f',
       \ 'svn':      'svn diff --diff-cmd %d -x -U0 -- %f',
       \ 'bzr':      'bzr diff --using %d --diff-options=-U0 -- %f',
       \ 'darcs':    'darcs diff --no-pause-for-gui --no-unified --diff-opts=-U0 -- %f',
@@ -358,6 +360,17 @@ Enable the plugin for the current buffer only.
 
 Can also be used to when a repository was initialized while Sy was already
 loaded.
+
+------------------------------------------------------------------------------
+                                                  *signify-:SignifyChangeTarget*  >
+    :SignifyChangeTarget HEAD~
+<
+Changes the target commit for the diff.
+
+Defaults:
+
+  git: HEAD
+  hg:  .
 
 ------------------------------------------------------------------------------
                                                      *signify-:SignifyEnableAll*  >
