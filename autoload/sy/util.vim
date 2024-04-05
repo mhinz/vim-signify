@@ -134,7 +134,9 @@ endfunction
 " #popup_close {{{1
 function! sy#util#popup_close() abort
   if s:popup_window
-    call nvim_win_close(s:popup_window, 1)
+    if nvim_win_is_valid(s:popup_window)
+      call nvim_win_close(s:popup_window, 1)
+    endif
     let s:popup_window = 0
   endif
 endfunction
