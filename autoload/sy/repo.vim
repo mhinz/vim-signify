@@ -620,7 +620,7 @@ endfunction
 let s:default_vcs_cmds = {
       \ 'git':      'git diff --no-color --no-ext-diff -U0 -- %f',
       \ 'yadm':     'yadm diff --no-color --no-ext-diff -U0 -- %f',
-      \ 'hg':       'hg diff --color=never --config aliases.diff= --nodates -U0 -- %f',
+      \ 'hg':       'hg --config alias.diff=diff diff --color=never --nodates -U0 -- %f',
       \ 'svn':      'svn diff --diff-cmd %d -x -U0 -- %f',
       \ 'bzr':      'bzr diff --using %d --diff-options=-U0 -- %f',
       \ 'darcs':    'darcs diff --no-pause-for-gui --no-unified --diff-opts=-U0 -- %f',
