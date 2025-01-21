@@ -179,6 +179,11 @@ function! s:check_diff_svn(exitval, diff) abort
   return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
+" s:check_diff_jj {{{1
+function! s:check_diff_jj(exitval, diff) abort
+  return a:exitval ? [0, []] : [1, a:diff]
+endfunction
+
 " s:check_diff_bzr {{{1
 function! s:check_diff_bzr(exitval, diff) abort
   return (a:exitval =~ '[012]') ? [1, a:diff] : [0, []]
@@ -629,7 +634,8 @@ let s:default_vcs_cmds = {
       \ 'rcs':      'rcsdiff -U0 %f 2>%n',
       \ 'accurev':  'accurev diff %f -- -U0',
       \ 'perforce': 'p4 info '. sy#util#shell_redirect('%n') . (has('win32') ? ' &&' : ' && env P4DIFF= P4COLORS=') .' p4 diff -du0 %f',
-      \ 'tfs':      'tf diff -version:W -noprompt -format:Unified %f'
+      \ 'tfs':      'tf diff -version:W -noprompt -format:Unified %f',
+      \ 'jj':       'jj diff --color=never --git --context=0 -r @ -- %f',
       \ }
 
 let s:default_vcs_cmds_diffmode = {
@@ -645,6 +651,7 @@ let s:default_vcs_cmds_diffmode = {
       \ 'accurev':  'accurev cat %f',
       \ 'perforce': 'p4 print %f',
       \ 'tfs':      'tf view -version:W -noprompt %f',
+      \ 'jj':       'jj file show -r @- -- %f',
       \ }
 
 if exists('g:signify_vcs_cmds')
