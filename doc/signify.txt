@@ -200,7 +200,7 @@ Default:
       \ 'cvs':      'cvs diff -U0 -- %f',
       \ 'rcs':      'rcsdiff -U0 %f 2>%n',
       \ 'accurev':  'accurev diff %f -- -U0',
-      \ 'perforce': 'p4 info '. sy#util#shell_redirect('%n') . (has('win32') ? ' &&' : ' && env P4DIFF= P4COLORS=') .' p4 diff -du0 %f',
+      \ 'perforce': 'p4 info '. sy#util#shell_redirect('%n') . (has('win32') ? ' && set P4DIFF=&&' : ' && env P4DIFF=') .' p4 diff -du0 %f',
       \ 'tfs':      'tf diff -version:W -noprompt -format:Unified %f'
       \ }
 <
