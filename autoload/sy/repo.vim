@@ -179,6 +179,11 @@ function! s:check_diff_svn(exitval, diff) abort
   return a:exitval ? [0, []] : [1, a:diff]
 endfunction
 
+" s:check_diff_dssc {{{1
+function! s:check_diff_dssc(exitval, diff) abort
+  return a:exitval ? [0, []] : [1, s:strip_context(a:diff)]
+endfunction
+
 " s:check_diff_bzr {{{1
 function! s:check_diff_bzr(exitval, diff) abort
   return (a:exitval =~ '[012]') ? [1, a:diff] : [0, []]
