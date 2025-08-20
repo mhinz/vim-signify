@@ -643,7 +643,7 @@ let s:default_vcs_cmds_diffmode = {
       \ 'cvs':      'cvs up -p -- %f 2>%n',
       \ 'rcs':      'co -q -p %f',
       \ 'accurev':  'accurev cat %f',
-      \ 'perforce': 'p4 print %f',
+      \ 'perforce': 'p4 print -q %f',
       \ 'tfs':      'tf view -version:W -noprompt %f',
       \ }
 
