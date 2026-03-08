@@ -85,6 +85,10 @@ function! sy#repo#get_diff(bufnr, vcs, func) abort
 
   let options.func = a:func
 
+  let s:job_gen = get(s:, 'job_gen', 0) + 1
+  let options.job_gen = s:job_gen
+  call setbufvar(a:bufnr, 'sy_job_gen_'.a:vcs, s:job_gen)
+
   if has('nvim')
     if job_id
       silent! call jobstop(job_id)
@@ -151,7 +155,12 @@ function! s:handle_diff(options, exitval) abort
     call sy#verbose('No valid diff found. Disabling this VCS.', a:options.vcs)
   endif
 
-  call setbufvar(a:options.bufnr, 'sy_job_id_'.a:options.vcs, 0)
+  " Only clear the job marker if this is still the current job.
+  " A stale job's callback must not clobber a newer job's marker,
+  " otherwise the newer job becomes orphaned and never gets stopped.
+  if get(a:options, 'job_gen', -1) == getbufvar(a:options.bufnr, 'sy_job_gen_'.a:options.vcs, -2)
+    call setbufvar(a:options.bufnr, 'sy_job_id_'.a:options.vcs, 0)
+  endif
 endfunction
 
 " s:check_diff_diff {{{1
