@@ -100,14 +100,14 @@ function! s:get_levels(lines, context0, context1) abort
   endfor
 
   for line in a:lines
-    for l in range(line - context1, line + context1)
+    for l in range(line - a:context1, line + a:context1)
       if (l < 1) || (l > line('$'))
         continue
       endif
       if levels[l] == 2
         let levels[l] = 1
       endif
-      for ll in range(line - context0, line + context0)
+      for ll in range(line - a:context0, line + a:context0)
         let levels[ll] = 0
       endfor
     endfor
